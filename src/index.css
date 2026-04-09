@@ -1,0 +1,38 @@
+@import './styles/global.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn-red {
+    @apply bg-primary text-white transition-transform hover:scale-[1.03] hover:bg-accent;
+    box-shadow: 0 0 0 rgba(227, 27, 35, 0);
+  }
+  .btn-red:hover {
+    animation: unitpro-shadowpulse 900ms ease-in-out infinite alternate;
+  }
+
+  .btn-white {
+    @apply bg-white text-dark transition-transform hover:scale-[1.03];
+  }
+
+  .btn-outline {
+    @apply border border-white/80 bg-transparent text-white transition-transform hover:scale-[1.03] hover:border-primary hover:text-primary;
+  }
+}
+
+@keyframes unitpro-shadowpulse {
+  0% {
+    box-shadow: 0 0 0 rgba(227, 27, 35, 0);
+  }
+  100% {
+    box-shadow: 0 18px 45px rgba(227, 27, 35, 0.18);
+  }
+}
+
+@layer base {
+  :is(a, button).bg-primary:hover {
+    animation: unitpro-shadowpulse 900ms ease-in-out infinite alternate;
+  }
+}

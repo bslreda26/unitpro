@@ -1,0 +1,90 @@
+import { useMemo, useState } from 'react'
+import { motion } from 'framer-motion'
+import { useInView } from 'react-intersection-observer'
+import { useI18n } from '../../i18n/I18nProvider.jsx'
+
+const ABOUT_IMG_PRIMARY =
+  'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1800&q=80'
+const ABOUT_IMG_FALLBACK =
+  'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1800&q=80'
+
+export function AboutSection() {
+  const { t } = useI18n()
+  const { ref, inView } = useInView({ threshold: 0.25, triggerOnce: true })
+  const [src, setSrc] = useState(ABOUT_IMG_PRIMARY)
+  const placeholder = useMemo(() => {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1a0000"/>
+      <stop offset="0.55" stop-color="#0b0b0b"/>
+      <stop offset="1" stop-color="#b91c1c"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="900" fill="url(#g)"/>
+  <g fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="2">
+    <path d="M80 720 L420 380 L680 620 L840 460 L1120 720" />
+    <rect x="80" y="160" width="1040" height="580" rx="18"/>
+  </g>
+  <g fill="rgba(255,255,255,0.86)" font-family="system-ui, -apple-system, Segoe UI, Roboto, Arial" font-weight="700">
+    <text x="100" y="235" font-size="34">UNIT PRO</text>
+    <text x="100" y="285" font-size="18" fill="rgba(255,255,255,0.68)">Espace d’entraînement</text>
+  </g>
+</svg>`
+    return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`
+  }, [])
+
+  return (
+    <section ref={ref} className="relative bg-dark py-20">
+      <div className="mx-auto grid w-full max-w-6xl items-center gap-10 px-6 md:grid-cols-2 md:gap-14">
+        <motion.div
+          initial={{ opacity: 0, x: -24 }}
+          animate={inView ? { opacity: 1, x: 0 } : {}}
+          transition={{ type: 'spring', stiffness: 260, damping: 28 }}
+          className="relative"
+        >
+          <div className="relative overflow-hidden border border-border bg-surface shadow-[0_30px_90px_rgba(0,0,0,0.55)]">
+            <img
+              src={src}
+              alt={t('about.imageAlt')}
+              className="h-[380px] w-full origin-center object-cover md:h-[520px]"
+              style={{ transform: 'rotate(-2deg) scale(1.05)' }}
+              loading="eager"
+              fetchPriority="high"
+              referrerPolicy="no-referrer"
+              onError={() => {
+                if (src !== ABOUT_IMG_FALLBACK) setSrc(ABOUT_IMG_FALLBACK)
+                else if (src !== placeholder) setSrc(placeholder)
+              }}
+            />
+          </div>
+          <div
+            aria-hidden="true"
+            className="absolute -bottom-4 -left-4 h-16 w-16 border-l-2 border-b-2 border-primary"
+          />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, x: 24 }}
+          animate={inView ? { opacity: 1, x: 0 } : {}}
+          transition={{ type: 'spring', stiffness: 260, damping: 28, delay: 0.06 }}
+        >
+          <div className="font-body text-[12px] font-semibold uppercase tracking-[0.26em] text-primary">
+            {t('about.label')}
+          </div>
+          <h2 className="mt-4 font-display text-5xl leading-[0.95] tracking-wide text-white md:text-6xl">
+            {t('about.title')}
+          </h2>
+
+          <div className="mt-6 space-y-4 font-body text-base leading-relaxed text-text-muted">
+            <p>{t('about.p1')}</p>
+            <p>{t('about.p2')}</p>
+          </div>
+
+          <div className="mt-7 h-px w-24 bg-primary" />
+        </motion.div>
+      </div>
+    </section>
+  )
+}
+

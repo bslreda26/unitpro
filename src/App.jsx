@@ -1,13 +1,12 @@
-import { lazy, useState } from 'react'
+import { lazy, useEffect, useLayoutEffect, useState } from 'react'
 import { Navbar } from './components/Navbar.jsx'
 import { Footer } from './components/Footer.jsx'
 import { AnimatedRoutes } from './components/AnimatedRoutes.jsx'
 import { ScrollToTopButton } from './components/ScrollToTopButton.jsx'
 import { LoadingScreen } from './components/LoadingScreen.jsx'
+import { HomePage } from './pages/HomePage.jsx'
+import { scrollToTopInstant } from './utils/scrollToTopInstant.js'
 
-const HomePage = lazy(() =>
-  import('./pages/HomePage.jsx').then((m) => ({ default: m.HomePage })),
-)
 const ClassesPage = lazy(() =>
   import('./pages/ClassesPage.jsx').then((m) => ({ default: m.ClassesPage })),
 )
@@ -20,6 +19,46 @@ const SubscriptionsPage = lazy(() =>
 export default function App() {
   const [loading, setLoading] = useState(true)
 
+  useEffect(() => {
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual'
+    }
+  }, [])
+
+  useLayoutEffect(() => {
+    if (loading) {
+      scrollToTopInstant()
+      document.documentElement.style.overflow = 'hidden'
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.documentElement.style.overflow = ''
+      document.body.style.overflow = ''
+      scrollToTopInstant()
+    }
+  }, [loading])
+
+  useEffect(() => {
+    if (loading) return
+
+    scrollToTopInstant()
+    let innerRaf = 0
+    const outerRaf = requestAnimationFrame(() => {
+      scrollToTopInstant()
+      innerRaf = requestAnimationFrame(scrollToTopInstant)
+    })
+    const t0 = setTimeout(scrollToTopInstant, 0)
+    const t1 = setTimeout(scrollToTopInstant, 120)
+    const t2 = setTimeout(scrollToTopInstant, 400)
+
+    return () => {
+      cancelAnimationFrame(outerRaf)
+      if (innerRaf) cancelAnimationFrame(innerRaf)
+      clearTimeout(t0)
+      clearTimeout(t1)
+      clearTimeout(t2)
+    }
+  }, [loading])
+
   return (
     <div className="min-h-screen bg-dark text-text-primary font-body">
       <LoadingScreen show={loading} onDone={() => setLoading(false)} />
@@ -27,7 +66,7 @@ export default function App() {
       {!loading && (
         <>
           <Navbar />
-          <main className="pt-20">
+          <main className="pt-unit-header">
             <AnimatedRoutes
               HomePage={HomePage}
               ClassesPage={ClassesPage}

@@ -14,12 +14,12 @@ export function LoadingScreen({ show, onDone }) {
     <AnimatePresence>
       {show && (
         <motion.div
-          className="fixed inset-0 z-[10000] flex items-center justify-center bg-dark"
+          className="fixed inset-0 z-[10000] flex items-center justify-center bg-dark px-4 pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)]"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.35, ease: 'easeOut' }}
         >
-          <div className="w-full max-w-lg px-8 text-center">
+          <div className="w-full max-w-lg px-4 text-center sm:px-8">
             <motion.div
               initial="hidden"
               animate="show"
@@ -27,7 +27,7 @@ export function LoadingScreen({ show, onDone }) {
                 hidden: {},
                 show: { transition: { staggerChildren: 0.06 } },
               }}
-              className="font-display text-7xl tracking-[0.12em] text-white md:text-8xl"
+              className="font-display text-[clamp(2.75rem,14vw,4.5rem)] tracking-[0.12em] text-white sm:text-7xl md:text-8xl"
             >
               {letters.map((ch, i) => (
                 <motion.span

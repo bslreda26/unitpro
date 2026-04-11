@@ -33,7 +33,7 @@ export function FeaturesSection() {
   return (
     <section
       ref={ref}
-      className="relative overflow-hidden bg-dark py-20"
+      className="relative overflow-hidden bg-dark py-14 sm:py-20"
       style={{
         backgroundImage:
           'linear-gradient(to right, rgba(255,60,68,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,60,68,0.06) 1px, transparent 1px)',
@@ -42,18 +42,18 @@ export function FeaturesSection() {
     >
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-dark/40 via-dark/70 to-dark" />
 
-      <div className="relative mx-auto w-full max-w-6xl px-6">
+      <div className="relative mx-auto w-full max-w-6xl px-4 sm:px-6">
         <div className="text-center">
           <div className="font-body text-[12px] font-semibold uppercase tracking-[0.26em] text-primary">
             {t('features.label')}
           </div>
-          <h2 className="mt-3 font-display text-5xl tracking-wide text-white md:text-6xl">
+          <h2 className="mt-3 font-display text-[clamp(2.25rem,9vw,3.75rem)] tracking-wide text-white md:text-6xl">
             {t('features.title')}
           </h2>
         </div>
 
         <motion.div
-          className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4"
+          className="mt-10 grid grid-cols-2 gap-3 sm:mt-12 sm:gap-4 lg:grid-cols-4 lg:gap-6"
           variants={container}
           initial="hidden"
           animate={inView ? 'show' : 'hidden'}
@@ -64,18 +64,18 @@ export function FeaturesSection() {
               <motion.article
                 key={`${title}-${idx}`}
                 variants={card}
-                className="group relative h-full border border-border bg-surface p-6 transition-transform hover:-translate-y-1"
+                className="group relative flex h-full min-h-0 flex-col border border-border bg-surface p-4 transition-transform active:scale-[0.99] sm:p-6 sm:hover:-translate-y-1"
               >
                 <div className="absolute left-0 top-0 h-[3px] w-full bg-transparent transition-colors group-hover:bg-primary" />
-                <div className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary/15">
-                    <Icon className="h-5 w-5 text-primary" />
+                <div className="flex min-h-0 flex-1 flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/15 sm:h-11 sm:w-11">
+                    <Icon className="h-4 w-4 text-primary sm:h-5 sm:w-5" />
                   </div>
-                  <div>
-                    <h3 className="font-body text-sm font-semibold uppercase tracking-widest text-white">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-body text-[11px] font-semibold uppercase leading-tight tracking-wider text-white sm:text-sm sm:tracking-widest">
                       {title}
                     </h3>
-                    <p className="mt-2 font-body text-sm leading-relaxed text-text-muted">
+                    <p className="mt-1.5 font-body text-[11px] leading-snug text-text-muted sm:mt-2 sm:text-sm sm:leading-relaxed">
                       {description}
                     </p>
                   </div>

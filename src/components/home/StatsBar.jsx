@@ -40,7 +40,7 @@ function Stat({ valueTo, suffix = '', label, divider }) {
   return (
     <div
       ref={ref}
-      className="flex flex-col items-center justify-center border border-primary/20 bg-[#120000]/40 px-4 py-7 text-center backdrop-blur-sm"
+      className="flex flex-col items-center justify-center border border-primary/20 bg-[#120000]/40 px-4 py-5 text-center backdrop-blur-sm md:py-6"
     >
       <div className="font-display text-5xl leading-none tracking-wide text-white md:text-6xl">
         {value}
@@ -68,9 +68,9 @@ export function StatsBar() {
   )
 
   return (
-    <section className="w-full bg-[#1A0000]">
+    <section className="relative z-[1] w-full bg-[#1A0000]">
       <motion.div
-        className="mx-auto grid max-w-6xl grid-cols-2 gap-4 px-6 py-10 sm:grid-cols-4"
+        className="mx-auto grid max-w-6xl grid-cols-2 gap-2 px-4 py-5 sm:grid-cols-4 sm:gap-3 sm:px-6 sm:py-8"
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, amount: 0.35 }}

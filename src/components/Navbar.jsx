@@ -116,7 +116,7 @@ function MobilePanel({ open, onClose }) {
             onClick={onClose}
           />
           <motion.aside
-            className="fixed right-0 top-0 z-50 h-full w-[82vw] max-w-sm border-l border-border bg-dark/95 p-6 backdrop-blur md:hidden"
+            className="fixed right-0 top-0 z-50 flex h-[100dvh] max-h-[100dvh] w-[min(100vw-3rem,22rem)] flex-col overflow-y-auto border-l border-border bg-dark/95 px-5 pb-safe-bottom pt-[max(1rem,env(safe-area-inset-top,0px))] backdrop-blur supports-[height:100dvh]:h-[100dvh] md:hidden"
             variants={panelVariants}
             initial="closed"
             animate="open"
@@ -136,7 +136,7 @@ function MobilePanel({ open, onClose }) {
                 <button
                   type="button"
                   onClick={toggleLang}
-                  className="inline-flex h-10 items-center justify-center border border-primary/35 bg-primary/10 px-3 font-body text-[10px] font-bold uppercase tracking-widest text-primary"
+                  className="inline-flex h-11 min-w-[44px] items-center justify-center border border-primary/35 bg-primary/10 px-3 font-body text-[10px] font-bold uppercase tracking-widest text-primary"
                   aria-label={lang === 'fr' ? 'Switch to English' : 'Passer en français'}
                 >
                   {lang === 'fr' ? 'EN' : 'FR'}
@@ -144,7 +144,7 @@ function MobilePanel({ open, onClose }) {
                 <button
                   type="button"
                   onClick={onClose}
-                  className="h-10 w-10 text-white/90 hover:text-white"
+                  className="inline-flex h-11 min-w-[44px] items-center justify-center rounded-sm text-white/90 hover:text-white"
                   aria-label={t('a11y.closeMenu')}
                 >
                   <Hamburger open />
@@ -152,8 +152,8 @@ function MobilePanel({ open, onClose }) {
               </div>
             </div>
 
-            <motion.div className="mt-10" variants={listVariants} initial="closed" animate="open">
-              <motion.ul className="space-y-5" variants={listVariants}>
+            <motion.div className="mt-8 flex-1" variants={listVariants} initial="closed" animate="open">
+              <motion.ul className="space-y-1" variants={listVariants}>
                 {NAV_LINKS.map((link) => (
                   <motion.li key={link.to} variants={itemVariants}>
                     <NavLink
@@ -162,7 +162,7 @@ function MobilePanel({ open, onClose }) {
                       onClick={onClose}
                       className={({ isActive }) =>
                         [
-                          'block font-body text-sm uppercase tracking-widest',
+                          'block rounded-sm py-3.5 pl-1 pr-2 font-body text-base font-medium uppercase tracking-widest active:bg-white/5',
                           isActive ? 'text-primary' : 'text-white/90 hover:text-white',
                         ].join(' ')
                       }
@@ -173,11 +173,11 @@ function MobilePanel({ open, onClose }) {
                 ))}
               </motion.ul>
 
-              <motion.div variants={itemVariants} className="mt-10">
+              <motion.div variants={itemVariants} className="mt-8 pb-2">
                 <NavLink
                   to="/subscriptions"
                   onClick={onClose}
-                  className="inline-flex h-12 w-full items-center justify-center bg-primary px-6 font-body text-xs font-semibold uppercase tracking-widest text-white transition-transform hover:scale-[1.03] hover:bg-accent"
+                  className="inline-flex min-h-12 w-full items-center justify-center bg-primary px-6 py-3.5 font-body text-xs font-semibold uppercase tracking-widest text-white transition active:scale-[0.98] hover:bg-accent"
                 >
                   {t('nav.joinNow')}
                 </NavLink>
@@ -235,16 +235,19 @@ export function Navbar() {
     <>
       <motion.header
         className={[
-          'fixed left-0 right-0 top-0 z-50 w-full border-b border-transparent',
+          'fixed left-0 right-0 top-0 z-50 w-full border-b border-transparent pt-safe-top',
           scrolled ? 'bg-dark/95 backdrop-blur supports-[backdrop-filter]:bg-dark/95' : 'bg-transparent',
         ].join(' ')}
         variants={containerVariants}
         initial="hidden"
         animate="show"
       >
-        <div className="mx-auto flex h-20 w-full max-w-6xl items-center px-6">
-          <motion.div variants={childVariants} className="flex items-center">
-            <NavLink to="/" className="group inline-flex items-baseline gap-2">
+        <div className="mx-auto flex h-20 w-full max-w-6xl items-center px-4 sm:px-6">
+          <motion.div variants={childVariants} className="flex min-w-0 items-center">
+            <NavLink
+              to="/"
+              className="group inline-flex min-h-[44px] min-w-[44px] items-center gap-2 py-1"
+            >
               <span className="inline-block h-2 w-2 bg-primary" aria-hidden="true" />
               <span className="font-display text-[28px] leading-none tracking-wide text-white">
                 UNIT
@@ -281,7 +284,7 @@ export function Navbar() {
               aria-label={open ? t('a11y.closeMenu') : t('a11y.openMenu')}
               aria-expanded={open}
               onClick={() => setOpen((v) => !v)}
-              className="inline-flex h-11 w-11 items-center justify-center text-white md:hidden"
+              className="inline-flex h-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-sm text-white active:bg-white/10 md:hidden"
             >
               <Hamburger open={open} />
             </button>

@@ -35,8 +35,8 @@ export function AboutSection() {
   }, [])
 
   return (
-    <section ref={ref} className="relative bg-dark py-20">
-      <div className="mx-auto grid w-full max-w-6xl items-center gap-10 px-6 md:grid-cols-2 md:gap-14">
+    <section ref={ref} className="relative bg-dark py-14 sm:py-20">
+      <div className="mx-auto grid w-full max-w-6xl items-center gap-8 px-4 sm:gap-10 sm:px-6 md:grid-cols-2 md:gap-14">
         <motion.div
           initial={{ opacity: 0, x: -24 }}
           animate={inView ? { opacity: 1, x: 0 } : {}}
@@ -72,7 +72,7 @@ export function AboutSection() {
           <div className="font-body text-[12px] font-semibold uppercase tracking-[0.26em] text-primary">
             {t('about.label')}
           </div>
-          <h2 className="mt-4 font-display text-5xl leading-[0.95] tracking-wide text-white md:text-6xl">
+          <h2 className="mt-4 font-display text-[clamp(2.25rem,9vw,3.75rem)] leading-[0.95] tracking-wide text-white md:text-6xl">
             {t('about.title')}
           </h2>
 

@@ -20,7 +20,7 @@ export function ScrollToTopButton() {
         <motion.button
           type="button"
           aria-label={t('a11y.scrollTop')}
-          className="fixed bottom-6 right-6 z-[70] inline-flex h-12 w-12 items-center justify-center bg-primary text-white shadow-[0_18px_45px_rgba(227,27,35,0.20)]"
+          className="fixed bottom-[max(1.25rem,env(safe-area-inset-bottom,0px)+0.5rem)] right-[max(1.25rem,env(safe-area-inset-right,0px)+0.25rem)] z-[70] inline-flex h-12 min-h-[48px] min-w-[48px] items-center justify-center rounded-sm bg-primary text-white shadow-[0_18px_45px_rgba(227,27,35,0.20)] active:scale-95"
           initial={{ opacity: 0, y: 10, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 10, scale: 0.96 }}

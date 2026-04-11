@@ -19,7 +19,7 @@ function Stars({ count = 5 }) {
 
 function QuoteCard({ t }) {
   return (
-    <article className="relative border border-border bg-surface p-7">
+    <article className="relative border border-border bg-surface p-5 sm:p-7">
       <div className="absolute -top-4 left-6 font-display text-7xl leading-none text-primary">
         “
       </div>
@@ -68,8 +68,8 @@ export function TestimonialsSection() {
   )
 
   return (
-    <section ref={ref} className="bg-dark py-20">
-      <div className="mx-auto w-full max-w-6xl px-6">
+    <section ref={ref} className="bg-dark py-14 sm:py-20">
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
         <motion.div
           initial="hidden"
           animate={inView ? 'show' : 'hidden'}
@@ -79,7 +79,7 @@ export function TestimonialsSection() {
           <div className="font-body text-[12px] font-semibold uppercase tracking-[0.26em] text-primary">
             {t('testimonials.label')}
           </div>
-          <h2 className="mt-3 font-display text-5xl tracking-wide text-white md:text-6xl">
+          <h2 className="mt-3 font-display text-[clamp(2.25rem,9vw,3.75rem)] tracking-wide text-white md:text-6xl">
             {t('testimonials.title')}
           </h2>
         </motion.div>
@@ -99,8 +99,13 @@ export function TestimonialsSection() {
           </motion.div>
         </div>
 
-        <div className="mt-12 md:hidden">
-          <Swiper spaceBetween={14} slidesPerView={1.05} className="!overflow-visible">
+        <div className="mt-10 md:hidden">
+          <Swiper
+            spaceBetween={12}
+            slidesPerView={1.08}
+            centeredSlides={false}
+            className="!overflow-visible pb-1"
+          >
             {(dict.testimonials?.items ?? []).map((item) => (
               <SwiperSlide key={item.name}>
                 <QuoteCard t={item} />

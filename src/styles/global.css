@@ -1,5 +1,8 @@
 html {
   scroll-behavior: smooth;
+  /* Avoid jumps when tall content mounts (e.g. after splash). */
+  overflow-anchor: none;
+  -webkit-tap-highlight-color: rgba(227, 27, 35, 0.12);
 }
 
 *,
@@ -19,6 +22,8 @@ body {
   color: #ffffff;
   scrollbar-color: #e31b23 #0a0a0a;
   font-family: 'DM Sans', system-ui, sans-serif;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 img,
@@ -53,5 +58,28 @@ body::before {
   }
   100% {
     transform: scale(1.08) translate3d(-1.5%, -1.5%, 0);
+  }
+}
+
+@layer utilities {
+  /* Fixed header is h-20 + iOS notch / safe area */
+  .pt-unit-header {
+    padding-top: calc(5rem + env(safe-area-inset-top, 0px));
+  }
+  .-mt-unit-header {
+    margin-top: calc(-5rem - env(safe-area-inset-top, 0px));
+  }
+  .pt-safe-top {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .pb-safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+
+@layer base {
+  :where(a, button, [role='button'], input, textarea, select, summary):focus-visible {
+    outline: 2px solid #e31b23;
+    outline-offset: 2px;
   }
 }

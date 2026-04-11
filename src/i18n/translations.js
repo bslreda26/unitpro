@@ -11,7 +11,7 @@ export const translations = {
       kicker: 'EST. 2024 — ÉLITE FITNESS',
       h1: 'FORGE YOUR',
       h2: 'LIMITS',
-      body: 'High-intensity training. Precision coaching. A community built to push you further—every session.',
+      body: 'Elite training. One gym.',
       ctaPrimary: 'Start Today',
       ctaSecondary: 'Explore Classes',
       scroll: 'Scroll',
@@ -31,7 +31,7 @@ export const translations = {
       imageAlt: 'Training floor',
     },
     features: {
-      label: 'Why Unit Pro',
+      label: 'Why UNIT PRO',
       title: 'WHY UNIT PRO',
       items: [
         {
@@ -53,8 +53,9 @@ export const translations = {
       ],
     },
     classesPreview: {
-      label: 'Galary',
-      title: 'GALARY',
+      label: 'Gallery',
+      title: 'THE FLOOR',
+      sub: 'Snapshots from training—raw light, real effort.',
       viewClass: 'View Class',
       seeAll: 'See All Classes',
       navPrev: 'Previous',
@@ -124,11 +125,10 @@ export const translations = {
       mostPopular: 'MOST POPULAR',
       faqLabel: 'FAQ',
       faqTitle: 'QUESTIONS, ANSWERED',
-      finalTitle: 'STILL UNSURE? TRY 7 DAYS FREE',
-      finalBody:
-        'Come train with us for a week—feel the difference, then pick your plan.',
-      claim: 'Claim Free Trial',
-      offer: '*Offer available for new members only.',
+      finalTitle: 'One free day',
+      finalBody: 'Train with us for a day—then pick your plan.',
+      claim: 'Book my free day',
+      offer: '*New members only.',
       plans: [
         {
           key: 'starter',
@@ -154,22 +154,6 @@ export const translations = {
           ],
           cta: { label: 'JOIN PRO', variant: 'solid' },
         },
-        {
-          key: 'elite',
-          name: 'ELITE',
-          monthly: 79,
-          annual: 63,
-          featured: false,
-          features: [
-            'Everything in PRO',
-            'Unlimited PT sessions',
-            'Body composition scans',
-            'Priority booking',
-            'Guest passes x2/month',
-            'Dedicated coach',
-          ],
-          cta: { label: 'GO ELITE', variant: 'solidDark' },
-        },
       ],
       faqItems: [
         {
@@ -190,7 +174,7 @@ export const translations = {
         },
         {
           q: 'Do you offer personal training?',
-          a: 'Yes. PRO includes 1 PT session/month. ELITE includes unlimited PT sessions with a dedicated coach.',
+          a: 'Yes. PRO includes 1 PT session/month. Extra sessions can be booked as add-ons.',
         },
         {
           q: 'What’s the annual savings?',
@@ -206,11 +190,14 @@ export const translations = {
       hiit: 'HIIT',
       conditioning: 'Conditioning',
       mobility: 'Mobility',
-      built: 'Built to forge limits.',
+      headline: 'Outwork yesterday.',
+      sub: 'We live on the floor, not in the inbox—still, say hi. We answer.',
+      built: 'Same doors. A higher bar every week.',
       rights: 'All rights reserved.',
       email: 'Email',
       phone: 'Phone',
       hours: 'Hours',
+      hoursValue: 'Members 24/7 · Staff on deck most days',
     },
     a11y: {
       scrollTop: 'Scroll to top',
@@ -230,7 +217,7 @@ export const translations = {
       kicker: 'DEPUIS 2024 — FITNESS ÉLITE',
       h1: 'FORGE',
       h2: 'TES LIMITES',
-      body: 'Entraînement intense. Coaching précis. Une communauté faite pour te pousser plus loin—à chaque séance.',
+      body: 'Fitness élite. Une salle.',
       ctaPrimary: 'Commencer',
       ctaSecondary: 'Voir les cours',
       scroll: 'Défiler',
@@ -250,7 +237,7 @@ export const translations = {
       imageAlt: 'Espace d’entraînement',
     },
     features: {
-      label: 'Pourquoi Unit Pro',
+      label: 'Pourquoi UNIT PRO',
       title: 'POURQUOI UNIT PRO',
       items: [
         {
@@ -272,8 +259,9 @@ export const translations = {
       ],
     },
     classesPreview: {
-      label: 'Galary',
-      title: 'GALARY',
+      label: 'Galerie',
+      title: 'LE PLANCHER',
+      sub: 'Images prises sur le vif—lumière brute, effort réel.',
       viewClass: 'Voir le cours',
       seeAll: 'Voir tous les cours',
       navPrev: 'Précédent',
@@ -343,11 +331,10 @@ export const translations = {
       mostPopular: 'LE PLUS POPULAIRE',
       faqLabel: 'FAQ',
       faqTitle: 'QUESTIONS / RÉPONSES',
-      finalTitle: 'HÉSITANT ? ESSAIE 7 JOURS GRATUITS',
-      finalBody:
-        'Viens t’entraîner une semaine—ressens la différence, puis choisis ton offre.',
-      claim: 'Obtenir l’essai',
-      offer: '*Offre réservée aux nouveaux membres.',
+      finalTitle: 'Une journée offerte',
+      finalBody: 'Viens t’entraîner une journée—puis choisis ton offre.',
+      claim: 'Réserver ma journée offerte',
+      offer: '*Nouveaux membres uniquement.',
       plans: [
         {
           key: 'starter',
@@ -373,22 +360,6 @@ export const translations = {
           ],
           cta: { label: 'REJOINDRE PRO', variant: 'solid' },
         },
-        {
-          key: 'elite',
-          name: 'ELITE',
-          monthly: 79,
-          annual: 63,
-          featured: false,
-          features: [
-            'Tout ce qui est dans PRO',
-            'Coaching illimité',
-            'Analyses de composition corporelle',
-            'Réservation prioritaire',
-            'Pass invité x2/mois',
-            'Coach dédié',
-          ],
-          cta: { label: 'PASSER ELITE', variant: 'solidDark' },
-        },
       ],
       faqItems: [
         {
@@ -409,7 +380,7 @@ export const translations = {
         },
         {
           q: 'Proposez-vous du coaching personnel ?',
-          a: 'Oui. PRO inclut 1 séance/mois. ELITE inclut des séances illimitées avec un coach dédié.',
+          a: 'Oui. PRO inclut 1 séance/mois. Des séances supplémentaires sont possibles en option.',
         },
         {
           q: 'Quelle est l’économie en annuel ?',
@@ -425,11 +396,14 @@ export const translations = {
       hiit: 'HIIT',
       conditioning: 'Conditioning',
       mobility: 'Mobilité',
-      built: 'Conçu pour dépasser tes limites.',
+      headline: 'Dépasse hier.',
+      sub: 'On est sur les haltères, pas sur Outlook—écris-nous quand même, on répond.',
+      built: 'Mêmes portes. Une barre plus haute chaque semaine.',
       rights: 'Tous droits réservés.',
       email: 'Email',
       phone: 'Téléphone',
       hours: 'Horaires',
+      hoursValue: 'Membres 24/7 · Équipe présente presque tous les jours',
     },
     a11y: {
       scrollTop: 'Retour en haut',

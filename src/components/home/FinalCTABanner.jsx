@@ -16,13 +16,13 @@ export function FinalCTABanner() {
           'linear-gradient(135deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.00) 40%), repeating-linear-gradient(135deg, rgba(0,0,0,0.12) 0 10px, rgba(0,0,0,0.0) 10px 22px)',
       }}
     >
-      <div className="mx-auto flex w-full max-w-6xl flex-col items-start justify-between gap-8 px-6 md:flex-row md:items-center">
+      <div className="mx-auto flex w-full max-w-6xl flex-col items-start justify-between gap-6 px-4 sm:gap-8 sm:px-6 md:flex-row md:items-center">
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ type: 'spring', stiffness: 260, damping: 26 }}
         >
-          <div className="font-display text-6xl leading-none tracking-wide md:text-7xl">
+          <div className="font-display text-[clamp(2.5rem,12vw,3.75rem)] leading-[0.95] tracking-wide md:text-7xl">
             {t('finalCta.title')}
           </div>
           <div className="mt-3 max-w-xl font-body text-sm text-white/90 md:text-base">
@@ -37,7 +37,7 @@ export function FinalCTABanner() {
         >
           <NavLink
             to="/subscriptions"
-            className="inline-flex h-12 items-center justify-center bg-white px-8 font-body text-xs font-semibold uppercase tracking-widest text-dark transition-transform hover:scale-[1.03]"
+            className="inline-flex min-h-12 w-full items-center justify-center bg-white px-8 py-3.5 font-body text-xs font-semibold uppercase tracking-widest text-dark transition active:scale-[0.98] hover:opacity-95 sm:w-auto"
           >
             {t('finalCta.cta')}
           </NavLink>

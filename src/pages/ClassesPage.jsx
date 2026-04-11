@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
@@ -209,22 +209,9 @@ function EventModal({ eventInfo, onClose }) {
 export function ClassesPage() {
   const { dict, t, lang } = useI18n()
   const [active, setActive] = useState('All')
-  const [isMobile, setIsMobile] = useState(false)
   const [modalEvent, setModalEvent] = useState(null)
   const placeholderBg = useSvgPlaceholderDataUrl()
   const [heroBg, setHeroBg] = useState(HERO_BG_PRIMARY)
-
-  useEffect(() => {
-    const mql = window.matchMedia('(max-width: 640px)')
-    const onChange = () => setIsMobile(mql.matches)
-    onChange()
-    if (mql.addEventListener) mql.addEventListener('change', onChange)
-    else mql.addListener(onChange)
-    return () => {
-      if (mql.removeEventListener) mql.removeEventListener('change', onChange)
-      else mql.removeListener(onChange)
-    }
-  }, [])
 
   const filtered = useMemo(() => {
     if (active === 'All') return CLASSES
@@ -383,9 +370,9 @@ export function ClassesPage() {
       </section>
 
       {/* CATEGORIES + GRID */}
-      <section className="py-18 bg-dark">
-        <div className="mx-auto w-full max-w-6xl px-6 py-16">
-          <div className="flex flex-col gap-10">
+      <section className="bg-dark py-14 sm:py-16">
+        <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
+          <div className="flex flex-col gap-8 sm:gap-10">
             <div>
               <div className="font-body text-[12px] font-semibold uppercase tracking-[0.26em] text-primary">
                 {t('classesPage.categoriesLabel')}
@@ -429,7 +416,7 @@ export function ClassesPage() {
             <div ref={gridRef}>
               <motion.div
                 layout
-                className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+                className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3"
               >
                 <AnimatePresence mode="popLayout">
                   {filtered.map((c, idx) => (
@@ -445,9 +432,9 @@ export function ClassesPage() {
                         damping: 30,
                         delay: gridInView ? Math.min(0.22, idx * 0.04) : 0,
                       }}
-                      className="group overflow-hidden border border-border bg-surface"
+                      className="group flex min-h-0 flex-col overflow-hidden border border-border bg-surface"
                     >
-                      <div className="relative h-48 overflow-hidden">
+                      <div className="relative h-32 overflow-hidden sm:h-40 md:h-48">
                         <img
                           src={c.img}
                           alt={c.name}
@@ -461,23 +448,23 @@ export function ClassesPage() {
                           }}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-primary/35 via-dark/35 to-dark/15" />
-                        <div className="absolute left-5 top-5 inline-flex items-center bg-primary px-3 py-1 font-body text-[10px] font-semibold uppercase tracking-widest text-white">
+                        <div className="absolute left-2 top-2 inline-flex max-w-[calc(100%-1rem)] items-center truncate bg-primary px-2 py-0.5 font-body text-[8px] font-semibold uppercase tracking-wider text-white sm:left-3 sm:top-3 sm:px-3 sm:py-1 sm:text-[10px] sm:tracking-widest md:left-5 md:top-5">
                           {c.category}
                         </div>
                       </div>
 
-                      <div className="p-6">
-                        <div className="font-display text-3xl tracking-wide text-white">
+                      <div className="flex flex-1 flex-col p-3 sm:p-4 md:p-6">
+                        <div className="font-display text-lg leading-tight tracking-wide text-white sm:text-2xl md:text-3xl">
                           {c.name}
                         </div>
 
-                        <div className="mt-3 flex flex-wrap gap-2">
-                          <span className="border border-white/35 bg-dark/20 px-2 py-1 font-body text-[10px] font-semibold uppercase tracking-widest text-white/90">
+                        <div className="mt-2 flex flex-wrap gap-1 sm:mt-3 sm:gap-2">
+                          <span className="border border-white/35 bg-dark/20 px-1.5 py-0.5 font-body text-[8px] font-semibold uppercase tracking-wide text-white/90 sm:px-2 sm:py-1 sm:text-[10px] sm:tracking-widest">
                             {c.duration}
                           </span>
                           <span
                             className={[
-                              'border bg-dark/20 px-2 py-1 font-body text-[10px] font-semibold uppercase tracking-widest',
+                              'border bg-dark/20 px-1.5 py-0.5 font-body text-[8px] font-semibold uppercase tracking-wide sm:px-2 sm:py-1 sm:text-[10px] sm:tracking-widest',
                               levelTone(c.level),
                             ].join(' ')}
                           >
@@ -485,26 +472,26 @@ export function ClassesPage() {
                           </span>
                         </div>
 
-                        <div className="mt-5 flex items-center justify-between gap-4">
-                          <div className="flex items-center gap-3">
-                            <div className="h-9 w-9 border border-primary/40 bg-primary/15" />
-                            <div>
-                              <div className="font-body text-[11px] font-semibold uppercase tracking-widest text-white">
+                        <div className="mt-3 flex flex-1 flex-col gap-2 sm:mt-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
+                          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+                            <div className="hidden h-8 w-8 shrink-0 border border-primary/40 bg-primary/15 sm:block sm:h-9 sm:w-9" />
+                            <div className="min-w-0">
+                              <div className="truncate font-body text-[9px] font-semibold uppercase tracking-wide text-white sm:text-[11px] sm:tracking-widest">
                                 {c.trainer}
                               </div>
-                              <div className="font-body text-xs text-white/60">
+                              <div className="font-body text-[9px] text-white/60 sm:text-xs">
                                 {t('classesPage.trainerLabel')}
                               </div>
                             </div>
                           </div>
-                          <div className="text-right font-body text-xs text-white/70">
+                          <div className="line-clamp-2 font-body text-[9px] leading-snug text-white/70 sm:text-right sm:text-xs">
                             {c.time}
                           </div>
                         </div>
 
                         <button
                           type="button"
-                          className="mt-6 inline-flex h-11 w-full items-center justify-center bg-primary px-6 font-body text-xs font-semibold uppercase tracking-widest text-white transition-transform hover:scale-[1.02] hover:bg-accent"
+                          className="mt-3 inline-flex min-h-10 w-full items-center justify-center bg-primary px-3 py-2 font-body text-[9px] font-semibold uppercase tracking-wide text-white transition-transform active:scale-[0.98] hover:bg-accent sm:mt-6 sm:min-h-11 sm:px-6 sm:text-xs sm:tracking-widest sm:hover:scale-[1.02]"
                         >
                           {t('classesPage.bookNow')}
                         </button>
@@ -520,7 +507,7 @@ export function ClassesPage() {
 
       {/* WEEKLY SCHEDULE */}
       <section ref={calRef} className="bg-dark py-20">
-        <div className="mx-auto w-full max-w-6xl px-6">
+        <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={calInView ? { opacity: 1, y: 0 } : {}}

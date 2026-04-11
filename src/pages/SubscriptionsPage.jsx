@@ -19,14 +19,14 @@ function Price({ value, suffix }) {
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: -10, opacity: 0 }}
         transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-        className="font-display text-6xl leading-none tracking-wide text-white"
+        className="font-display text-4xl leading-none tracking-wide text-white sm:text-5xl md:text-6xl"
       >
         {formatted}
-        <span className="ml-2 align-baseline font-body text-sm font-semibold uppercase tracking-widest text-white/75">
+        <span className="ml-1 align-baseline font-body text-[10px] font-semibold uppercase tracking-widest text-white/75 sm:ml-2 sm:text-sm">
           FCFA
         </span>
       </motion.div>
-      <div className="pb-1 font-body text-sm font-semibold uppercase tracking-widest text-white/70">
+      <div className="pb-0.5 font-body text-[10px] font-semibold uppercase tracking-widest text-white/70 sm:pb-1 sm:text-sm">
         {suffix}
       </div>
     </div>
@@ -36,7 +36,7 @@ function Price({ value, suffix }) {
 function BillingToggle({ billing, setBilling }) {
   const { t } = useI18n()
   return (
-    <div className="mx-auto flex w-full max-w-xl items-center justify-center gap-3">
+    <div className="mx-auto flex w-full max-w-xl flex-wrap items-center justify-center gap-2 sm:gap-3">
       <button
         type="button"
         onClick={() => setBilling('monthly')}
@@ -59,7 +59,7 @@ function BillingToggle({ billing, setBilling }) {
         ].join(' ')}
       >
         {t('subscriptions.annual')}
-        <span className="ml-3 inline-flex items-center bg-primary/15 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-primary">
+        <span className="ml-1.5 inline-flex max-w-full items-center bg-primary/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-primary sm:ml-3 sm:px-2 sm:py-1 sm:text-[10px] sm:tracking-widest">
           {t('subscriptions.save')}
         </span>
       </button>
@@ -106,7 +106,7 @@ function PlanCard({ plan, billing }) {
     billing === 'annual' ? t('subscriptions.suffixAnnual') : t('subscriptions.suffixMo')
 
   const base =
-    'relative flex h-full flex-col overflow-hidden border border-border bg-surface p-7 md:p-8'
+    'relative flex h-full min-h-0 flex-col overflow-hidden border border-border bg-surface p-4 sm:p-6 md:p-8'
   const featured =
     'bg-[#1A0000] shadow-[0_30px_90px_rgba(227,27,35,0.15)]'
 
@@ -137,7 +137,7 @@ function PlanCard({ plan, billing }) {
       {plan.featured && (
         <>
           <div className="absolute left-0 top-0 h-[4px] w-full bg-primary" />
-          <div className="absolute right-6 top-6 inline-flex items-center bg-primary/15 px-3 py-1 font-body text-[10px] font-bold uppercase tracking-widest text-primary">
+          <div className="absolute right-3 top-3 inline-flex max-w-[calc(100%-1.5rem)] items-center truncate bg-primary/15 px-2 py-0.5 font-body text-[8px] font-bold uppercase tracking-wider text-primary sm:right-6 sm:top-6 sm:px-3 sm:py-1 sm:text-[10px] sm:tracking-widest">
             {t('subscriptions.mostPopular')}
           </div>
           <div className="pointer-events-none absolute inset-0 opacity-40">
@@ -147,24 +147,26 @@ function PlanCard({ plan, billing }) {
       )}
 
       <div className="relative flex h-full flex-col">
-        <div className="font-body text-[11px] font-semibold uppercase tracking-widest text-white/70">
+        <div className="font-body text-[9px] font-semibold uppercase tracking-wider text-white/70 sm:text-[11px] sm:tracking-widest">
           {t('subscriptions.planLabel')}
         </div>
-        <div className="mt-2 font-display text-5xl tracking-wide text-white">
+        <div className="mt-1 font-display text-2xl tracking-wide text-white sm:mt-2 sm:text-4xl md:text-5xl">
           {plan.name}
         </div>
 
-        <div className="mt-6">
+        <div className="mt-4 sm:mt-6">
           <Price value={price} suffix={suffix} />
         </div>
 
-        <div className="mt-7 space-y-3">
+        <div className="mt-4 space-y-2 sm:mt-7 sm:space-y-3">
           {plan.features.map((f) => (
-            <div key={f} className="flex items-start gap-3">
-              <div className="mt-0.5 inline-flex h-5 w-5 items-center justify-center bg-primary/15">
-                <Check className="h-4 w-4 text-primary" />
+            <div key={f} className="flex items-start gap-2 sm:gap-3">
+              <div className="mt-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center bg-primary/15 sm:h-5 sm:w-5">
+                <Check className="h-3 w-3 text-primary sm:h-4 sm:w-4" />
               </div>
-              <div className="font-body text-sm text-white/85">{f}</div>
+              <div className="min-w-0 font-body text-[11px] leading-snug text-white/85 sm:text-sm sm:leading-normal">
+                {f}
+              </div>
             </div>
           ))}
         </div>
@@ -172,7 +174,7 @@ function PlanCard({ plan, billing }) {
         <button
           type="button"
           className={[
-            'mt-auto inline-flex h-12 w-full items-center justify-center px-7 font-body text-xs font-semibold uppercase tracking-widest transition-transform',
+            'mt-4 inline-flex min-h-10 w-full items-center justify-center px-4 font-body text-[9px] font-semibold uppercase tracking-wide transition-transform active:scale-[0.98] sm:mt-auto sm:min-h-12 sm:px-7 sm:text-xs sm:tracking-widest sm:hover:scale-[1.02]',
             ctaClass,
           ].join(' ')}
         >
@@ -210,29 +212,29 @@ export function SubscriptionsPage() {
           />
         </div>
 
-        <div className="relative mx-auto flex h-full w-full max-w-6xl flex-col justify-end px-6 pb-10 pt-24">
-          <h1 className="font-display text-6xl tracking-wide md:text-7xl">
+        <div className="relative mx-auto flex h-full w-full max-w-6xl flex-col justify-end px-4 pb-8 pt-24 sm:px-6 sm:pb-10">
+          <h1 className="font-display text-[clamp(2.5rem,12vw,4rem)] tracking-wide md:text-7xl">
             {t('subscriptions.heroTitle')}
           </h1>
-          <p className="mt-3 max-w-xl font-body text-base text-white/80 md:text-lg">
+          <p className="mt-3 max-w-xl font-body text-sm text-white/80 sm:text-base md:text-lg">
             {t('subscriptions.heroBody')}
           </p>
         </div>
       </section>
 
       {/* TOGGLE + PRICING */}
-      <section className="py-20">
-        <div className="mx-auto w-full max-w-6xl px-6">
+      <section className="py-14 sm:py-20">
+        <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
           <div className="text-center">
             <div className="font-body text-[12px] font-semibold uppercase tracking-[0.26em] text-primary">
               {t('subscriptions.billingLabel')}
             </div>
-            <h2 className="mt-3 font-display text-5xl tracking-wide text-white md:text-6xl">
+            <h2 className="mt-3 font-display text-[clamp(2rem,8vw,3.75rem)] tracking-wide text-white md:text-6xl">
               {t('subscriptions.pricingTitle')}
             </h2>
           </div>
 
-          <div className="mt-10">
+          <div className="mt-8 sm:mt-10">
             <BillingToggle billing={billing} setBilling={setBilling} />
           </div>
 
@@ -241,7 +243,7 @@ export function SubscriptionsPage() {
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, amount: 0.25 }}
-            className="mt-12 grid items-stretch gap-6 md:grid-cols-3"
+            className="mt-8 grid grid-cols-2 items-stretch gap-2.5 sm:mt-12 sm:gap-4 md:gap-6"
           >
             {(dict.subscriptions?.plans ?? []).map((p) => (
               <PlanCard key={p.key} plan={p} billing={billing} />
@@ -250,28 +252,22 @@ export function SubscriptionsPage() {
         </div>
       </section>
 
-      {/* FINAL CTA */}
-      <section className="bg-primary py-16 text-white">
-        <div className="mx-auto flex w-full max-w-6xl flex-col items-start justify-between gap-8 px-6 md:flex-row md:items-center">
-          <div>
-            <div className="font-display text-6xl leading-none tracking-wide md:text-7xl">
-              {t('subscriptions.finalTitle')}
-            </div>
-            <div className="mt-3 max-w-xl font-body text-sm text-white/90 md:text-base">
-              {t('subscriptions.finalBody')}
-            </div>
-          </div>
-          <div className="flex flex-col items-start gap-2">
-            <NavLink
-              to="/subscriptions"
-              className="inline-flex h-12 items-center justify-center bg-white px-8 font-body text-xs font-semibold uppercase tracking-widest text-dark transition-transform hover:scale-[1.03]"
-            >
-              {t('subscriptions.claim')}
-            </NavLink>
-            <div className="font-body text-xs text-white/85">
-              {t('subscriptions.offer')}
-            </div>
-          </div>
+      {/* FINAL CTA — compact trial strip */}
+      <section className="border-t border-white/15 bg-primary py-10 text-white sm:py-12">
+        <div className="mx-auto max-w-lg px-4 text-center sm:max-w-2xl sm:px-6 md:max-w-3xl">
+          <h2 className="font-display text-3xl tracking-wide sm:text-4xl">
+            {t('subscriptions.finalTitle')}
+          </h2>
+          <p className="mt-2 font-body text-sm leading-relaxed text-white/90">
+            {t('subscriptions.finalBody')}
+          </p>
+          <NavLink
+            to="/subscriptions"
+            className="mt-6 inline-flex min-h-11 w-full max-w-xs items-center justify-center bg-white px-6 font-body text-xs font-semibold uppercase tracking-widest text-dark transition hover:opacity-90 sm:mx-auto sm:w-auto"
+          >
+            {t('subscriptions.claim')}
+          </NavLink>
+          <p className="mt-3 font-body text-[11px] text-white/70">{t('subscriptions.offer')}</p>
         </div>
       </section>
     </div>

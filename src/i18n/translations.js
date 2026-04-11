@@ -204,6 +204,16 @@ export const translations = {
       closeMenu: 'Close menu',
       openMenu: 'Open menu',
     },
+    whatsapp: {
+      heroSubscriptions:
+        "Hi UNIT PRO — I'd like information about memberships / subscriptions.",
+      heroClasses: "Hi UNIT PRO — I'd like information about classes.",
+      navJoin: "Hi UNIT PRO — I'd like to sign up / join.",
+      finalCta: "Hi UNIT PRO — I'd like to get started.",
+      plan: "Hi UNIT PRO — I'm interested in the {plan} plan.",
+      classBook: "Hi UNIT PRO — I'd like to book: {class}.",
+      trialDay: "Hi UNIT PRO — I'd like my free trial day.",
+    },
   },
   fr: {
     langName: 'Français',
@@ -409,6 +419,16 @@ export const translations = {
       scrollTop: 'Retour en haut',
       closeMenu: 'Fermer le menu',
       openMenu: 'Ouvrir le menu',
+    },
+    whatsapp: {
+      heroSubscriptions:
+        'Bonjour UNIT PRO — je souhaite des infos sur les abonnements.',
+      heroClasses: 'Bonjour UNIT PRO — je souhaite des infos sur les cours.',
+      navJoin: 'Bonjour UNIT PRO — je souhaite m’inscrire.',
+      finalCta: 'Bonjour UNIT PRO — je souhaite commencer.',
+      plan: 'Bonjour UNIT PRO — je suis intéressé(e) par l’offre {plan}.',
+      classBook: 'Bonjour UNIT PRO — je souhaite réserver : {class}.',
+      trialDay: 'Bonjour UNIT PRO — je souhaite ma journée d’essai gratuite.',
     },
   },
 }

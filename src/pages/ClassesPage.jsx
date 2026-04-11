@@ -7,6 +7,7 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import { ArrowRight, X } from 'lucide-react'
 import { useI18n } from '../i18n/I18nProvider.jsx'
+import { getWhatsAppUrl } from '../utils/whatsapp.js'
 
 import '../styles/fullcalendar.css'
 
@@ -191,12 +192,16 @@ function EventModal({ eventInfo, onClose }) {
               </div>
 
               <div className="mt-6">
-                <button
-                  type="button"
+                <a
+                  href={getWhatsAppUrl(
+                    t('whatsapp.classBook').replace('{class}', eventInfo.title ?? ''),
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex h-11 w-full items-center justify-center bg-primary px-6 font-body text-xs font-semibold uppercase tracking-widest text-white transition-transform hover:scale-[1.02] hover:bg-accent md:w-auto md:justify-end"
                 >
                   {t('classesPage.bookNow')}
-                </button>
+                </a>
               </div>
             </div>
           </motion.div>
@@ -489,12 +494,14 @@ export function ClassesPage() {
                           </div>
                         </div>
 
-                        <button
-                          type="button"
+                        <a
+                          href={getWhatsAppUrl(t('whatsapp.classBook').replace('{class}', c.name))}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="mt-3 inline-flex min-h-10 w-full items-center justify-center bg-primary px-3 py-2 font-body text-[9px] font-semibold uppercase tracking-wide text-white transition-transform active:scale-[0.98] hover:bg-accent sm:mt-6 sm:min-h-11 sm:px-6 sm:text-xs sm:tracking-widest sm:hover:scale-[1.02]"
                         >
                           {t('classesPage.bookNow')}
-                        </button>
+                        </a>
                       </div>
                     </motion.article>
                   ))}

@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { NavLink } from 'react-router-dom'
 import { Check } from 'lucide-react'
 import { useI18n } from '../i18n/I18nProvider.jsx'
+import { getWhatsAppUrl } from '../utils/whatsapp.js'
 
 const HERO_BG =
   'https://images.unsplash.com/photo-1517963879433-6ad2b056d712?auto=format&fit=crop&w=2400&q=80'
@@ -63,38 +63,6 @@ function BillingToggle({ billing, setBilling }) {
           {t('subscriptions.save')}
         </span>
       </button>
-
-      <div className="relative ml-2 hidden h-11 w-32 border border-border bg-surface p-1 md:block">
-        <motion.div
-          layout
-          className="absolute top-1 bottom-1 w-[calc(50%-6px)] bg-primary/15"
-          initial={false}
-          animate={{ left: billing === 'monthly' ? 4 : 'calc(50% + 2px)' }}
-          transition={{ type: 'spring', stiffness: 520, damping: 36 }}
-        />
-        <div className="relative z-10 grid h-full grid-cols-2">
-          <button
-            type="button"
-            onClick={() => setBilling('monthly')}
-            className={[
-              'font-body text-[10px] font-bold uppercase tracking-widest',
-              billing === 'monthly' ? 'text-primary' : 'text-white/60',
-            ].join(' ')}
-          >
-            Mo
-          </button>
-          <button
-            type="button"
-            onClick={() => setBilling('annual')}
-            className={[
-              'font-body text-[10px] font-bold uppercase tracking-widest',
-              billing === 'annual' ? 'text-primary' : 'text-white/60',
-            ].join(' ')}
-          >
-            Yr
-          </button>
-        </div>
-      </div>
     </div>
   )
 }
@@ -171,15 +139,17 @@ function PlanCard({ plan, billing }) {
           ))}
         </div>
 
-        <button
-          type="button"
+        <a
+          href={getWhatsAppUrl(t('whatsapp.plan').replace('{plan}', plan.name))}
+          target="_blank"
+          rel="noopener noreferrer"
           className={[
             'mt-4 inline-flex min-h-10 w-full items-center justify-center px-4 font-body text-[9px] font-semibold uppercase tracking-wide transition-transform active:scale-[0.98] sm:mt-auto sm:min-h-12 sm:px-7 sm:text-xs sm:tracking-widest sm:hover:scale-[1.02]',
             ctaClass,
           ].join(' ')}
         >
           {plan.cta.label}
-        </button>
+        </a>
       </div>
     </motion.article>
   )
@@ -261,12 +231,14 @@ export function SubscriptionsPage() {
           <p className="mt-2 font-body text-sm leading-relaxed text-white/90">
             {t('subscriptions.finalBody')}
           </p>
-          <NavLink
-            to="/subscriptions"
+          <a
+            href={getWhatsAppUrl(t('whatsapp.trialDay'))}
+            target="_blank"
+            rel="noopener noreferrer"
             className="mt-6 inline-flex min-h-11 w-full max-w-xs items-center justify-center bg-white px-6 font-body text-xs font-semibold uppercase tracking-widest text-dark transition hover:opacity-90 sm:mx-auto sm:w-auto"
           >
             {t('subscriptions.claim')}
-          </NavLink>
+          </a>
           <p className="mt-3 font-body text-[11px] text-white/70">{t('subscriptions.offer')}</p>
         </div>
       </section>

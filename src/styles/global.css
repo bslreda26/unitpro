@@ -64,10 +64,10 @@ body::before {
 @layer utilities {
   /* Fixed header is h-20 + iOS notch / safe area */
   .pt-unit-header {
-    padding-top: calc(5rem + env(safe-area-inset-top, 0px));
+    padding-top: 5rem;
   }
   .-mt-unit-header {
-    margin-top: calc(-5rem - env(safe-area-inset-top, 0px));
+    margin-top: -5rem;
   }
   .pt-safe-top {
     padding-top: env(safe-area-inset-top, 0px);

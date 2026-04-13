@@ -333,7 +333,7 @@ export function ClassesPage() {
   return (
     <div className="bg-dark text-white">
       {/* HERO */}
-      <section className="relative h-[50vh] min-h-[360px] overflow-hidden bg-dark">
+      <section className="relative h-[42vh] min-h-[300px] overflow-hidden bg-dark">
         <img
           src={heroBg}
           alt=""
@@ -360,7 +360,7 @@ export function ClassesPage() {
             }}
           />
         </div>
-        <div className="relative mx-auto flex h-full w-full max-w-6xl flex-col justify-end px-6 pb-10 pt-24">
+        <div className="relative mx-auto flex h-full w-full max-w-6xl flex-col justify-end px-6 pb-8 pt-20">
           <div className="font-body text-[11px] font-semibold uppercase tracking-widest text-white/70">
             <NavLink to="/" className="hover:text-primary">
               {t('classesPage.breadcrumbHome')}
@@ -368,7 +368,7 @@ export function ClassesPage() {
             <span className="px-2 text-white/40">›</span>
             <span className="text-white/90">{t('classesPage.breadcrumbClasses')}</span>
           </div>
-          <h1 className="mt-4 font-display text-6xl tracking-wide md:text-7xl">
+          <h1 className="mt-3 font-display text-5xl tracking-wide md:text-6xl">
             {t('classesPage.heroTitle')}
           </h1>
         </div>

@@ -56,14 +56,14 @@ export function Footer() {
 
           <a
             className="group flex min-h-0 flex-col justify-center rounded-xl border border-white/[0.09] bg-white/[0.03] px-3 py-2.5 shadow-[0_10px_26px_rgba(0,0,0,0.25)] transition-all duration-300 active:bg-white/[0.06] hover:-translate-y-0.5 hover:border-primary/50 hover:bg-white/[0.05] sm:min-h-[52px] sm:px-5 sm:py-4"
-            href="tel:+15550122024"
+            href="tel:07000000"
           >
             <div className="font-body text-[9px] font-semibold uppercase tracking-[0.18em] text-primary sm:text-[10px] sm:tracking-[0.22em]">
               {t('footer.phone')}
             </div>
             <div className="mt-1 flex items-baseline justify-between gap-1 sm:mt-2 sm:gap-2">
               <span className="font-body text-[11px] text-white/90 transition-colors group-hover:text-white sm:text-sm">
-                (555) 012-2024
+                07000000
               </span>
               <span
                 className="hidden shrink-0 text-primary opacity-0 transition-opacity group-hover:opacity-100 sm:inline"

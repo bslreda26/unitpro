@@ -35,7 +35,7 @@ export const translations = {
       title: 'WHY UNIT PRO',
       items: [
         {
-          title: '24/7 Access',
+          title: 'Daily Access',
           description: 'Train on your schedule with secure anytime entry.',
         },
         {
@@ -133,8 +133,8 @@ export const translations = {
         {
           key: 'starter',
           name: 'STARTER',
-          monthly: 29,
-          annual: 23,
+          monthly: 70000,
+          annual: 70000,
           featured: false,
           features: ['Gym access (6am–10pm)', '2 classes/week', 'Locker access', 'App access'],
           cta: { label: 'GET STARTED', variant: 'outline' },
@@ -142,11 +142,11 @@ export const translations = {
         {
           key: 'pro',
           name: 'PRO',
-          monthly: 49,
-          annual: 39,
+          monthly: 100000,
+          annual: 100000,
           featured: true,
           features: [
-            'Unlimited gym access 24/7',
+            'Unlimited gym access',
             'Unlimited classes',
             '1 PT session/month',
             'Locker + towel service',
@@ -197,7 +197,7 @@ export const translations = {
       email: 'Email',
       phone: 'Phone',
       hours: 'Hours',
-      hoursValue: 'Members 24/7 · Staff on deck most days',
+      hoursValue: 'Members daily · Staff on deck most days',
       location: 'Location',
       locationValue: 'Plateau, Abidjan',
     },
@@ -253,7 +253,7 @@ export const translations = {
       title: 'POURQUOI UNIT PRO',
       items: [
         {
-          title: 'Accès 24/7',
+          title: 'Accès quotidien',
           description: 'Entraîne-toi quand tu veux avec un accès sécurisé.',
         },
         {
@@ -351,8 +351,8 @@ export const translations = {
         {
           key: 'starter',
           name: 'STARTER',
-          monthly: 29,
-          annual: 23,
+          monthly: 70000,
+          annual: 70000,
           featured: false,
           features: ['Accès salle (6h–22h)', '2 cours/semaine', 'Accès casier', 'Accès application'],
           cta: { label: 'COMMENCER', variant: 'outline' },
@@ -360,11 +360,11 @@ export const translations = {
         {
           key: 'pro',
           name: 'PRO',
-          monthly: 49,
-          annual: 39,
+          monthly: 100000,
+          annual: 100000,
           featured: true,
           features: [
-            'Accès illimité 24/7',
+            'Accès illimité à la salle',
             'Cours illimités',
             '1 séance de coaching/mois',
             'Casier + serviette',
@@ -415,7 +415,7 @@ export const translations = {
       email: 'Email',
       phone: 'Téléphone',
       hours: 'Horaires',
-      hoursValue: 'Membres 24/7 · Équipe présente presque tous les jours',
+      hoursValue: 'Membres tous les jours · Équipe présente presque tous les jours',
       location: 'Localisation',
       locationValue: 'Plateau, Abidjan',
     },

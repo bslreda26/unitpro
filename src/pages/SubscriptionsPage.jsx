@@ -144,7 +144,7 @@ function PlanCard({ plan, billing }) {
           target="_blank"
           rel="noopener noreferrer"
           className={[
-            'mt-4 inline-flex min-h-10 w-full items-center justify-center px-4 font-body text-[9px] font-semibold uppercase tracking-wide transition-transform active:scale-[0.98] sm:mt-auto sm:min-h-12 sm:px-7 sm:text-xs sm:tracking-widest sm:hover:scale-[1.02]',
+            'mt-auto inline-flex min-h-10 w-full items-center justify-center px-4 font-body text-[9px] font-semibold uppercase tracking-wide transition-transform active:scale-[0.98] sm:min-h-12 sm:px-7 sm:text-xs sm:tracking-widest sm:hover:scale-[1.02]',
             ctaClass,
           ].join(' ')}
         >
@@ -170,7 +170,7 @@ export function SubscriptionsPage() {
   return (
     <div className="bg-dark text-white">
       {/* HERO */}
-      <section className="relative h-[50vh] min-h-[360px] overflow-hidden bg-dark">
+      <section className="relative h-[42vh] min-h-[300px] overflow-hidden bg-dark">
         <div className="absolute inset-0">
           <div
             className="absolute inset-0"
@@ -182,8 +182,8 @@ export function SubscriptionsPage() {
           />
         </div>
 
-        <div className="relative mx-auto flex h-full w-full max-w-6xl flex-col justify-end px-4 pb-8 pt-24 sm:px-6 sm:pb-10">
-          <h1 className="font-display text-[clamp(2.5rem,12vw,4rem)] tracking-wide md:text-7xl">
+        <div className="relative mx-auto flex h-full w-full max-w-6xl flex-col justify-end px-4 pb-7 pt-20 sm:px-6 sm:pb-8">
+          <h1 className="font-display text-[clamp(2.2rem,10vw,3.4rem)] tracking-wide md:text-6xl">
             {t('subscriptions.heroTitle')}
           </h1>
           <p className="mt-3 max-w-xl font-body text-sm text-white/80 sm:text-base md:text-lg">

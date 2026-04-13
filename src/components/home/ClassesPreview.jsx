@@ -6,11 +6,14 @@ import { useI18n } from '../../i18n/I18nProvider.jsx'
 const GALLERY_IMAGES = [
   'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80',
   'https://images.unsplash.com/photo-1517963879433-6ad2b056d712?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1526401485004-2aa7bca48f03?auto=format&fit=crop&w=1200&q=80',
+  'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80',
   'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=80',
   'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?auto=format&fit=crop&w=1200&q=80',
   'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80',
 ]
+
+const GALLERY_FALLBACK =
+  'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80'
 
 export function ClassesPreview() {
   const { t } = useI18n()
@@ -78,6 +81,12 @@ export function ClassesPreview() {
                 loading="lazy"
                 decoding="async"
                 className="h-full w-full object-cover saturate-110"
+                referrerPolicy="no-referrer"
+                onError={(e) => {
+                  if (e.currentTarget.src !== GALLERY_FALLBACK) {
+                    e.currentTarget.src = GALLERY_FALLBACK
+                  }
+                }}
                 whileHover={{ scale: 1.07 }}
                 whileTap={{ scale: 0.98 }}
                 transition={{ type: 'spring', stiffness: 420, damping: 28 }}

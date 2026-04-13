@@ -77,7 +77,7 @@ export function StatsBar() {
         variants={variants}
       >
         <Stat valueTo={100} suffix="%" label={t('stats.members')} />
-        <Stat valueTo={24} suffix="/7" label={t('stats.access')} />
+        <Stat valueTo={7} suffix={t('stats.accessSuffix')} label={t('stats.access')} />
         <Stat valueTo={10} suffix="+" label={t('stats.classesPerWeek')} />
         <Stat valueTo={2} suffix="" label={t('stats.expertTrainers')} />
       </motion.div>

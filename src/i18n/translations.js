@@ -19,6 +19,7 @@ export const translations = {
     stats: {
       members: 'Satisfaction',
       access: 'Access',
+      accessSuffix: ' days',
       classesPerWeek: 'Classes / Week',
       expertTrainers: 'Expert Trainers',
     },
@@ -237,6 +238,7 @@ export const translations = {
     stats: {
       members: 'Satisfaction',
       access: 'Accès',
+      accessSuffix: ' jours',
       classesPerWeek: 'Cours / semaine',
       expertTrainers: 'Coachs experts',
     },

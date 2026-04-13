@@ -33,9 +33,9 @@ export function Footer() {
           </p>
         </div>
 
-        <div className="mt-6 grid grid-cols-2 gap-2 sm:mt-8 sm:grid-cols-3 sm:gap-4 md:mt-10">
+        <div className="mt-6 grid grid-cols-2 gap-2 sm:mt-8 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4 md:mt-10">
           <a
-            className="group flex min-h-0 flex-col justify-center border border-white/[0.08] bg-white/[0.02] px-3 py-2.5 transition-colors active:bg-white/[0.06] hover:border-primary/50 hover:bg-white/[0.04] sm:min-h-[52px] sm:px-5 sm:py-4"
+            className="group flex min-h-0 flex-col justify-center rounded-xl border border-white/[0.09] bg-white/[0.03] px-3 py-2.5 shadow-[0_10px_26px_rgba(0,0,0,0.25)] transition-all duration-300 active:bg-white/[0.06] hover:-translate-y-0.5 hover:border-primary/50 hover:bg-white/[0.05] sm:min-h-[52px] sm:px-5 sm:py-4"
             href="mailto:hello@unitpro.com"
           >
             <div className="font-body text-[9px] font-semibold uppercase tracking-[0.18em] text-primary sm:text-[10px] sm:tracking-[0.22em]">
@@ -55,7 +55,7 @@ export function Footer() {
           </a>
 
           <a
-            className="group flex min-h-0 flex-col justify-center border border-white/[0.08] bg-white/[0.02] px-3 py-2.5 transition-colors active:bg-white/[0.06] hover:border-primary/50 hover:bg-white/[0.04] sm:min-h-[52px] sm:px-5 sm:py-4"
+            className="group flex min-h-0 flex-col justify-center rounded-xl border border-white/[0.09] bg-white/[0.03] px-3 py-2.5 shadow-[0_10px_26px_rgba(0,0,0,0.25)] transition-all duration-300 active:bg-white/[0.06] hover:-translate-y-0.5 hover:border-primary/50 hover:bg-white/[0.05] sm:min-h-[52px] sm:px-5 sm:py-4"
             href="tel:+15550122024"
           >
             <div className="font-body text-[9px] font-semibold uppercase tracking-[0.18em] text-primary sm:text-[10px] sm:tracking-[0.22em]">
@@ -74,12 +74,20 @@ export function Footer() {
             </div>
           </a>
 
-          <div className="col-span-2 flex min-h-0 flex-col justify-center border border-white/[0.08] bg-white/[0.02] px-3 py-2.5 sm:col-span-1 sm:min-h-[52px] sm:px-5 sm:py-4">
+          <div className="flex min-h-0 flex-col justify-center rounded-xl border border-white/[0.09] bg-white/[0.03] px-3 py-2.5 shadow-[0_10px_26px_rgba(0,0,0,0.25)] sm:min-h-[52px] sm:px-5 sm:py-4">
             <div className="font-body text-[9px] font-semibold uppercase tracking-[0.18em] text-primary sm:text-[10px] sm:tracking-[0.22em]">
               {t('footer.hours')}
             </div>
             <p className="mt-1 font-body text-[11px] leading-snug text-white/85 sm:mt-2 sm:text-sm">
               {t('footer.hoursValue')}
+            </p>
+          </div>
+          <div className="col-span-2 flex min-h-0 flex-col justify-center rounded-xl border border-primary/35 bg-primary/[0.08] px-3 py-2.5 shadow-[0_12px_28px_rgba(227,27,35,0.16)] sm:col-span-1 sm:min-h-[52px] sm:px-5 sm:py-4 lg:col-span-1">
+            <div className="font-body text-[9px] font-semibold uppercase tracking-[0.18em] text-primary sm:text-[10px] sm:tracking-[0.22em]">
+              {t('footer.location')}
+            </div>
+            <p className="mt-1 font-body text-[11px] leading-snug text-white sm:mt-2 sm:text-sm">
+              {t('footer.locationValue')}
             </p>
           </div>
         </div>

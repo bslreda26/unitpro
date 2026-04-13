@@ -33,7 +33,7 @@ export function Footer() {
           </p>
         </div>
 
-        <div className="mt-6 grid grid-cols-2 gap-2 sm:mt-8 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4 md:mt-10">
+        <div className="mt-6 grid grid-cols-2 grid-rows-2 gap-2 sm:mt-8 sm:grid-cols-4 sm:grid-rows-1 sm:gap-4 md:mt-10">
           <a
             className="group flex min-h-0 flex-col justify-center rounded-xl border border-white/[0.09] bg-white/[0.03] px-3 py-2.5 shadow-[0_10px_26px_rgba(0,0,0,0.25)] transition-all duration-300 active:bg-white/[0.06] hover:-translate-y-0.5 hover:border-primary/50 hover:bg-white/[0.05] sm:min-h-[52px] sm:px-5 sm:py-4"
             href="mailto:hello@unitpro.com"

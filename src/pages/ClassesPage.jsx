@@ -374,6 +374,72 @@ export function ClassesPage() {
         </div>
       </section>
 
+      {/* WEEKLY SCHEDULE */}
+      <section ref={calRef} className="bg-dark py-20">
+        <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={calInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ type: 'spring', stiffness: 260, damping: 26 }}
+            className="flex items-end justify-between gap-6"
+          >
+            <div>
+              <div className="font-body text-[12px] font-semibold uppercase tracking-[0.26em] text-primary">
+                {t('classesPage.scheduleLabel')}
+              </div>
+              <h2 className="mt-3 font-display text-5xl tracking-wide text-white md:text-6xl">
+                {t('classesPage.scheduleTitle')}
+              </h2>
+            </div>
+            <div className="hidden items-center gap-2 text-white/70 md:flex">
+              <span className="font-body text-xs uppercase tracking-widest">
+                {t('classesPage.hintTapEvent')}
+              </span>
+              <ArrowRight className="h-4 w-4 text-primary" />
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={calInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ type: 'spring', stiffness: 260, damping: 26, delay: 0.06 }}
+            className="mt-10 border border-border bg-surface p-3 md:p-4"
+          >
+            <FullCalendar
+              plugins={[timeGridPlugin, interactionPlugin]}
+              initialView="timeGridWeek"
+              initialDate={anchorMonday}
+              validRange={{ start: anchorMonday, end: weekEnd }}
+              height="auto"
+              nowIndicator
+              allDaySlot={false}
+              slotMinTime="06:00:00"
+              slotMaxTime="20:00:00"
+              slotDuration="01:00:00"
+              slotLabelInterval="01:00"
+              expandRows
+              headerToolbar={false}
+              navLinks={false}
+              editable={false}
+              eventStartEditable={false}
+              eventDurationEditable={false}
+              displayEventTime={false}
+              dayHeaderContent={(arg) => {
+                const locale = lang === 'fr' ? 'fr-FR' : 'en-US'
+                return arg.date.toLocaleDateString(locale, { weekday: 'short' })
+              }}
+              events={events}
+              eventClick={(arg) => {
+                arg.jsEvent.preventDefault()
+                setModalEvent(arg.event)
+              }}
+            />
+          </motion.div>
+        </div>
+
+        <EventModal eventInfo={modalEvent} onClose={() => setModalEvent(null)} />
+      </section>
+
       {/* CATEGORIES + GRID */}
       <section className="bg-dark py-14 sm:py-16">
         <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
@@ -510,72 +576,6 @@ export function ClassesPage() {
             </div>
           </div>
         </div>
-      </section>
-
-      {/* WEEKLY SCHEDULE */}
-      <section ref={calRef} className="bg-dark py-20">
-        <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            animate={calInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ type: 'spring', stiffness: 260, damping: 26 }}
-            className="flex items-end justify-between gap-6"
-          >
-            <div>
-              <div className="font-body text-[12px] font-semibold uppercase tracking-[0.26em] text-primary">
-                {t('classesPage.scheduleLabel')}
-              </div>
-              <h2 className="mt-3 font-display text-5xl tracking-wide text-white md:text-6xl">
-                {t('classesPage.scheduleTitle')}
-              </h2>
-            </div>
-            <div className="hidden items-center gap-2 text-white/70 md:flex">
-              <span className="font-body text-xs uppercase tracking-widest">
-                {t('classesPage.hintTapEvent')}
-              </span>
-              <ArrowRight className="h-4 w-4 text-primary" />
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            animate={calInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ type: 'spring', stiffness: 260, damping: 26, delay: 0.06 }}
-            className="mt-10 border border-border bg-surface p-3 md:p-4"
-          >
-            <FullCalendar
-              plugins={[timeGridPlugin, interactionPlugin]}
-              initialView="timeGridWeek"
-              initialDate={anchorMonday}
-              validRange={{ start: anchorMonday, end: weekEnd }}
-              height="auto"
-              nowIndicator
-              allDaySlot={false}
-              slotMinTime="06:00:00"
-              slotMaxTime="20:00:00"
-              slotDuration="01:00:00"
-              slotLabelInterval="01:00"
-              expandRows
-              headerToolbar={false}
-              navLinks={false}
-              editable={false}
-              eventStartEditable={false}
-              eventDurationEditable={false}
-              displayEventTime={false}
-              dayHeaderContent={(arg) => {
-                const locale = lang === 'fr' ? 'fr-FR' : 'en-US'
-                return arg.date.toLocaleDateString(locale, { weekday: 'short' })
-              }}
-              events={events}
-              eventClick={(arg) => {
-                arg.jsEvent.preventDefault()
-                setModalEvent(arg.event)
-              }}
-            />
-          </motion.div>
-        </div>
-
-        <EventModal eventInfo={modalEvent} onClose={() => setModalEvent(null)} />
       </section>
     </div>
   )

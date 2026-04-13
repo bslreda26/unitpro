@@ -4,7 +4,7 @@ import { useInView } from 'react-intersection-observer'
 import { useI18n } from '../../i18n/I18nProvider.jsx'
 
 const ABOUT_IMG_PRIMARY =
-  'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1800&q=80'
+  'https://images.unsplash.com/photo-1517964603305-11c0f6f66012?auto=format&fit=crop&w=1800&q=80'
 const ABOUT_IMG_FALLBACK =
   'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1800&q=80'
 
@@ -41,14 +41,17 @@ export function AboutSection() {
           initial={{ opacity: 0, x: -24 }}
           animate={inView ? { opacity: 1, x: 0 } : {}}
           transition={{ type: 'spring', stiffness: 260, damping: 28 }}
-          className="relative"
+          className="group relative"
         >
           <div className="relative overflow-hidden border border-border bg-surface shadow-[0_30px_90px_rgba(0,0,0,0.55)]">
-            <img
+            <motion.img
               src={src}
               alt={t('about.imageAlt')}
               className="h-[380px] w-full origin-center object-cover md:h-[520px]"
-              style={{ transform: 'rotate(-2deg) scale(1.05)' }}
+              initial={{ opacity: 0, scale: 1.12, rotate: -5, y: 18 }}
+              animate={inView ? { opacity: 1, scale: 1.05, rotate: -2, y: 0 } : {}}
+              whileHover={{ scale: 1.09, rotate: -0.8 }}
+              transition={{ type: 'spring', stiffness: 240, damping: 24 }}
               loading="eager"
               fetchPriority="high"
               referrerPolicy="no-referrer"
@@ -56,6 +59,13 @@ export function AboutSection() {
                 if (src !== ABOUT_IMG_FALLBACK) setSrc(ABOUT_IMG_FALLBACK)
                 else if (src !== placeholder) setSrc(placeholder)
               }}
+            />
+            <motion.div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 bg-[linear-gradient(110deg,transparent_30%,rgba(255,255,255,0.18)_50%,transparent_70%)]"
+              initial={{ x: '-130%', opacity: 0 }}
+              animate={inView ? { x: '130%', opacity: [0, 0.55, 0] } : {}}
+              transition={{ duration: 1.25, ease: 'easeInOut', delay: 0.25 }}
             />
           </div>
           <div

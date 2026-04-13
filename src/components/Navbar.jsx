@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useI18n } from '../i18n/I18nProvider.jsx'
@@ -87,38 +87,15 @@ export function Navbar() {
   const [hovered, setHovered] = useState(null)
   const { t, lang, toggleLang } = useI18n()
 
-  const containerVariants = useMemo(
-    () => ({
-      hidden: { y: -18, opacity: 0 },
-      show: {
-        y: 0,
-        opacity: 1,
-        transition: { staggerChildren: 0.08, delayChildren: 0.12 },
-      },
-    }),
-    [],
-  )
-
-  const childVariants = useMemo(
-    () => ({
-      hidden: { y: -10, opacity: 0 },
-      show: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 420, damping: 28 } },
-    }),
-    [],
-  )
-
   return (
-    <motion.header
+    <header
       className={[
         'fixed left-0 right-0 top-0 z-50 w-full border-b border-transparent',
         scrolled ? 'bg-dark/95 backdrop-blur supports-[backdrop-filter]:bg-dark/95' : 'bg-transparent',
       ].join(' ')}
-      variants={containerVariants}
-      initial="hidden"
-      animate="show"
     >
       <div className="mx-auto flex h-20 w-full max-w-6xl items-center px-4 sm:px-6">
-        <motion.div variants={childVariants} className="flex min-w-0 items-center">
+        <div className="flex min-w-0 items-center">
           <NavLink
             to="/"
             className="group inline-flex min-h-[44px] min-w-[44px] items-center gap-2 py-1"
@@ -131,13 +108,13 @@ export function Navbar() {
               PRO
             </span>
           </NavLink>
-        </motion.div>
+        </div>
 
-        <motion.div variants={childVariants} className="flex flex-1 justify-center">
+        <div className="flex flex-1 justify-center">
           <DesktopNav hovered={hovered} setHovered={setHovered} />
-        </motion.div>
+        </div>
 
-        <motion.div variants={childVariants} className="flex items-center gap-3">
+        <div className="flex items-center gap-3">
           <MobileQuickLinks />
 
           <NavLink
@@ -155,9 +132,9 @@ export function Navbar() {
           >
             {lang === 'fr' ? 'EN' : 'FR'}
           </button>
-        </motion.div>
+        </div>
       </div>
-    </motion.header>
+    </header>
   )
 }
 

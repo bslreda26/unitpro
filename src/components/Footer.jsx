@@ -82,7 +82,7 @@ export function Footer() {
               {t('footer.hoursValue')}
             </p>
           </div>
-          <div className="col-span-2 flex min-h-0 flex-col justify-center rounded-xl border border-primary/35 bg-primary/[0.08] px-3 py-2.5 shadow-[0_12px_28px_rgba(227,27,35,0.16)] sm:col-span-1 sm:min-h-[52px] sm:px-5 sm:py-4 lg:col-span-1">
+          <div className="flex min-h-0 flex-col justify-center rounded-xl border border-primary/35 bg-primary/[0.08] px-3 py-2.5 shadow-[0_12px_28px_rgba(227,27,35,0.16)] sm:min-h-[52px] sm:px-5 sm:py-4">
             <div className="font-body text-[9px] font-semibold uppercase tracking-[0.18em] text-primary sm:text-[10px] sm:tracking-[0.22em]">
               {t('footer.location')}
             </div>

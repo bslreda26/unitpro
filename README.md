@@ -1,16 +1,35 @@
-# React + Vite
+# Unit Pro
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Vite + React site for Unit Pro gym.
 
-Currently, two official plugins are available:
+## Run locally
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run dev
+```
 
-## React Compiler
+## Deploy to GitHub Pages
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+This project is configured for this repository:
 
-## Expanding the ESLint configuration
+- Repo: `https://github.com/bslreda26/unitpro`
+- Live URL: `https://bslreda26.github.io/unitpro/`
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Deploy steps:
+
+```bash
+npm install
+npm run deploy
+```
+
+The deploy command builds the app and publishes the `dist` folder to the `gh-pages` branch.
+
+## GitHub Pages settings
+
+In GitHub:
+
+1. Open repository **Settings** -> **Pages**
+2. Under **Build and deployment**, select **Deploy from a branch**
+3. Branch: `gh-pages`, folder: `/ (root)`
+4. Save

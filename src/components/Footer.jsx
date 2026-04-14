@@ -30,8 +30,8 @@ export function Footer() {
             <span className="text-white/[0.08]">UNIT</span>
             <br />
             <span className="text-primary/25">PRO</span>
-            <span className="ml-3 inline-block align-super font-body text-[0.15em] font-semibold uppercase tracking-[0.3em] text-white/35">
-              STUDIO
+            <span className="ml-3 inline-block align-super font-body text-[0.12em] font-semibold uppercase tracking-[0.2em] text-white/35">
+              TRAINING CENTER
             </span>
           </p>
         </div>
@@ -113,7 +113,7 @@ export function Footer() {
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-2 px-4 py-4 pb-safe-bottom text-center sm:gap-3 sm:px-6 sm:py-6 md:flex-row md:justify-between md:text-left">
           <p className="order-2 font-body text-[10px] uppercase tracking-[0.18em] text-white/45 sm:text-[11px] sm:tracking-[0.2em] md:order-1">
             © {new Date().getFullYear()} UNIT <span className="text-primary/90">PRO</span>{' '}
-            <span className="text-white/65">STUDIO</span> — {t('footer.rights')}
+            <span className="text-white/65">TRAINING CENTER</span> — {t('footer.rights')}
           </p>
           <p className="order-1 max-w-md font-body text-[11px] italic leading-snug text-white/55 sm:text-xs sm:leading-relaxed md:order-2 md:text-right">
             {t('footer.built')}

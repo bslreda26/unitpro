@@ -8,8 +8,8 @@ export const translations = {
       joinNow: 'Join Now',
     },
     hero: {
-      kicker: 'EST. 2024 — ÉLITE FITNESS',
-      h1: 'FORGE YOUR',
+      kicker: 'EST. 2024 — TRAINING CENTER',
+      h1: 'BREAK YOUR',
       h2: 'LIMITS',
       body: 'WITH UNIT PRO',
       ctaPrimary: 'Start Today',
@@ -250,8 +250,8 @@ export const translations = {
       joinNow: 'S’inscrire',
     },
     hero: {
-      kicker: 'DEPUIS 2024 — FITNESS ÉLITE',
-      h1: 'FORGE',
+      kicker: 'DEPUIS 2024 — TRAINING CENTER',
+      h1: 'BRISE',
       h2: 'TES LIMITES',
       body: 'AVEC UNIT PRO',
       ctaPrimary: 'Commencer',

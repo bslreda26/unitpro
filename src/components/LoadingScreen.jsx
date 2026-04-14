@@ -74,7 +74,7 @@ export function LoadingScreen({ show, onDone }) {
                 }}
                 className="ml-3 inline-block align-super font-body text-[0.2em] font-semibold uppercase tracking-[0.35em] text-white/80"
               >
-                STUDIO
+                TRAINING CENTER
               </motion.span>
             </motion.div>
 

@@ -75,8 +75,8 @@ export function Hero() {
         {before}
         <span className="text-white">UNIT </span>
         <span className="text-primary">PRO</span>
-        <span className="ml-2 inline-block align-super text-[0.7em] font-semibold uppercase tracking-[0.2em] text-white/80">
-          STUDIO
+        <span className="ml-2 inline-block align-super text-[0.58em] font-semibold uppercase tracking-[0.12em] text-white/80">
+          TRAINING CENTER
         </span>
         {after}
       </>

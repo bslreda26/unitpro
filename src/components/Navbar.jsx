@@ -101,14 +101,14 @@ export function Navbar() {
             className="group inline-flex min-h-[44px] min-w-[44px] items-center gap-2 py-1"
           >
             <span className="inline-block h-2 w-2 bg-primary" aria-hidden="true" />
-            <span className="font-display text-[28px] leading-none tracking-wide text-white">
-              UNIT
-            </span>
-            <span className="font-display text-[28px] leading-none tracking-wide text-primary">
-              PRO
-            </span>
-            <span className="translate-y-2 font-body text-[9px] font-semibold uppercase tracking-[0.25em] text-white/70">
-              STUDIO
+            <span className="flex flex-col leading-none">
+              <span className="font-display text-[26px] tracking-wide sm:text-[28px]">
+                <span className="text-white">UNIT </span>
+                <span className="text-primary">PRO</span>
+              </span>
+              <span className="mt-0.5 font-body text-[8px] font-semibold uppercase tracking-[0.14em] text-white/70 sm:text-[9px] sm:tracking-[0.16em]">
+                TRAINING CENTER
+              </span>
             </span>
           </NavLink>
         </div>

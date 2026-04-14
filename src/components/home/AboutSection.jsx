@@ -30,7 +30,7 @@ export function AboutSection() {
     <text x="100" y="235" font-size="34">
       <tspan>UNIT </tspan>
       <tspan fill="#e31b23">PRO</tspan>
-      <tspan dx="10" font-size="14" letter-spacing="4" fill="rgba(255,255,255,0.7)">STUDIO</tspan>
+      <tspan dx="10" font-size="12" letter-spacing="3" fill="rgba(255,255,255,0.7)">TRAINING CENTER</tspan>
     </text>
     <text x="100" y="285" font-size="18" fill="rgba(255,255,255,0.68)">Espace d’entraînement</text>
   </g>

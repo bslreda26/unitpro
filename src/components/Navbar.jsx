@@ -107,6 +107,9 @@ export function Navbar() {
             <span className="font-display text-[28px] leading-none tracking-wide text-primary">
               PRO
             </span>
+            <span className="translate-y-2 font-body text-[9px] font-semibold uppercase tracking-[0.25em] text-white/70">
+              STUDIO
+            </span>
           </NavLink>
         </div>
 

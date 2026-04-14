@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
 import { useI18n } from '../i18n/I18nProvider.jsx'
-import { getWhatsAppUrl } from '../utils/whatsapp.js'
+import { WhatsAppLeadModal } from '../components/WhatsAppLeadModal.jsx'
 
 const HERO_BG =
   'https://images.unsplash.com/photo-1517963879433-6ad2b056d712?auto=format&fit=crop&w=2400&q=80'
@@ -67,11 +67,14 @@ function BillingToggle({ billing, setBilling }) {
   )
 }
 
-function PlanCard({ plan, billing }) {
+function PlanCard({ plan, billing, onWhatsAppRequest }) {
   const { t } = useI18n()
   const price = billing === 'annual' ? plan.annual : plan.monthly
-  const suffix =
-    billing === 'annual' ? t('subscriptions.suffixAnnual') : t('subscriptions.suffixMo')
+  const suffix = plan.suffix
+    ? plan.suffix
+    : billing === 'annual'
+      ? t('subscriptions.suffixAnnual')
+      : t('subscriptions.suffixMo')
 
   const base =
     'relative flex h-full min-h-0 flex-col overflow-hidden border border-border bg-surface p-4 sm:p-6 md:p-8'
@@ -139,17 +142,16 @@ function PlanCard({ plan, billing }) {
           ))}
         </div>
 
-        <a
-          href={getWhatsAppUrl(t('whatsapp.plan').replace('{plan}', plan.name))}
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          type="button"
+          onClick={() => onWhatsAppRequest?.(t('whatsapp.plan').replace('{plan}', plan.name))}
           className={[
             'mt-auto inline-flex min-h-10 w-full items-center justify-center px-4 font-body text-[9px] font-semibold uppercase tracking-wide transition-transform active:scale-[0.98] sm:min-h-12 sm:px-7 sm:text-xs sm:tracking-widest sm:hover:scale-[1.02]',
             ctaClass,
           ].join(' ')}
         >
           {plan.cta.label}
-        </a>
+        </button>
       </div>
     </motion.article>
   )
@@ -158,6 +160,8 @@ function PlanCard({ plan, billing }) {
 export function SubscriptionsPage() {
   const { dict, t } = useI18n()
   const [billing, setBilling] = useState('monthly') // 'monthly' | 'annual'
+  const [whatsAppMessage, setWhatsAppMessage] = useState('')
+  const [whatsAppOpen, setWhatsAppOpen] = useState(false)
 
   const container = useMemo(
     () => ({
@@ -213,10 +217,18 @@ export function SubscriptionsPage() {
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, amount: 0.25 }}
-            className="mt-8 grid grid-cols-2 items-stretch gap-2.5 sm:mt-12 sm:gap-4 md:gap-6"
+            className="mt-8 grid grid-cols-1 items-stretch gap-3 sm:mt-12 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 md:gap-6"
           >
             {(dict.subscriptions?.plans ?? []).map((p) => (
-              <PlanCard key={p.key} plan={p} billing={billing} />
+              <PlanCard
+                key={p.key}
+                plan={p}
+                billing={billing}
+                onWhatsAppRequest={(message) => {
+                  setWhatsAppMessage(message)
+                  setWhatsAppOpen(true)
+                }}
+              />
             ))}
           </motion.div>
         </div>
@@ -231,17 +243,24 @@ export function SubscriptionsPage() {
           <p className="mt-2 font-body text-sm leading-relaxed text-white/90">
             {t('subscriptions.finalBody')}
           </p>
-          <a
-            href={getWhatsAppUrl(t('whatsapp.trialDay'))}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
+            onClick={() => {
+              setWhatsAppMessage(t('whatsapp.trialDay'))
+              setWhatsAppOpen(true)
+            }}
             className="mt-6 inline-flex min-h-11 w-full max-w-xs items-center justify-center bg-white px-6 font-body text-xs font-semibold uppercase tracking-widest text-dark transition hover:opacity-90 sm:mx-auto sm:w-auto"
           >
             {t('subscriptions.claim')}
-          </a>
+          </button>
           <p className="mt-3 font-body text-[11px] text-white/70">{t('subscriptions.offer')}</p>
         </div>
       </section>
+      <WhatsAppLeadModal
+        open={whatsAppOpen}
+        onClose={() => setWhatsAppOpen(false)}
+        initialMessage={whatsAppMessage}
+      />
     </div>
   )
 }

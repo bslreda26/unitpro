@@ -8,7 +8,8 @@ export function LoadingScreen({ show, onDone }) {
     return () => clearTimeout(t)
   }, [onDone, show])
 
-  const letters = 'UNIT PRO'.split('')
+  const unitLetters = 'UNIT'.split('')
+  const proLetters = 'PRO'.split('')
 
   return (
     <AnimatePresence>
@@ -27,9 +28,9 @@ export function LoadingScreen({ show, onDone }) {
                 hidden: {},
                 show: { transition: { staggerChildren: 0.06 } },
               }}
-              className="font-display text-[clamp(2.75rem,14vw,4.5rem)] tracking-[0.12em] text-white sm:text-7xl md:text-8xl"
+              className="font-display text-[clamp(2.75rem,14vw,4.5rem)] tracking-[0.12em] sm:text-7xl md:text-8xl"
             >
-              {letters.map((ch, i) => (
+              {unitLetters.map((ch, i) => (
                 <motion.span
                   key={`${ch}-${i}`}
                   variants={{
@@ -40,11 +41,41 @@ export function LoadingScreen({ show, onDone }) {
                       transition: { type: 'spring', stiffness: 520, damping: 34 },
                     },
                   }}
-                  className={ch === ' ' ? 'inline-block w-5' : 'inline-block'}
+                  className="inline-block text-white"
                 >
                   {ch}
                 </motion.span>
               ))}
+              <span className="inline-block w-5" aria-hidden="true" />
+              {proLetters.map((ch, i) => (
+                <motion.span
+                  key={`${ch}-${i}`}
+                  variants={{
+                    hidden: { opacity: 0, y: 18 },
+                    show: {
+                      opacity: 1,
+                      y: 0,
+                      transition: { type: 'spring', stiffness: 520, damping: 34 },
+                    },
+                  }}
+                  className="inline-block text-primary"
+                >
+                  {ch}
+                </motion.span>
+              ))}
+              <motion.span
+                variants={{
+                  hidden: { opacity: 0, y: 18 },
+                  show: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { type: 'spring', stiffness: 520, damping: 34 },
+                  },
+                }}
+                className="ml-3 inline-block align-super font-body text-[0.2em] font-semibold uppercase tracking-[0.35em] text-white/80"
+              >
+                STUDIO
+              </motion.span>
             </motion.div>
 
             <div className="mt-10 h-1 w-full bg-white/10">

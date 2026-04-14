@@ -93,7 +93,9 @@ export function ClassesPreview() {
               />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent opacity-90 transition-opacity duration-300 group-hover:opacity-100" />
               <div className="pointer-events-none absolute bottom-2 left-2 border border-primary/50 bg-black/45 px-2 py-1 font-body text-[9px] font-semibold uppercase tracking-widest text-white/90 sm:bottom-3 sm:left-3 sm:text-[10px]">
-                UNIT PRO
+                <span>UNIT </span>
+                <span className="text-primary">PRO</span>
+                <span className="ml-1 text-[0.8em] tracking-[0.2em] text-white/75">STUDIO</span>
               </div>
             </motion.div>
           ))}

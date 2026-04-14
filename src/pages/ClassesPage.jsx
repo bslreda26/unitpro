@@ -7,7 +7,7 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import { ArrowRight, X } from 'lucide-react'
 import { useI18n } from '../i18n/I18nProvider.jsx'
-import { getWhatsAppUrl } from '../utils/whatsapp.js'
+import { WhatsAppLeadModal } from '../components/WhatsAppLeadModal.jsx'
 
 import '../styles/fullcalendar.css'
 
@@ -110,7 +110,7 @@ function levelTone(level) {
   return 'border-white/35 text-white/90'
 }
 
-function EventModal({ eventInfo, onClose }) {
+function EventModal({ eventInfo, onClose, onWhatsAppRequest }) {
   const { t } = useI18n()
   return (
     <AnimatePresence>
@@ -192,16 +192,17 @@ function EventModal({ eventInfo, onClose }) {
               </div>
 
               <div className="mt-6">
-                <a
-                  href={getWhatsAppUrl(
-                    t('whatsapp.classBook').replace('{class}', eventInfo.title ?? ''),
-                  )}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  type="button"
+                  onClick={() =>
+                    onWhatsAppRequest?.(
+                      t('whatsapp.classBook').replace('{class}', eventInfo.title ?? ''),
+                    )
+                  }
                   className="inline-flex h-11 w-full items-center justify-center bg-primary px-6 font-body text-xs font-semibold uppercase tracking-widest text-white transition-transform hover:scale-[1.02] hover:bg-accent md:w-auto md:justify-end"
                 >
                   {t('classesPage.bookNow')}
-                </a>
+                </button>
               </div>
             </div>
           </motion.div>
@@ -215,6 +216,8 @@ export function ClassesPage() {
   const { dict, t, lang } = useI18n()
   const [active, setActive] = useState('All')
   const [modalEvent, setModalEvent] = useState(null)
+  const [whatsAppMessage, setWhatsAppMessage] = useState('')
+  const [whatsAppOpen, setWhatsAppOpen] = useState(false)
   const placeholderBg = useSvgPlaceholderDataUrl()
   const [heroBg, setHeroBg] = useState(HERO_BG_PRIMARY)
 
@@ -437,7 +440,15 @@ export function ClassesPage() {
           </motion.div>
         </div>
 
-        <EventModal eventInfo={modalEvent} onClose={() => setModalEvent(null)} />
+        <EventModal
+          eventInfo={modalEvent}
+          onClose={() => setModalEvent(null)}
+          onWhatsAppRequest={(message) => {
+            setWhatsAppMessage(message)
+            setWhatsAppOpen(true)
+            setModalEvent(null)
+          }}
+        />
       </section>
 
       {/* CATEGORIES + GRID */}
@@ -560,14 +571,16 @@ export function ClassesPage() {
                           </div>
                         </div>
 
-                        <a
-                          href={getWhatsAppUrl(t('whatsapp.classBook').replace('{class}', c.name))}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setWhatsAppMessage(t('whatsapp.classBook').replace('{class}', c.name))
+                            setWhatsAppOpen(true)
+                          }}
                           className="mt-3 inline-flex min-h-10 w-full items-center justify-center bg-primary px-3 py-2 font-body text-[9px] font-semibold uppercase tracking-wide text-white transition-transform active:scale-[0.98] hover:bg-accent sm:mt-6 sm:min-h-11 sm:px-6 sm:text-xs sm:tracking-widest sm:hover:scale-[1.02]"
                         >
                           {t('classesPage.bookNow')}
-                        </a>
+                        </button>
                       </div>
                     </motion.article>
                   ))}
@@ -577,6 +590,11 @@ export function ClassesPage() {
           </div>
         </div>
       </section>
+      <WhatsAppLeadModal
+        open={whatsAppOpen}
+        onClose={() => setWhatsAppOpen(false)}
+        initialMessage={whatsAppMessage}
+      />
     </div>
   )
 }

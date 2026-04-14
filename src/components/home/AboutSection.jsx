@@ -27,7 +27,11 @@ export function AboutSection() {
     <rect x="80" y="160" width="1040" height="580" rx="18"/>
   </g>
   <g fill="rgba(255,255,255,0.86)" font-family="system-ui, -apple-system, Segoe UI, Roboto, Arial" font-weight="700">
-    <text x="100" y="235" font-size="34">UNIT PRO</text>
+    <text x="100" y="235" font-size="34">
+      <tspan>UNIT </tspan>
+      <tspan fill="#e31b23">PRO</tspan>
+      <tspan dx="10" font-size="14" letter-spacing="4" fill="rgba(255,255,255,0.7)">STUDIO</tspan>
+    </text>
     <text x="100" y="285" font-size="18" fill="rgba(255,255,255,0.68)">Espace d’entraînement</text>
   </g>
 </svg>`

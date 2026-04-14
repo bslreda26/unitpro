@@ -62,6 +62,27 @@ export function Hero() {
     },
   }
 
+  const renderHeroBody = () => {
+    const text = t('hero.body')
+    const marker = 'UNIT PRO'
+    const idx = text.indexOf(marker)
+    if (idx === -1) return text
+
+    const before = text.slice(0, idx)
+    const after = text.slice(idx + marker.length)
+    return (
+      <>
+        {before}
+        <span className="text-white">UNIT </span>
+        <span className="text-primary">PRO</span>
+        <span className="ml-2 inline-block align-super text-[0.7em] font-semibold uppercase tracking-[0.2em] text-white/80">
+          STUDIO
+        </span>
+        {after}
+      </>
+    )
+  }
+
   return (
     <section className="relative -mt-unit-header min-h-[100svh] w-full overflow-hidden bg-dark pt-unit-header">
       <div className="absolute inset-0">
@@ -130,7 +151,7 @@ export function Hero() {
             variants={fadeUp}
             className="mt-6 max-w-sm font-body text-base text-white/85 md:max-w-md md:text-lg"
           >
-            {t('hero.body')}
+            {renderHeroBody()}
           </motion.p>
           <motion.div
             variants={fadeUp}

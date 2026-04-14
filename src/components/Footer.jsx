@@ -26,10 +26,13 @@ export function Footer() {
               {t('footer.sub')}
             </p>
           </div>
-          <p className="hidden select-none font-display text-[clamp(3rem,8vw,7rem)] leading-none tracking-[0.08em] text-white/[0.08] md:block lg:text-right">
-            UNIT
+          <p className="hidden select-none font-display text-[clamp(3rem,8vw,7rem)] leading-none tracking-[0.08em] md:block lg:text-right">
+            <span className="text-white/[0.08]">UNIT</span>
             <br />
-            PRO
+            <span className="text-primary/25">PRO</span>
+            <span className="ml-3 inline-block align-super font-body text-[0.15em] font-semibold uppercase tracking-[0.3em] text-white/35">
+              STUDIO
+            </span>
           </p>
         </div>
 
@@ -82,21 +85,35 @@ export function Footer() {
               {t('footer.hoursValue')}
             </p>
           </div>
-          <div className="flex min-h-0 flex-col justify-center rounded-xl border border-primary/35 bg-primary/[0.08] px-3 py-2.5 shadow-[0_12px_28px_rgba(227,27,35,0.16)] sm:min-h-[52px] sm:px-5 sm:py-4">
+          <a
+            className="group flex min-h-0 flex-col justify-center rounded-xl border border-primary/35 bg-primary/[0.08] px-3 py-2.5 shadow-[0_12px_28px_rgba(227,27,35,0.16)] transition-all duration-300 active:bg-primary/[0.14] hover:-translate-y-0.5 hover:bg-primary/[0.14] sm:min-h-[52px] sm:px-5 sm:py-4"
+            href="https://www.google.com/maps/search/?api=1&query=Deux+Plateau+Abidjan"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <div className="font-body text-[9px] font-semibold uppercase tracking-[0.18em] text-primary sm:text-[10px] sm:tracking-[0.22em]">
               {t('footer.location')}
             </div>
-            <p className="mt-1 font-body text-[11px] leading-snug text-white sm:mt-2 sm:text-sm">
-              {t('footer.locationValue')}
-            </p>
-          </div>
+            <div className="mt-1 flex items-center justify-between gap-2 sm:mt-2">
+              <p className="font-body text-[11px] leading-snug text-white sm:text-sm">
+                {t('footer.locationValue')}
+              </p>
+              <span
+                className="shrink-0 text-primary opacity-80 transition-opacity group-hover:opacity-100"
+                aria-hidden="true"
+              >
+                →
+              </span>
+            </div>
+          </a>
         </div>
       </div>
 
       <div className="relative border-t border-white/[0.06]">
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-2 px-4 py-4 pb-safe-bottom text-center sm:gap-3 sm:px-6 sm:py-6 md:flex-row md:justify-between md:text-left">
           <p className="order-2 font-body text-[10px] uppercase tracking-[0.18em] text-white/45 sm:text-[11px] sm:tracking-[0.2em] md:order-1">
-            © {new Date().getFullYear()} UNIT PRO — {t('footer.rights')}
+            © {new Date().getFullYear()} UNIT <span className="text-primary/90">PRO</span>{' '}
+            <span className="text-white/65">STUDIO</span> — {t('footer.rights')}
           </p>
           <p className="order-1 max-w-md font-body text-[11px] italic leading-snug text-white/55 sm:text-xs sm:leading-relaxed md:order-2 md:text-right">
             {t('footer.built')}

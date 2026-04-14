@@ -1,1 +1,0 @@
-var e=`2250702604309`;function t(t=``){return`https://wa.me/${e}${typeof t==`string`&&t.trim()?`?text=${encodeURIComponent(t.trim())}`:``}`}export{t};

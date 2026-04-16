@@ -49,7 +49,8 @@ export const translations = {
         },
         {
           title: 'Community',
-          description: 'A high-standard culture that makes consistency inevitable.',
+          description:
+            'A strong community with a nutrition bar for gym products and a back garden made for post-workout connections.',
         },
       ],
     },
@@ -291,7 +292,8 @@ export const translations = {
         },
         {
           title: 'Communauté',
-          description: 'Une culture exigeante qui rend la régularité inévitable.',
+          description:
+            'Une vraie communauté avec un bar nutrition qui vend des produits fitness et un jardin à l’arrière pour créer des connexions.',
         },
       ],
     },

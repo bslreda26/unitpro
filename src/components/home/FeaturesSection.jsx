@@ -1,10 +1,10 @@
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
-import { Clock, Dumbbell, ShieldCheck, Users } from 'lucide-react'
+import { Clock, CupSoda, Dumbbell, ShieldCheck } from 'lucide-react'
 import { useI18n } from '../../i18n/I18nProvider.jsx'
 
-const FEATURE_ICONS = [Clock, ShieldCheck, Dumbbell, Users]
+const FEATURE_ICONS = [Clock, ShieldCheck, Dumbbell, CupSoda]
 
 export function FeaturesSection() {
   const { dict, t } = useI18n()

@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist -c www.unitpro.fit",
+    "deploy": "gh-pages -d dist --cname www.unitpro.fit",
     "lint": "eslint .",
     "preview": "vite preview"
   },

@@ -1,4 +1,4 @@
-import { lazy, useEffect, useLayoutEffect, useState } from 'react'
+import { lazy, useEffect, useState } from 'react'
 import { Navbar } from './components/Navbar.jsx'
 import { Footer } from './components/Footer.jsx'
 import { AnimatedRoutes } from './components/AnimatedRoutes.jsx'
@@ -25,17 +25,16 @@ export default function App() {
     }
   }, [])
 
-  useLayoutEffect(() => {
-    if (loading) {
-      scrollToTopInstant()
-      document.documentElement.style.overflow = 'hidden'
-      document.body.style.overflow = 'hidden'
-    } else {
+  useEffect(() => {
+    // Ensure no stale inline overflow lock remains.
+    document.documentElement.style.overflow = ''
+    document.body.style.overflow = ''
+
+    return () => {
       document.documentElement.style.overflow = ''
       document.body.style.overflow = ''
-      scrollToTopInstant()
     }
-  }, [loading])
+  }, [])
 
   useEffect(() => {
     if (loading) return

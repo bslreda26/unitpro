@@ -1,10 +1,11 @@
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
-import { Clock, CupSoda, Dumbbell, ShieldCheck } from 'lucide-react'
+import { Check, Clock, CupSoda, Dumbbell, ShieldCheck } from 'lucide-react'
 import { useI18n } from '../../i18n/I18nProvider.jsx'
 
 const FEATURE_ICONS = [Clock, ShieldCheck, Dumbbell, CupSoda]
+const PERSONAL_TRAINING_ICONS = [Check, ShieldCheck, Clock]
 
 export function FeaturesSection() {
   const { dict, t } = useI18n()
@@ -72,18 +73,56 @@ export function FeaturesSection() {
                     <Icon className="h-4 w-4 text-primary sm:h-5 sm:w-5" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-body text-[11px] font-semibold uppercase leading-tight tracking-wider text-white sm:text-sm sm:tracking-widest">
+                    <h3 className="font-body text-[11px] font-semibold leading-tight tracking-wider text-white sm:text-sm sm:tracking-widest">
                       {title}
                     </h3>
-                    <p className="mt-1.5 font-body text-[11px] leading-snug text-text-muted sm:mt-2 sm:text-sm sm:leading-relaxed">
-                      {description}
-                    </p>
+                    {description ? (
+                      <p className="mt-1.5 font-body text-[11px] leading-snug text-text-muted sm:mt-2 sm:text-sm sm:leading-relaxed">
+                        {description}
+                      </p>
+                    ) : null}
                   </div>
                 </div>
               </motion.article>
             )
           })}
         </motion.div>
+
+        <div className="mt-14 text-center">
+          <div className="font-body text-[12px] font-semibold uppercase tracking-[0.26em] text-primary">
+            {dict.features?.personalTrainingTitle}
+          </div>
+
+          <motion.div
+            className="mt-8 grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-3 lg:gap-6"
+            variants={container}
+            initial="hidden"
+            animate={inView ? 'show' : 'hidden'}
+          >
+            {(dict.features?.personalTrainingItems ?? []).map((line, idx) => {
+              const Icon = PERSONAL_TRAINING_ICONS[idx] ?? Check
+              return (
+                <motion.article
+                  key={`${line}-${idx}`}
+                  variants={card}
+                  className="group relative flex h-full min-h-0 flex-col border border-border bg-surface p-4 transition-transform active:scale-[0.99] sm:p-6 sm:hover:-translate-y-1"
+                >
+                  <div className="absolute left-0 top-0 h-[3px] w-full bg-transparent transition-colors group-hover:bg-primary" />
+                  <div className="flex min-h-0 flex-1 flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/15 sm:h-11 sm:w-11">
+                      <Icon className="h-4 w-4 text-primary sm:h-5 sm:w-5" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-body text-[11px] font-semibold leading-tight tracking-wider text-white sm:text-sm sm:tracking-widest">
+                        {line}
+                      </h3>
+                    </div>
+                  </div>
+                </motion.article>
+              )
+            })}
+          </motion.div>
+        </div>
       </div>
     </section>
   )

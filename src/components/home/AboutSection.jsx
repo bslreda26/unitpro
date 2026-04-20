@@ -12,6 +12,13 @@ export function AboutSection() {
   const { t } = useI18n()
   const { ref, inView } = useInView({ threshold: 0.25, triggerOnce: true })
   const [src, setSrc] = useState(ABOUT_IMG_PRIMARY)
+  const paragraphs = useMemo(
+    () =>
+      [t('about.p1'), t('about.p2')].filter(
+        (line) => typeof line === 'string' && line.trim() && !line.startsWith('about.'),
+      ),
+    [t],
+  )
   const placeholder = useMemo(() => {
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
   <defs>
@@ -91,8 +98,11 @@ export function AboutSection() {
           </h2>
 
           <div className="mt-6 space-y-4 font-body text-base leading-relaxed text-text-muted">
-            <p>{t('about.p1')}</p>
-            <p>{t('about.p2')}</p>
+            {paragraphs.map((line, idx) => (
+              <p key={`${idx}-${line.slice(0, 24)}`} className="whitespace-pre-line">
+                {line}
+              </p>
+            ))}
           </div>
 
           <div className="mt-7 h-px w-24 bg-primary" />

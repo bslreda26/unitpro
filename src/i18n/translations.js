@@ -26,8 +26,8 @@ export const translations = {
     about: {
       label: 'Who We Are',
       title: 'NOT JUST A GYM. A MOVEMENT.',
-      p1: 'UNIT PRO is built for athletes, builders, and anyone tired of “average.” We train with intent—strength, conditioning, mobility, and resilience.',
-      p2: 'From first-timers to competitors, our coaching and programming are designed to meet you where you are and push you beyond what you thought was possible.',
+      p1: 'UNIT PRO brings a unique fitness environment to the local community, combining state-of-the-art connected gym equipment, an unrivalled class offering, motivating personal trainers, and full gym access.',
+      p2: 'Located in Cocody, we welcome everyone to start a results-based fitness journey in a strong and supportive community atmosphere, with technique-first personal training, friendly professional coaches, and daily client check-ins.',
       learnMore: 'Learn More',
       imageAlt: 'Training floor',
     },
@@ -36,21 +36,20 @@ export const translations = {
       title: 'WHY UNIT PRO',
       items: [
         {
-          title: 'Daily Access',
-          description: 'Train on your schedule with secure anytime entry.',
+          title: 'Free Weights Zone',
+          description: 'Build real strength with quality free weights and open space.',
         },
         {
-          title: 'Expert Coaches',
-          description: 'Technique-first guidance and relentless accountability.',
+          title: 'Pin Loaded Equipment',
+          description: 'Train safely and effectively with premium resistance machines.',
         },
         {
-          title: 'Premium Equipment',
-          description: 'Top-tier machines, free weights, and performance tools.',
+          title: 'Sled / Sprint Track',
+          description: 'Develop power and speed with dedicated athletic lanes.',
         },
         {
-          title: 'Community',
-          description:
-            'A strong community with a nutrition bar for gym products and a back garden made for post-workout connections.',
+          title: 'Conditioning & Cardio Zone',
+          description: 'Boost endurance with modern conditioning and cardio equipment.',
         },
       ],
     },
@@ -211,7 +210,7 @@ export const translations = {
       hours: 'Hours',
       hoursValue: 'Monday to Saturday de 9h a 20h · Sunday de 9h a 16h',
       location: 'Location',
-      locationValue: 'Deux Plateau',
+      locationValue: 'Cocody',
     },
     a11y: {
       scrollTop: 'Scroll to top',
@@ -268,9 +267,9 @@ export const translations = {
     },
     about: {
       label: 'Qui sommes-nous',
-      title: 'UNE SALLE. UNE ÉNERGIE.',
-      p1: 'Chez UNIT PRO, on vient pour progresser—sans bruit, sans excuses. Force, cardio, mobilité : l’essentiel, bien fait.',
-      p2: 'Débutant ou confirmé, tu suis un plan clair avec un coaching présent. Tu avances, séance après séance.',
+      title: 'PAS JUSTE UNE SALLE. UN MOUVEMENT.',
+      p1: 'UNIT PRO propose un environnement fitness unique a la communaute locale, avec des equipements connectes haut de gamme, une offre de cours exceptionnelle, des coachs motivants et un acces libre a la salle.',
+      p2: 'La salle est situee a Cocody. Rejoins-nous pour commencer ton parcours fitness avec un entrainement axe sur les resultats, des coachs professionnels et bienveillants, une approche technique d abord, et un suivi quotidien des clients.',
       learnMore: 'En savoir plus',
       imageAlt: 'Espace d’entraînement',
     },
@@ -279,21 +278,20 @@ export const translations = {
       title: 'POURQUOI UNIT PRO',
       items: [
         {
-          title: 'Accès quotidien',
-          description: 'Entraîne-toi quand tu veux avec un accès sécurisé.',
+          title: 'Zone poids libres',
+          description: 'Developpe ta force avec des poids libres de qualite.',
         },
         {
-          title: 'Coachs experts',
-          description: 'Technique d’abord, et une exigence constante.',
+          title: 'Machines guidees',
+          description: 'Travaille efficacement avec des machines premium et securisees.',
         },
         {
-          title: 'Équipement premium',
-          description: 'Machines haut de gamme, haltères et outils de performance.',
+          title: 'Piste sled / sprint',
+          description: 'Ameliore ta puissance et ta vitesse sur une piste dediee.',
         },
         {
-          title: 'Communauté',
-          description:
-            'Une vraie communauté avec un bar nutrition qui vend des produits fitness et un jardin à l’arrière pour créer des connexions.',
+          title: 'Zone cardio & conditioning',
+          description: 'Augmente ton endurance avec des equipements cardio modernes.',
         },
       ],
     },
@@ -454,7 +452,7 @@ export const translations = {
       hours: 'Horaires',
       hoursValue: 'Lundi a samedi de 9h a 20h · Dimanche de 9h a 16h',
       location: 'Localisation',
-      locationValue: 'Deux Plateau',
+      locationValue: 'Cocody',
     },
     a11y: {
       scrollTop: 'Retour en haut',

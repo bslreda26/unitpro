@@ -40,13 +40,13 @@ function Stat({ valueTo, suffix = '', label, divider }) {
   return (
     <div
       ref={ref}
-      className="flex flex-col items-center justify-center border border-primary/20 bg-[#120000]/40 px-4 py-5 text-center backdrop-blur-sm md:py-6"
+      className="flex flex-col items-center justify-center border border-primary/20 bg-[#120000]/40 px-2 py-4 text-center backdrop-blur-sm sm:px-4 sm:py-5 md:py-6"
     >
-      <div className="font-display text-5xl leading-none tracking-wide text-white md:text-6xl">
+      <div className="font-display text-4xl leading-none tracking-wide text-white sm:text-5xl md:text-6xl">
         {value}
         <span className="text-primary">{suffix}</span>
       </div>
-      <div className="mt-2 font-body text-[11px] font-semibold uppercase tracking-widest text-white/80">
+      <div className="mt-1.5 font-body text-[9px] font-semibold uppercase leading-snug tracking-wide text-white/80 sm:mt-2 sm:text-[11px] sm:tracking-widest">
         {label}
       </div>
     </div>

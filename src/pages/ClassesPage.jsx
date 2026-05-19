@@ -3,9 +3,10 @@ import { NavLink } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import FullCalendar from '@fullcalendar/react'
+import frLocale from '@fullcalendar/core/locales/fr'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
-import { ArrowRight, X } from 'lucide-react'
+import { ArrowRight, ChevronRight, X } from 'lucide-react'
 import { useI18n } from '../i18n/I18nProvider.jsx'
 import { WhatsAppLeadModal } from '../components/WhatsAppLeadModal.jsx'
 
@@ -36,70 +37,388 @@ function useSvgPlaceholderDataUrl() {
   }, [])
 }
 
-const TAB_KEYS = ['All', 'Strength', 'Cardio', 'HIIT', 'Yoga', 'Boxing']
+const TAB_KEYS = ['All', 'Strength', 'Cardio', 'HIIT', 'Conditioning', 'Recovery']
 const CLASS_IMG_FALLBACK =
   'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1600&q=80'
 
+/** Studio timetable + blurbs from membership / schedule brief (Bassel.pdf). */
+const CLASS_INFO = {
+  'Burn45': {
+    category: 'Cardio',
+    level: 'All levels',
+    trainer: 'UNIT PRO Coach',
+    details:
+      '45-minute fat-burning workout: circuits, cardio intervals, full body. Great for beginners and weight loss.',
+  },
+  Strong: {
+    category: 'Strength',
+    level: 'All levels',
+    trainer: 'UNIT PRO Coach',
+    details: 'Strength & muscle building class',
+  },
+  Sculpt: {
+    category: 'Strength',
+    level: 'All levels',
+    trainer: 'UNIT PRO Coach',
+    details: 'Full body strength',
+  },
+  'HIIT Rush': {
+    category: 'HIIT',
+    level: 'Intermediate',
+    trainer: 'UNIT PRO Coach',
+    details: 'High-intensity intervals—fast-paced calorie burn with sharp work/rest blocks.',
+  },
+  'Booty & Legs': {
+    category: 'Strength',
+    level: 'All levels',
+    trainer: 'UNIT PRO Coach',
+    details: 'Lower body for Women',
+  },
+  'Express Burn': {
+    category: 'Cardio',
+    level: 'All levels',
+    trainer: 'UNIT PRO Coach',
+    details: 'Express format to spike metabolism mid-day—efficient burn in a tight window.',
+  },
+  'Core & Cardio': {
+    category: 'Cardio',
+    level: 'All levels',
+    trainer: 'UNIT PRO Coach',
+    details: 'Midday core work plus cardio blocks to reset posture and energy.',
+  },
+  Sweat60: {
+    category: 'Conditioning',
+    level: 'Intermediate',
+    trainer: 'UNIT PRO Coach',
+    details: 'Hybrid class',
+  },
+  Bootcamp: {
+    category: 'HIIT',
+    level: 'All levels',
+    trainer: 'UNIT PRO Coach',
+    details: 'Strength, endurance, functional',
+  },
+  'Athletic Conditioning': {
+    category: 'Conditioning',
+    level: 'Advanced',
+    trainer: 'UNIT PRO Coach',
+    details: 'Sports style training',
+  },
+  'Stretch & Recovery': {
+    category: 'Recovery',
+    level: 'All levels',
+    trainer: 'UNIT PRO Coach',
+    details: 'Mobility and recovery to improve flexibility and reduce injury risk.',
+  },
+  'Small Group Coaching': {
+    category: 'Strength',
+    level: 'All levels',
+    trainer: 'UNIT PRO Coach',
+    details: 'Premium coaching for 4–8 people max: customized guidance on the studio floor.',
+  },
+}
+
+/** [dayOffsetFromMonday, hour, minute, className] — powers calendar + mobile list */
+const SWEAT60_SLOTS = [
+  [0, 18, 30, 'Sweat60'],
+  [2, 18, 30, 'Sweat60'],
+  [4, 18, 30, 'Sweat60'],
+]
+
+const WEEKLY_SLOTS = [
+  [0, 6, 0, 'Burn45'],
+  [1, 6, 0, 'Strong'],
+  [2, 6, 0, 'Burn45'],
+  [3, 6, 0, 'Strong'],
+  [4, 6, 0, 'Burn45'],
+  [5, 6, 0, 'Booty & Legs'],
+  [0, 7, 0, 'Sculpt'],
+  [1, 7, 0, 'HIIT Rush'],
+  [2, 7, 0, 'Sculpt'],
+  [3, 7, 0, 'HIIT Rush'],
+  [4, 7, 0, 'Sculpt'],
+  [5, 7, 0, 'Bootcamp'],
+  [0, 12, 30, 'Express Burn'],
+  [1, 12, 30, 'Core & Cardio'],
+  [2, 12, 30, 'Express Burn'],
+  [3, 12, 30, 'Core & Cardio'],
+  [4, 12, 30, 'Express Burn'],
+  [0, 17, 30, 'Strong'],
+  [1, 17, 30, 'Booty & Legs'],
+  [2, 17, 30, 'Strong'],
+  [3, 17, 30, 'Booty & Legs'],
+  [4, 17, 30, 'Strong'],
+  [5, 17, 30, 'Athletic Conditioning'],
+  ...SWEAT60_SLOTS,
+  [1, 18, 30, 'Burn45'],
+  [3, 18, 30, 'Burn45'],
+  [5, 18, 30, 'Stretch & Recovery'],
+  [0, 19, 30, 'Small Group Coaching'],
+  [1, 19, 30, 'Small Group Coaching'],
+  [2, 19, 30, 'Small Group Coaching'],
+  [3, 19, 30, 'Small Group Coaching'],
+  [4, 19, 30, 'Small Group Coaching'],
+]
+
+function durationMinutes(title) {
+  if (title === 'Burn45') return 45
+  if (title === 'Express Burn') return 45
+  if (title === 'Sweat60') return 60
+  return 60
+}
+
+/** Visual group for FullCalendar event styling (left accent + background). */
+function categoryEventClass(category) {
+  const c = (category || '').toLowerCase()
+  if (c === 'cardio') return 'unit-fc-event--cardio'
+  if (c === 'strength') return 'unit-fc-event--strength'
+  if (c === 'hiit') return 'unit-fc-event--hiit'
+  if (c === 'conditioning') return 'unit-fc-event--conditioning'
+  if (c === 'recovery') return 'unit-fc-event--recovery'
+  return 'unit-fc-event--default'
+}
+
+function formatEventTimeRange(start, end, locale) {
+  if (!start || !end) return ''
+  const opts = { hour: 'numeric', minute: '2-digit' }
+  return `${start.toLocaleTimeString(locale, opts)} – ${end.toLocaleTimeString(locale, opts)}`
+}
+
+function categoryAccentClass(category) {
+  const c = (category || '').toLowerCase()
+  if (c === 'cardio') return 'bg-primary'
+  if (c === 'strength') return 'bg-[#6b9dff]'
+  if (c === 'hiit') return 'bg-[#ffb347]'
+  if (c === 'conditioning') return 'bg-[#4fd1c5]'
+  if (c === 'recovery') return 'bg-[#86efac]'
+  return 'bg-white/35'
+}
+
+function dayOffsetFromWeekMonday(anchorMonday, eventStart) {
+  const a = new Date(anchorMonday)
+  a.setHours(0, 0, 0, 0)
+  const d = new Date(eventStart)
+  d.setHours(0, 0, 0, 0)
+  return Math.round((d.getTime() - a.getTime()) / 86400000)
+}
+
+function MobileScheduleList({ events, anchorMonday, lang, onSelect }) {
+  const locale = lang === 'fr' ? 'fr-FR' : 'en-US'
+
+  const byDay = useMemo(() => {
+    const buckets = Array.from({ length: 6 }, () => [])
+    for (const ev of events) {
+      const idx = dayOffsetFromWeekMonday(anchorMonday, ev.start)
+      if (idx >= 0 && idx < 6) buckets[idx].push(ev)
+    }
+    for (const b of buckets) {
+      b.sort((x, y) => x.start.getTime() - y.start.getTime())
+    }
+    return buckets
+  }, [events, anchorMonday])
+
+  return (
+    <div className="space-y-5">
+      {byDay.map((dayEvents, d) => {
+        if (dayEvents.length === 0) return null
+        const dayDate = new Date(anchorMonday)
+        dayDate.setDate(anchorMonday.getDate() + d)
+        const dayTitle = dayDate.toLocaleDateString(locale, {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'short',
+        })
+
+        return (
+          <section
+            key={d}
+            className="overflow-hidden rounded-lg border border-white/[0.08] bg-[#0a0a0a]"
+          >
+            <div className="border-b border-white/10 bg-white/[0.02] px-4 py-2.5 sm:px-5 sm:py-3">
+              <h3 className="font-display text-lg capitalize tracking-wide text-white sm:text-xl">
+                {dayTitle}
+              </h3>
+            </div>
+            <ul className="divide-y divide-white/[0.06]">
+              {dayEvents.map((ev) => {
+                const cat = ev.extendedProps?.category || ''
+                const accent = categoryAccentClass(cat)
+                const range = formatEventTimeRange(ev.start, ev.end, locale)
+                return (
+                  <li key={ev.id}>
+                    <button
+                      type="button"
+                      onClick={() => onSelect(ev)}
+                      className="flex w-full items-stretch gap-0 text-left transition-colors hover:bg-white/[0.03] active:bg-white/[0.06]"
+                    >
+                      <div className={`w-1 shrink-0 self-stretch ${accent}`} aria-hidden />
+                      <div className="flex min-h-[3.25rem] flex-1 items-center gap-3 px-3 py-3 sm:gap-4 sm:px-4 sm:py-3.5">
+                        <div className="w-[5.25rem] shrink-0 whitespace-normal break-words font-body text-[11px] font-semibold leading-snug tracking-wide text-white/85 tabular-nums sm:w-24 sm:text-xs">
+                          {range}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="font-display text-base leading-tight tracking-wide text-white sm:text-lg">
+                            {ev.title}
+                          </div>
+                          <div className="mt-0.5 font-body text-[10px] font-semibold uppercase tracking-wider text-white/45 sm:text-[11px]">
+                            {cat}
+                          </div>
+                        </div>
+                        <ChevronRight
+                          className="h-4 w-4 shrink-0 self-center text-white/30"
+                          aria-hidden
+                        />
+                      </div>
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+          </section>
+        )
+      })}
+    </div>
+  )
+}
+
+function ScheduleEventContent({ eventInfo, lang }) {
+  const ev = eventInfo.event
+  const locale = lang === 'fr' ? 'fr-FR' : 'en-US'
+  const range = formatEventTimeRange(ev.start, ev.end, locale)
+  return (
+    <div className="unit-fc-event-inner unit-fc-event-inner--compact">
+      <div className="unit-fc-event-title">{ev.title}</div>
+      <div className="unit-fc-event-time">{range}</div>
+    </div>
+  )
+}
+
 const CLASSES = [
   {
-    id: 'iron-circuit',
-    category: 'Strength',
-    name: 'Iron Circuit',
+    id: 'burn45',
+    category: 'Cardio',
+    name: 'Burn45',
     duration: '45 MIN',
-    level: 'Intermediate',
-    trainer: 'Coach Nova',
-    time: 'Mon / Wed / Fri — 6:00 PM',
-    img: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1600&q=80',
-  },
-  {
-    id: 'pulse-protocol',
-    category: 'HIIT',
-    name: 'Pulse Protocol',
-    duration: '30 MIN',
-    level: 'Advanced',
-    trainer: 'Coach Vega',
-    time: 'Mon / Thu — 7:00 AM',
+    level: 'All levels',
+    trainer: 'UNIT PRO Coach',
+    time: 'Mon–Fri — 6:00 AM & evening blocks',
     img: 'https://images.unsplash.com/photo-1517963879433-6ad2b056d712?auto=format&fit=crop&w=1600&q=80',
   },
   {
-    id: 'engine-room',
+    id: 'strong',
+    category: 'Strength',
+    name: 'Strong',
+    tagline: 'Strength & muscle building class',
+    duration: '60 MIN',
+    level: 'All levels',
+    trainer: 'UNIT PRO Coach',
+    time: 'Tue / Thu / Sat — 6:00 AM · Mon–Fri — 5:30 PM',
+    img: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1600&q=80',
+  },
+  {
+    id: 'sculpt',
+    category: 'Strength',
+    name: 'Sculpt',
+    tagline: 'Full body strength',
+    duration: '60 MIN',
+    level: 'All levels',
+    trainer: 'UNIT PRO Coach',
+    time: 'Mon / Wed / Fri — 7:00 AM',
+    img: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=1600&q=80',
+  },
+  {
+    id: 'hiit-rush',
+    category: 'HIIT',
+    name: 'HIIT Rush',
+    duration: '60 MIN',
+    level: 'Intermediate',
+    trainer: 'UNIT PRO Coach',
+    time: 'Tue / Thu — 7:00 AM',
+    img: 'https://images.unsplash.com/photo-1601422407692-ec4eeec1d9b3?auto=format&fit=crop&w=1600&q=80',
+  },
+  {
+    id: 'booty-legs',
+    category: 'Strength',
+    name: 'Booty & Legs',
+    tagline: 'Lower body for Women',
+    duration: '60 MIN',
+    level: 'All levels',
+    trainer: 'UNIT PRO Coach',
+    time: 'Tue / Thu — 5:30 PM · Sat — 6:00 AM',
+    img: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1600&q=80',
+  },
+  {
+    id: 'express-burn',
     category: 'Cardio',
-    name: 'Engine Room',
-    duration: '50 MIN',
-    level: 'All',
-    trainer: 'Coach Atlas',
-    time: 'Tue / Sat — 9:00 AM',
+    name: 'Express Burn',
+    duration: '45 MIN',
+    level: 'All levels',
+    trainer: 'UNIT PRO Coach',
+    time: 'Mon / Wed / Fri — 12:30 PM',
     img: 'https://images.unsplash.com/photo-1526401485004-2aa7bca48f03?auto=format&fit=crop&w=1600&q=80',
   },
   {
-    id: 'flex-flow',
-    category: 'Yoga',
-    name: 'Flex & Flow',
-    duration: '40 MIN',
-    level: 'Beginner',
-    trainer: 'Coach Luna',
-    time: 'Tue / Thu — 9:00 AM',
+    id: 'core-cardio',
+    category: 'Cardio',
+    name: 'Core & Cardio',
+    duration: '60 MIN',
+    level: 'All levels',
+    trainer: 'UNIT PRO Coach',
+    time: 'Tue / Thu — 12:30 PM',
+    img: 'https://images.unsplash.com/photo-1434596922112-19c563067271?auto=format&fit=crop&w=1600&q=80',
+  },
+  {
+    id: 'sweat60',
+    category: 'Conditioning',
+    name: 'Sweat60',
+    tagline: 'Hybrid class',
+    duration: '60 MIN',
+    level: 'Intermediate',
+    trainer: 'UNIT PRO Coach',
+    time: 'Mon / Wed / Fri — 6:30 PM',
+    img: 'https://images.unsplash.com/photo-1517832207067-4db24a2ae47c?auto=format&fit=crop&w=1600&q=80',
+  },
+  {
+    id: 'bootcamp',
+    category: 'HIIT',
+    name: 'Bootcamp',
+    tagline: 'Strength, endurance, functional',
+    duration: '60 MIN',
+    level: 'All levels',
+    trainer: 'UNIT PRO Coach',
+    time: 'Sat — 7:00 AM',
+    img: 'https://images.unsplash.com/photo-1601422407692-ec4eeec1d9b3?auto=format&fit=crop&w=1600&q=80',
+  },
+  {
+    id: 'athletic-conditioning',
+    category: 'Conditioning',
+    name: 'Athletic Conditioning',
+    tagline: 'Sports style training',
+    duration: '60 MIN',
+    level: 'Advanced',
+    trainer: 'UNIT PRO Coach',
+    time: 'Sat — 5:30 PM',
+    img: 'https://images.unsplash.com/photo-1599058945522-28ba584b6715?auto=format&fit=crop&w=1600&q=80',
+  },
+  {
+    id: 'stretch-recovery',
+    category: 'Recovery',
+    name: 'Stretch & Recovery',
+    duration: '60 MIN',
+    level: 'All levels',
+    trainer: 'UNIT PRO Coach',
+    time: 'Sat — 6:30 PM',
     img: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1600&q=80',
   },
   {
-    id: 'striker-series',
-    category: 'Boxing',
-    name: 'Striker Series',
-    duration: '55 MIN',
-    level: 'Intermediate',
-    trainer: 'Coach Knox',
-    time: 'Wed — 6:00 PM',
-    img: 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?auto=format&fit=crop&w=1600&q=80',
-  },
-  {
-    id: 'power-burn',
+    id: 'small-group',
     category: 'Strength',
-    name: 'Power Burn',
+    name: 'Small Group Coaching',
     duration: '60 MIN',
-    level: 'Advanced',
-    trainer: 'Coach Rhea',
-    time: 'Sat — 10:00 AM',
-    img: 'https://images.unsplash.com/photo-1517832207067-4db24a2ae47c?auto=format&fit=crop&w=1600&q=80',
+    level: 'All levels',
+    trainer: 'UNIT PRO Coach',
+    time: 'Mon–Fri — 7:30 PM',
+    img: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1600&q=80',
   },
 ]
 
@@ -107,6 +426,7 @@ function levelTone(level) {
   const v = level.toLowerCase()
   if (v.includes('beginner')) return 'border-emerald-400/40 text-emerald-200'
   if (v.includes('advanced')) return 'border-primary/50 text-primary'
+  if (v.includes('intermediate')) return 'border-amber-400/35 text-amber-100'
   return 'border-white/35 text-white/90'
 }
 
@@ -240,6 +560,7 @@ export function ClassesPage() {
   const weekEnd = useMemo(() => {
     const d = new Date(anchorMonday)
     d.setDate(anchorMonday.getDate() + 7)
+    d.setHours(0, 0, 0, 0)
     return d
   }, [anchorMonday])
 
@@ -251,68 +572,30 @@ export function ClassesPage() {
       return d
     }
 
-    return [
-      {
-        id: 'ev-hiit-mon',
-        title: 'Pulse Protocol',
-        start: at(0, 7, 0),
-        end: at(0, 7, 45),
+    return WEEKLY_SLOTS.map(([dOffset, hour, minute, title], idx) => {
+      const start = at(dOffset, hour, minute)
+      const end = new Date(start)
+      end.setMinutes(end.getMinutes() + durationMinutes(title))
+      const info = CLASS_INFO[title] ?? {
+        category: 'Strength',
+        level: 'All levels',
+        trainer: 'UNIT PRO Coach',
+        details: 'Studio class — tap Book for WhatsApp.',
+      }
+      return {
+        id: `ev-${dOffset}-${hour}-${minute}-${title}-${idx}`,
+        title,
+        start,
+        end,
+        classNames: ['unit-fc-event', categoryEventClass(info.category)],
         extendedProps: {
-          category: 'HIIT',
-          trainer: 'Coach Vega',
-          level: 'Advanced',
-          details: 'Intervals designed to spike output and build resilience.',
+          category: info.category,
+          trainer: info.trainer,
+          level: info.level,
+          details: info.details,
         },
-      },
-      {
-        id: 'ev-yoga-tue',
-        title: 'Flex & Flow',
-        start: at(1, 9, 0),
-        end: at(1, 9, 50),
-        extendedProps: {
-          category: 'Yoga',
-          trainer: 'Coach Luna',
-          level: 'Beginner',
-          details: 'Mobility, breathwork, and recovery-focused movement.',
-        },
-      },
-      {
-        id: 'ev-box-wed',
-        title: 'Striker Series',
-        start: at(2, 18, 0),
-        end: at(2, 19, 0),
-        extendedProps: {
-          category: 'Boxing',
-          trainer: 'Coach Knox',
-          level: 'Intermediate',
-          details: 'Technique + conditioning with pad work and combos.',
-        },
-      },
-      {
-        id: 'ev-str-thu',
-        title: 'Iron Circuit',
-        start: at(3, 17, 0),
-        end: at(3, 17, 55),
-        extendedProps: {
-          category: 'Strength',
-          trainer: 'Coach Nova',
-          level: 'Intermediate',
-          details: 'Compound lifts + density work. Build real strength.',
-        },
-      },
-      {
-        id: 'ev-card-sat',
-        title: 'Engine Room',
-        start: at(5, 9, 0),
-        end: at(5, 9, 55),
-        extendedProps: {
-          category: 'Cardio',
-          trainer: 'Coach Atlas',
-          level: 'All',
-          details: 'Sustainable intensity: row, run, bike, and sled.',
-        },
-      },
-    ]
+      }
+    })
   }, [anchorMonday])
 
   const { ref: gridRef, inView: gridInView } = useInView({
@@ -363,81 +646,135 @@ export function ClassesPage() {
             }}
           />
         </div>
-        <div className="relative mx-auto flex h-full w-full max-w-6xl flex-col justify-end px-6 pb-8 pt-20">
-          <div className="font-body text-[11px] font-semibold uppercase tracking-widest text-white/70">
+        <div className="relative mx-auto flex h-full w-full max-w-6xl flex-col justify-end px-4 pb-6 pt-20 sm:px-6 sm:pb-8">
+          <div className="font-body text-[10px] font-semibold uppercase tracking-widest text-white/70 sm:text-[11px]">
             <NavLink to="/" className="hover:text-primary">
               {t('classesPage.breadcrumbHome')}
             </NavLink>{' '}
             <span className="px-2 text-white/40">›</span>
             <span className="text-white/90">{t('classesPage.breadcrumbClasses')}</span>
           </div>
-          <h1 className="mt-3 font-display text-5xl tracking-wide md:text-6xl">
+          <h1 className="mt-3 text-balance font-display text-[clamp(2rem,9vw,3.75rem)] tracking-wide md:text-6xl">
             {t('classesPage.heroTitle')}
           </h1>
         </div>
       </section>
 
       {/* WEEKLY SCHEDULE */}
-      <section ref={calRef} className="bg-dark py-20">
+      <section ref={calRef} className="bg-dark py-12 sm:py-16 md:py-20">
         <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={calInView ? { opacity: 1, y: 0 } : {}}
             transition={{ type: 'spring', stiffness: 260, damping: 26 }}
-            className="flex items-end justify-between gap-6"
+            className="max-w-3xl"
           >
-            <div>
-              <div className="font-body text-[12px] font-semibold uppercase tracking-[0.26em] text-primary">
-                {t('classesPage.scheduleLabel')}
-              </div>
-              <h2 className="mt-3 font-display text-5xl tracking-wide text-white md:text-6xl">
-                {t('classesPage.scheduleTitle')}
-              </h2>
+            <div className="font-body text-[12px] font-semibold uppercase tracking-[0.26em] text-primary">
+              {t('classesPage.scheduleLabel')}
             </div>
-            <div className="hidden items-center gap-2 text-white/70 md:flex">
-              <span className="font-body text-xs uppercase tracking-widest">
-                {t('classesPage.hintTapEvent')}
-              </span>
-              <ArrowRight className="h-4 w-4 text-primary" />
-            </div>
+            <h2 className="mt-3 font-display text-[clamp(2rem,8vw,3.75rem)] leading-tight tracking-wide text-white md:text-6xl">
+              {t('classesPage.scheduleTitle')}
+            </h2>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            animate={calInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ type: 'spring', stiffness: 260, damping: 26, delay: 0.06 }}
-            className="mt-10 border border-border bg-surface p-3 md:p-4"
-          >
-            <FullCalendar
-              plugins={[timeGridPlugin, interactionPlugin]}
-              initialView="timeGridWeek"
-              initialDate={anchorMonday}
-              validRange={{ start: anchorMonday, end: weekEnd }}
-              height="auto"
-              nowIndicator
-              allDaySlot={false}
-              slotMinTime="06:00:00"
-              slotMaxTime="20:00:00"
-              slotDuration="01:00:00"
-              slotLabelInterval="01:00"
-              expandRows
-              headerToolbar={false}
-              navLinks={false}
-              editable={false}
-              eventStartEditable={false}
-              eventDurationEditable={false}
-              displayEventTime={false}
-              dayHeaderContent={(arg) => {
-                const locale = lang === 'fr' ? 'fr-FR' : 'en-US'
-                return arg.date.toLocaleDateString(locale, { weekday: 'short' })
-              }}
-              events={events}
-              eventClick={(arg) => {
-                arg.jsEvent.preventDefault()
-                setModalEvent(arg.event)
-              }}
-            />
-          </motion.div>
+          <div className="mt-8 md:mt-10">
+            <motion.div
+              className="md:hidden"
+              initial={{ opacity: 0, y: 12 }}
+              animate={calInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ type: 'spring', stiffness: 260, damping: 26 }}
+            >
+              <MobileScheduleList
+                events={events}
+                anchorMonday={anchorMonday}
+                lang={lang}
+                onSelect={setModalEvent}
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              animate={calInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ type: 'spring', stiffness: 260, damping: 26, delay: 0.06 }}
+              className="hidden md:block"
+            >
+              <div className="mb-3 flex items-center justify-end gap-2 text-white/55">
+                <span className="font-body text-[11px] uppercase tracking-widest">
+                  {t('classesPage.hintTapEvent')}
+                </span>
+                <ArrowRight className="h-3.5 w-3.5 text-primary" />
+              </div>
+              <div className="overflow-hidden rounded-lg border border-white/[0.08] bg-[#080808]">
+                <div className="unit-weekly-calendar px-2 pb-2 pt-3 md:px-3 md:pb-3 md:pt-4">
+                  <FullCalendar
+                    key={anchorMonday.toISOString()}
+                    plugins={[timeGridPlugin, interactionPlugin]}
+                    initialView="timeGridWeek"
+                    initialDate={anchorMonday}
+                    firstDay={1}
+                    hiddenDays={[0]}
+                    validRange={{ start: anchorMonday, end: weekEnd }}
+                    height="auto"
+                    locales={[frLocale]}
+                    locale={lang === 'fr' ? 'fr' : 'en'}
+                    nowIndicator
+                    allDaySlot={false}
+                    slotMinTime="06:00:00"
+                    slotMaxTime="21:00:00"
+                    slotDuration="00:30:00"
+                    slotLabelInterval="01:00"
+                    expandRows
+                    headerToolbar={false}
+                    navLinks={false}
+                    editable={false}
+                    eventStartEditable={false}
+                    eventDurationEditable={false}
+                    displayEventTime={false}
+                    eventMinHeight={26}
+                    dayHeaderContent={(arg) => {
+                      const locale = lang === 'fr' ? 'fr-FR' : 'en-US'
+                      const dow = arg.date.toLocaleDateString(locale, { weekday: 'short' })
+                      const dom = arg.date.getDate()
+                      const isSat = arg.date.getDay() === 6
+                      return (
+                        <div
+                          className={[
+                            'unit-fc-day-head',
+                            isSat ? 'unit-fc-day-head--sat' : '',
+                          ].join(' ')}
+                        >
+                          <span className="unit-fc-day-head__dow">{dow}</span>
+                          <span className="unit-fc-day-head__dom">{dom}</span>
+                        </div>
+                      )
+                    }}
+                    slotLabelContent={(arg) => {
+                      const d = arg.date
+                      const locale = lang === 'fr' ? 'fr-FR' : 'en-US'
+                      return (
+                        <span className="unit-fc-slot-label">
+                          {d.toLocaleTimeString(locale, {
+                            hour: 'numeric',
+                            minute: '2-digit',
+                          })}
+                        </span>
+                      )
+                    }}
+                    slotLaneClassNames={(arg) => {
+                      const m = arg.date.getMinutes()
+                      return m === 0 ? ['unit-fc-slot-lane-hour'] : ['unit-fc-slot-lane-half']
+                    }}
+                    events={events}
+                    eventContent={(arg) => <ScheduleEventContent eventInfo={arg} lang={lang} />}
+                    eventClick={(arg) => {
+                      arg.jsEvent.preventDefault()
+                      setModalEvent(arg.event)
+                    }}
+                  />
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </div>
 
         <EventModal
@@ -498,7 +835,7 @@ export function ClassesPage() {
             <div ref={gridRef}>
               <motion.div
                 layout
-                className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3"
+                className="grid grid-cols-1 gap-3 min-[400px]:grid-cols-2 sm:gap-4 md:gap-6 lg:grid-cols-3"
               >
                 <AnimatePresence mode="popLayout">
                   {filtered.map((c, idx) => (
@@ -539,6 +876,11 @@ export function ClassesPage() {
                         <div className="font-display text-lg leading-tight tracking-wide text-white sm:text-2xl md:text-3xl">
                           {c.name}
                         </div>
+                        {c.tagline ? (
+                          <p className="mt-1 font-body text-[11px] leading-snug text-white/65 sm:text-sm">
+                            {c.tagline}
+                          </p>
+                        ) : null}
 
                         <div className="mt-2 flex flex-wrap gap-1 sm:mt-3 sm:gap-2">
                           <span className="border border-white/35 bg-dark/20 px-1.5 py-0.5 font-body text-[8px] font-semibold uppercase tracking-wide text-white/90 sm:px-2 sm:py-1 sm:text-[10px] sm:tracking-widest">

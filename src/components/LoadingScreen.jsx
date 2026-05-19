@@ -28,8 +28,9 @@ export function LoadingScreen({ show, onDone }) {
                 hidden: {},
                 show: { transition: { staggerChildren: 0.06 } },
               }}
-              className="font-display text-[clamp(2.75rem,14vw,4.5rem)] tracking-[0.12em] sm:text-7xl md:text-8xl"
+              className="flex flex-col items-center font-display text-[clamp(2.75rem,14vw,4.5rem)] tracking-[0.12em] sm:block sm:text-7xl md:text-8xl"
             >
+              <span className="inline">
               {unitLetters.map((ch, i) => (
                 <motion.span
                   key={`${ch}-${i}`}
@@ -63,6 +64,7 @@ export function LoadingScreen({ show, onDone }) {
                   {ch}
                 </motion.span>
               ))}
+              </span>
               <motion.span
                 variants={{
                   hidden: { opacity: 0, y: 18 },
@@ -72,9 +74,9 @@ export function LoadingScreen({ show, onDone }) {
                     transition: { type: 'spring', stiffness: 520, damping: 34 },
                   },
                 }}
-                className="ml-3 inline-block align-super font-body text-[0.2em] font-semibold uppercase tracking-[0.35em] text-white/80"
+                className="mt-3 block font-body text-[9px] font-semibold uppercase tracking-[0.28em] text-white/80 sm:mt-0 sm:ml-3 sm:inline-block sm:align-super sm:text-[0.2em] sm:tracking-[0.35em]"
               >
-                TRAINING CENTER
+                TRANSFORMATION CENTER
               </motion.span>
             </motion.div>
 

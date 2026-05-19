@@ -68,7 +68,7 @@ function MobileQuickLinks() {
           to={link.to}
           className={({ isActive }) =>
             [
-              'inline-flex min-h-[36px] items-center rounded-sm border px-2.5 py-1 font-body text-[10px] font-semibold uppercase tracking-wide transition-colors',
+              'inline-flex min-h-[34px] items-center rounded-sm border px-2 py-1 font-body text-[9px] font-semibold uppercase tracking-wide transition-colors min-[380px]:px-2.5 min-[380px]:text-[10px]',
               isActive
                 ? 'border-primary/50 bg-primary/15 text-primary'
                 : 'border-white/20 bg-white/[0.03] text-white/85 hover:text-white',
@@ -94,30 +94,30 @@ export function Navbar() {
         scrolled ? 'bg-dark/95 backdrop-blur supports-[backdrop-filter]:bg-dark/95' : 'bg-transparent',
       ].join(' ')}
     >
-      <div className="mx-auto flex h-20 w-full max-w-6xl items-center px-4 sm:px-6">
+      <div className="mx-auto flex h-16 w-full max-w-6xl items-center px-4 sm:h-20 sm:px-6">
         <div className="flex min-w-0 items-center">
           <NavLink
             to="/"
-            className="group inline-flex min-h-[44px] min-w-[44px] items-center gap-2 py-1"
+            className="group inline-flex min-h-[44px] min-w-0 items-center gap-1.5 py-1 sm:gap-2"
           >
-            <span className="inline-block h-2 w-2 bg-primary" aria-hidden="true" />
-            <span className="flex flex-col leading-none">
-              <span className="font-display text-[26px] tracking-wide sm:text-[28px]">
+            <span className="inline-block h-2 w-2 shrink-0 bg-primary" aria-hidden="true" />
+            <span className="flex min-w-0 flex-col leading-none">
+              <span className="font-display text-[22px] tracking-wide sm:text-[28px]">
                 <span className="text-white">UNIT </span>
                 <span className="text-primary">PRO</span>
               </span>
-              <span className="mt-0.5 font-body text-[8px] font-semibold uppercase tracking-[0.14em] text-white/70 sm:text-[9px] sm:tracking-[0.16em]">
-                TRAINING CENTER
+              <span className="mt-0.5 hidden max-w-[9.5rem] truncate font-body text-[8px] font-semibold uppercase tracking-[0.12em] text-white/70 min-[380px]:block sm:max-w-none sm:text-[9px] sm:tracking-[0.16em]">
+                TRANSFORMATION CENTER
               </span>
             </span>
           </NavLink>
         </div>
 
-        <div className="flex flex-1 justify-center">
+        <div className="hidden flex-1 justify-center md:flex">
           <DesktopNav hovered={hovered} setHovered={setHovered} />
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <MobileQuickLinks />
 
           <NavLink

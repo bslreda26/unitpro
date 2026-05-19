@@ -96,7 +96,7 @@ export function ClassesPreview() {
                 <span>UNIT </span>
                 <span className="text-primary">PRO</span>
                 <span className="ml-1 text-[0.72em] tracking-[0.14em] text-white/75">
-                  TRAINING CENTER
+                  TRANSFORMATION CENTER
                 </span>
               </div>
             </motion.div>

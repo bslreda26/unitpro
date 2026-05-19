@@ -1,64 +1,20 @@
+/* Shared FullCalendar tokens (used on Classes page) */
 .fc {
   --fc-page-bg-color: transparent;
   --fc-neutral-bg-color: rgba(255, 255, 255, 0.03);
   --fc-border-color: #1f1f1f;
-  --fc-today-bg-color: rgba(227, 27, 35, 0.12);
+  --fc-today-bg-color: rgba(227, 27, 35, 0.1);
   --fc-event-bg-color: #e31b23;
-  --fc-event-border-color: #e31b23;
+  --fc-event-border-color: rgba(255, 255, 255, 0.12);
   --fc-event-text-color: #ffffff;
   --fc-list-event-hover-bg-color: rgba(255, 255, 255, 0.04);
   color: #ffffff;
-}
-
-.fc .fc-scrollgrid,
-.fc .fc-scrollgrid-section > td {
-  background: #111111;
 }
 
 .fc .fc-toolbar-title {
   font-family: 'Bebas Neue', system-ui, sans-serif;
   letter-spacing: 0.06em;
   font-size: 32px;
-}
-
-.fc .fc-col-header-cell-cushion,
-.fc .fc-timegrid-axis-cushion,
-.fc .fc-timegrid-slot-label-cushion {
-  color: rgba(255, 255, 255, 0.92);
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  font-size: 11px;
-  font-weight: 700;
-  font-family: 'DM Sans', system-ui, sans-serif;
-}
-
-/* Make the time labels (left axis) very readable */
-.fc .fc-timegrid-slot-label-cushion,
-.fc .fc-timegrid-axis-cushion {
-  text-transform: none;
-  letter-spacing: 0.06em;
-  font-variant-numeric: tabular-nums;
-}
-
-.fc .fc-timegrid-axis,
-.fc .fc-timegrid-slot-label {
-  background: rgba(0, 0, 0, 0.22);
-}
-
-.fc .fc-timegrid-axis-frame,
-.fc .fc-timegrid-slot-label-frame {
-  padding: 0 10px;
-}
-
-.fc .fc-timegrid-axis {
-  width: 4.25rem;
-}
-
-.fc .fc-timegrid-axis-cushion,
-.fc .fc-timegrid-slot-label-cushion {
-  display: inline-block;
-  line-height: 1.1;
-  font-size: 12px;
 }
 
 .fc .fc-button {
@@ -84,107 +40,307 @@
   color: #ffffff !important;
 }
 
-.fc .fc-timegrid-event .fc-event-main {
-  padding: 6px 8px;
-}
-
-.fc .fc-event-title,
-.fc .fc-event-time {
-  font-family: 'DM Sans', system-ui, sans-serif;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-}
-
-/* Compact calendar sizing + cleaner event layout */
-.fc .fc-timegrid-slot {
-  height: 2.15rem;
-}
-
-.fc .fc-timegrid-event {
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.fc .fc-timegrid-event .fc-event-main {
-  display: grid;
-  gap: 2px;
-  padding: 6px 8px;
-}
-
-.fc .fc-event-time {
-  font-size: 11px;
-  opacity: 0.92;
-}
-
-.fc .fc-event-title {
-  font-size: 12px;
-  line-height: 1.15;
-  white-space: normal;
-  word-break: break-word;
-}
-
-.fc .fc-toolbar.fc-header-toolbar {
-  margin-bottom: 14px;
-}
-
 .fc-theme-standard .fc-popover {
   border: 1px solid #1f1f1f;
   background: #111111;
 }
 
-/* Mobile responsiveness */
-@media (max-width: 640px) {
-  .fc {
-    max-width: 100%;
-  }
+/* ------------------------------------------------------------------ */
+/* Weekly timetable — scoped for readability + category visualization */
+/* ------------------------------------------------------------------ */
 
-  .fc .fc-toolbar.fc-header-toolbar {
+.unit-weekly-calendar .fc {
+  --fc-border-color: rgba(255, 255, 255, 0.1);
+  --fc-neutral-bg-color: rgba(255, 255, 255, 0.02);
+  --fc-page-bg-color: transparent;
+  --fc-today-bg-color: rgba(227, 27, 35, 0.07);
+  --fc-now-indicator-color: #ff5c5c;
+}
+
+.unit-weekly-calendar .fc .fc-scrollgrid,
+.unit-weekly-calendar .fc .fc-scrollgrid-section > td {
+  background: #0c0c0c;
+}
+
+.unit-weekly-calendar .fc .fc-timegrid-divider {
+  padding: 0;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.unit-weekly-calendar .fc .fc-timegrid-axis {
+  width: 3.65rem;
+}
+
+@media (min-width: 768px) {
+  .unit-weekly-calendar .fc .fc-timegrid-axis {
+    width: 4.65rem;
+  }
+}
+
+.unit-weekly-calendar .fc .fc-timegrid-axis,
+.unit-weekly-calendar .fc .fc-timegrid-slot-label {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.unit-weekly-calendar .fc .fc-timegrid-axis-frame,
+.unit-weekly-calendar .fc .fc-timegrid-slot-label-frame {
+  padding: 0 8px;
+}
+
+@media (min-width: 768px) {
+  .unit-weekly-calendar .fc .fc-timegrid-axis-frame,
+  .unit-weekly-calendar .fc .fc-timegrid-slot-label-frame {
+    padding: 0 12px;
+  }
+}
+
+/* Taller slots = easier scanning */
+.unit-weekly-calendar .fc .fc-timegrid-slot {
+  height: 2.8rem;
+}
+
+@media (min-width: 768px) {
+  .unit-weekly-calendar .fc .fc-timegrid-slot {
+    height: 3.2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .unit-weekly-calendar .fc .fc-timegrid-slot {
+    height: 3.45rem;
+  }
+}
+
+.unit-weekly-calendar .fc .fc-timegrid-slot-lane {
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.unit-weekly-calendar .fc .fc-timegrid-slot-minor {
+  border-top-style: dotted;
+  border-top-color: rgba(255, 255, 255, 0.05);
+}
+
+.unit-weekly-calendar .fc .fc-timegrid-slot-lane.unit-fc-slot-lane-hour {
+  border-top-color: rgba(255, 255, 255, 0.16) !important;
+}
+
+.unit-fc-slot-label {
+  display: block;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.03em;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+  .unit-fc-slot-label {
+    font-size: 12px;
+  }
+}
+
+/* Column headers: weekday + date */
+.unit-weekly-calendar .fc .fc-col-header-cell {
+  padding: 0;
+  vertical-align: middle;
+  border-color: rgba(255, 255, 255, 0.1);
+  background: linear-gradient(180deg, rgba(24, 24, 24, 0.98), rgba(10, 10, 10, 0.98));
+}
+
+.unit-fc-day-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 10px 4px 12px;
+  min-height: 3.35rem;
+}
+
+.unit-fc-day-head__dow {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.52);
+}
+
+.unit-fc-day-head__dom {
+  font-family: 'Bebas Neue', system-ui, sans-serif;
+  font-size: clamp(1.35rem, 2.8vw, 1.65rem);
+  line-height: 1;
+  letter-spacing: 0.06em;
+  color: #ffffff;
+}
+
+.unit-fc-day-head--sat .unit-fc-day-head__dom {
+  color: #ffc9cc;
+}
+
+.unit-weekly-calendar .fc .fc-timegrid-now-indicator-line {
+  border-color: #ff5c5c;
+  border-top-width: 2px;
+  opacity: 1;
+}
+
+.unit-weekly-calendar .fc .fc-timegrid-now-indicator-arrow {
+  border-top-color: #ff5c5c;
+}
+
+/* Events */
+.unit-weekly-calendar .fc-timegrid-event {
+  border-radius: 6px !important;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.unit-weekly-calendar .fc-timegrid-event .fc-event-main {
+  padding: 5px 7px 6px;
+}
+
+@media (min-width: 768px) {
+  .unit-weekly-calendar .fc-timegrid-event .fc-event-main {
+    padding: 7px 9px 8px;
+  }
+}
+
+.unit-weekly-calendar .fc-event.unit-fc-event {
+  border-width: 1px !important;
+  border-left-width: 3px !important;
+}
+
+.unit-fc-event-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  text-align: left;
+}
+
+.unit-fc-event-inner--compact {
+  gap: 2px;
+}
+
+.unit-fc-event-time {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: none;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.2;
+  white-space: normal;
+}
+
+@media (min-width: 768px) {
+  .unit-fc-event-time {
+    font-size: 10px;
+  }
+}
+
+.unit-fc-event-title-row {
+  min-width: 0;
+}
+
+.unit-fc-event-title {
+  font-family: 'Bebas Neue', system-ui, sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  line-height: 1.08;
+  color: #ffffff;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.unit-fc-event-inner--compact .unit-fc-event-title {
+  font-size: 12px;
+}
+
+@media (min-width: 768px) {
+  .unit-fc-event-title {
+    font-size: 15px;
+  }
+}
+
+.unit-fc-event-cat {
+  align-self: flex-start;
+  margin-top: 1px;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78);
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 1px 5px 2px;
+  border-radius: 3px;
+}
+
+@media (min-width: 768px) {
+  .unit-fc-event-cat {
+    font-size: 8px;
+  }
+}
+
+/* Category hues (left accent + fill) */
+.unit-weekly-calendar .fc-event.unit-fc-event--cardio {
+  background: linear-gradient(150deg, #d42430, #8f101a) !important;
+  border-color: rgba(255, 200, 205, 0.35) !important;
+  border-left-color: #ff9aa2 !important;
+}
+
+.unit-weekly-calendar .fc-event.unit-fc-event--strength {
+  background: linear-gradient(150deg, #2c3d63, #151d2f) !important;
+  border-color: rgba(150, 190, 255, 0.35) !important;
+  border-left-color: #7eb0ff !important;
+}
+
+.unit-weekly-calendar .fc-event.unit-fc-event--hiit {
+  background: linear-gradient(150deg, #9a4a12, #5c2c0b) !important;
+  border-color: rgba(255, 190, 120, 0.4) !important;
+  border-left-color: #ffb86b !important;
+}
+
+.unit-weekly-calendar .fc-event.unit-fc-event--conditioning {
+  background: linear-gradient(150deg, #0e5a52, #072f2b) !important;
+  border-color: rgba(120, 230, 210, 0.35) !important;
+  border-left-color: #5eead4 !important;
+}
+
+.unit-weekly-calendar .fc-event.unit-fc-event--recovery {
+  background: linear-gradient(150deg, #2d4a3a, #16261e) !important;
+  border-color: rgba(160, 230, 180, 0.35) !important;
+  border-left-color: #86efac !important;
+}
+
+.unit-weekly-calendar .fc-event.unit-fc-event--default {
+  background: linear-gradient(150deg, #3a3a3a, #1c1c1c) !important;
+  border-left-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Hatching for “now” column optional — keep today tint only */
+
+@media (max-width: 640px) {
+  .unit-weekly-calendar .fc .fc-toolbar.fc-header-toolbar {
     flex-wrap: wrap;
     gap: 10px;
   }
 
-  .fc .fc-toolbar.fc-header-toolbar .fc-toolbar-chunk {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .fc .fc-toolbar-title {
+  .unit-weekly-calendar .fc .fc-toolbar-title {
     font-size: 22px;
     line-height: 1.05;
   }
 
-  .fc .fc-button {
+  .unit-weekly-calendar .fc .fc-button {
     padding: 0.45rem 0.55rem;
     font-size: 10px;
     letter-spacing: 0.12em;
-  }
-
-  .fc .fc-col-header-cell-cushion,
-  .fc .fc-timegrid-axis-cushion,
-  .fc .fc-timegrid-slot-label-cushion {
-    font-size: 11px;
-    letter-spacing: 0.06em;
-  }
-
-  .fc .fc-timegrid-axis {
-    width: 4.25rem;
-  }
-
-  .fc .fc-timegrid-event .fc-event-main {
-    padding: 5px 6px;
-  }
-
-  .fc .fc-timegrid-slot {
-    height: 1.9rem;
-  }
-
-  .fc .fc-event-time {
-    font-size: 10px;
-  }
-
-  .fc .fc-event-title {
-    font-size: 11px;
   }
 }

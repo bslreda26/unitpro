@@ -9,16 +9,14 @@ const ABOUT_IMG_FALLBACK =
   'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1800&q=80'
 
 export function AboutSection() {
-  const { t } = useI18n()
+  const { dict, t } = useI18n()
   const { ref, inView } = useInView({ threshold: 0.25, triggerOnce: true })
   const [src, setSrc] = useState(ABOUT_IMG_PRIMARY)
-  const paragraphs = useMemo(
-    () =>
-      [t('about.p1'), t('about.p2')].filter(
-        (line) => typeof line === 'string' && line.trim() && !line.startsWith('about.'),
-      ),
-    [t],
-  )
+  const intro = t('about.intro')
+  const benefits = dict.about?.benefits ?? []
+  const closing = t('about.p2')
+  const showIntro = intro && !intro.startsWith('about.')
+  const showClosing = closing && !closing.startsWith('about.')
   const placeholder = useMemo(() => {
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
   <defs>
@@ -37,7 +35,7 @@ export function AboutSection() {
     <text x="100" y="235" font-size="34">
       <tspan>UNIT </tspan>
       <tspan fill="#e31b23">PRO</tspan>
-      <tspan dx="10" font-size="12" letter-spacing="3" fill="rgba(255,255,255,0.7)">TRAINING CENTER</tspan>
+      <tspan dx="10" font-size="12" letter-spacing="3" fill="rgba(255,255,255,0.7)">TRANSFORMATION CENTER</tspan>
     </text>
     <text x="100" y="285" font-size="18" fill="rgba(255,255,255,0.68)">Espace d’entraînement</text>
   </g>
@@ -58,7 +56,7 @@ export function AboutSection() {
             <motion.img
               src={src}
               alt={t('about.imageAlt')}
-              className="h-[380px] w-full origin-center object-cover md:h-[520px]"
+              className="h-[min(380px,55vh)] w-full origin-center object-cover sm:h-[420px] md:h-[520px]"
               initial={{ opacity: 0, scale: 1.12, rotate: -5, y: 18 }}
               animate={inView ? { opacity: 1, scale: 1.05, rotate: -2, y: 0 } : {}}
               whileHover={{ scale: 1.09, rotate: -0.8 }}
@@ -98,11 +96,18 @@ export function AboutSection() {
           </h2>
 
           <div className="mt-6 space-y-4 font-body text-base leading-relaxed text-text-muted">
-            {paragraphs.map((line, idx) => (
-              <p key={`${idx}-${line.slice(0, 24)}`} className="whitespace-pre-line">
-                {line}
-              </p>
-            ))}
+            {showIntro ? <p>{intro}</p> : null}
+            {benefits.length > 0 ? (
+              <ul className="space-y-2 pl-1">
+                {benefits.map((item) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden="true" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+            {showClosing ? <p className="font-medium text-white/90">{closing}</p> : null}
           </div>
 
           <div className="mt-7 h-px w-24 bg-primary" />

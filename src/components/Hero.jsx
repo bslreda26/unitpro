@@ -62,26 +62,7 @@ export function Hero() {
     },
   }
 
-  const renderHeroBody = () => {
-    const text = t('hero.body')
-    const marker = 'UNIT PRO'
-    const idx = text.indexOf(marker)
-    if (idx === -1) return text
-
-    const before = text.slice(0, idx)
-    const after = text.slice(idx + marker.length)
-    return (
-      <>
-        {before}
-        <span className="text-white">UNIT </span>
-        <span className="text-primary">PRO</span>
-        <span className="ml-2 inline-block align-super text-[0.58em] font-semibold uppercase tracking-[0.12em] text-white/80">
-          TRAINING CENTER
-        </span>
-        {after}
-      </>
-    )
-  }
+  const slogan = t('hero.slogan')
 
   return (
     <section className="relative -mt-unit-header min-h-[100svh] w-full overflow-hidden bg-dark pt-unit-header">
@@ -128,7 +109,7 @@ export function Hero() {
         />
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-[calc(100svh-5rem-env(safe-area-inset-top,0px))] max-w-4xl flex-col items-center justify-center px-4 py-8 text-center sm:px-6 md:py-14">
+      <div className="relative z-10 mx-auto flex min-h-[calc(100svh-4rem-env(safe-area-inset-top,0px))] max-w-4xl flex-col items-center justify-center px-4 py-8 text-center sm:min-h-[calc(100svh-5rem-env(safe-area-inset-top,0px))] sm:px-6 md:py-14">
         <motion.div
           variants={stagger}
           initial="hidden"
@@ -139,20 +120,23 @@ export function Hero() {
             variants={fadeUp}
             className="font-display text-[clamp(2.5rem,10vw,4.5rem)] font-semibold leading-[1.05] tracking-wide text-white"
           >
-            {t('hero.h1')}
+            <span className="text-white">UNIT </span>
+            <span className="text-primary">PRO</span>
           </motion.h1>
           <motion.h2
             variants={fadeUp}
-            className="mt-1 font-display text-[clamp(2.75rem,12vw,5.5rem)] font-semibold leading-[1.02] tracking-tight text-white"
+            className="mt-1 text-balance font-display text-[clamp(1.1rem,4.5vw,2.25rem)] font-semibold uppercase leading-[1.15] tracking-[0.08em] text-white/95 min-[380px]:tracking-[0.12em] sm:text-3xl sm:tracking-[0.14em]"
           >
             {t('hero.h2')}
           </motion.h2>
-          <motion.p
-            variants={fadeUp}
-            className="mt-6 max-w-sm font-body text-base text-white/85 md:max-w-md md:text-lg"
-          >
-            {renderHeroBody()}
-          </motion.p>
+          {slogan && !slogan.startsWith('hero.') ? (
+            <motion.p
+              variants={fadeUp}
+              className="mt-4 max-w-lg text-balance font-body text-sm font-medium italic text-white/90 sm:mt-5 sm:text-base md:text-xl"
+            >
+              {slogan}
+            </motion.p>
+          ) : null}
           <motion.div
             variants={fadeUp}
             className="mt-8 flex w-full max-w-md flex-col items-stretch gap-3 sm:mt-10 sm:max-w-none sm:flex-row sm:flex-wrap sm:items-center sm:justify-center sm:gap-4"

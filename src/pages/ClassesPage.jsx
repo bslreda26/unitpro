@@ -126,18 +126,18 @@ const SWEAT60_SLOTS = [
 ]
 
 const WEEKLY_SLOTS = [
-  [0, 6, 0, 'Burn45'],
-  [1, 6, 0, 'Strong'],
-  [2, 6, 0, 'Burn45'],
-  [3, 6, 0, 'Strong'],
-  [4, 6, 0, 'Burn45'],
-  [5, 6, 0, 'Booty & Legs'],
-  [0, 7, 0, 'Sculpt'],
-  [1, 7, 0, 'HIIT Rush'],
-  [2, 7, 0, 'Sculpt'],
-  [3, 7, 0, 'HIIT Rush'],
-  [4, 7, 0, 'Sculpt'],
-  [5, 7, 0, 'Bootcamp'],
+  [0, 8, 30, 'Burn45'],
+  [1, 8, 30, 'Strong'],
+  [2, 8, 30, 'Burn45'],
+  [3, 8, 30, 'Strong'],
+  [4, 8, 30, 'Burn45'],
+  [5, 8, 30, 'Booty & Legs'],
+  [0, 9, 15, 'Sculpt'],
+  [2, 9, 15, 'Sculpt'],
+  [4, 9, 15, 'Sculpt'],
+  [1, 9, 30, 'HIIT Rush'],
+  [3, 9, 30, 'HIIT Rush'],
+  [5, 9, 30, 'Bootcamp'],
   [0, 12, 30, 'Express Burn'],
   [1, 12, 30, 'Core & Cardio'],
   [2, 12, 30, 'Express Burn'],
@@ -160,7 +160,9 @@ const WEEKLY_SLOTS = [
   [4, 19, 30, 'Small Group Coaching'],
 ]
 
-function durationMinutes(title) {
+function durationMinutes(title, hour, minute) {
+  if (hour === 9 && minute === 15) return 45 // Sculpt — 9:15–10:00
+  if (hour === 9 && minute === 30) return 60 // HIIT Rush & Bootcamp — 9:30–10:30
   if (title === 'Burn45') return 45
   if (title === 'Express Burn') return 45
   if (title === 'Sweat60') return 60
@@ -301,7 +303,7 @@ const CLASSES = [
     duration: '45 MIN',
     level: 'All levels',
     trainer: 'UNIT PRO Coach',
-    time: 'Mon–Fri — 6:00 AM & evening blocks',
+    time: 'Mon–Fri — 8:30 AM & evening blocks',
     img: 'https://images.unsplash.com/photo-1517963879433-6ad2b056d712?auto=format&fit=crop&w=1600&q=80',
   },
   {
@@ -312,7 +314,7 @@ const CLASSES = [
     duration: '60 MIN',
     level: 'All levels',
     trainer: 'UNIT PRO Coach',
-    time: 'Tue / Thu / Sat — 6:00 AM · Mon–Fri — 5:30 PM',
+    time: 'Tue / Thu / Sat — 8:30 AM · Mon–Fri — 5:30 PM',
     img: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1600&q=80',
   },
   {
@@ -323,7 +325,7 @@ const CLASSES = [
     duration: '60 MIN',
     level: 'All levels',
     trainer: 'UNIT PRO Coach',
-    time: 'Mon / Wed / Fri — 7:00 AM',
+    time: 'Mon / Wed / Fri — 9:15–10:00 AM',
     img: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=1600&q=80',
   },
   {
@@ -333,7 +335,7 @@ const CLASSES = [
     duration: '60 MIN',
     level: 'Intermediate',
     trainer: 'UNIT PRO Coach',
-    time: 'Tue / Thu — 7:00 AM',
+    time: 'Tue / Thu — 9:30–10:30 AM',
     img: 'https://images.unsplash.com/photo-1601422407692-ec4eeec1d9b3?auto=format&fit=crop&w=1600&q=80',
   },
   {
@@ -344,7 +346,7 @@ const CLASSES = [
     duration: '60 MIN',
     level: 'All levels',
     trainer: 'UNIT PRO Coach',
-    time: 'Tue / Thu — 5:30 PM · Sat — 6:00 AM',
+    time: 'Tue / Thu — 5:30 PM · Sat — 8:30 AM',
     img: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1600&q=80',
   },
   {
@@ -386,7 +388,7 @@ const CLASSES = [
     duration: '60 MIN',
     level: 'All levels',
     trainer: 'UNIT PRO Coach',
-    time: 'Sat — 7:00 AM',
+    time: 'Sat — 9:30–10:30 AM',
     img: 'https://images.unsplash.com/photo-1601422407692-ec4eeec1d9b3?auto=format&fit=crop&w=1600&q=80',
   },
   {
@@ -532,8 +534,11 @@ function EventModal({ eventInfo, onClose, onWhatsAppRequest }) {
   )
 }
 
+const VIEW_KEYS = ['calendar', 'classes']
+
 export function ClassesPage() {
   const { dict, t, lang } = useI18n()
+  const [viewMode, setViewMode] = useState('calendar')
   const [active, setActive] = useState('All')
   const [modalEvent, setModalEvent] = useState(null)
   const [whatsAppMessage, setWhatsAppMessage] = useState('')
@@ -575,7 +580,7 @@ export function ClassesPage() {
     return WEEKLY_SLOTS.map(([dOffset, hour, minute, title], idx) => {
       const start = at(dOffset, hour, minute)
       const end = new Date(start)
-      end.setMinutes(end.getMinutes() + durationMinutes(title))
+      end.setMinutes(end.getMinutes() + durationMinutes(title, hour, minute))
       const info = CLASS_INFO[title] ?? {
         category: 'Strength',
         level: 'All levels',
@@ -598,13 +603,13 @@ export function ClassesPage() {
     })
   }, [anchorMonday])
 
+  const { ref: contentRef, inView: contentInView } = useInView({
+    threshold: 0.08,
+    triggerOnce: true,
+  })
   const { ref: gridRef, inView: gridInView } = useInView({
     threshold: 0.12,
     triggerOnce: false,
-  })
-  const { ref: calRef, inView: calInView } = useInView({
-    threshold: 0.12,
-    triggerOnce: true,
   })
 
   const tabContainer = {
@@ -660,120 +665,316 @@ export function ClassesPage() {
         </div>
       </section>
 
-      {/* WEEKLY SCHEDULE */}
-      <section ref={calRef} className="bg-dark py-12 sm:py-16 md:py-20">
+      {/* CALENDAR / CLASSES TOGGLE */}
+      <section ref={contentRef} className="bg-dark py-12 sm:py-16 md:py-20">
         <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            animate={calInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ type: 'spring', stiffness: 260, damping: 26 }}
-            className="max-w-3xl"
+          <div
+            className="flex gap-2 sm:justify-center sm:gap-3"
+            role="tablist"
+            aria-label={t('classesPage.heroTitle')}
           >
-            <div className="font-body text-[12px] font-semibold uppercase tracking-[0.26em] text-primary">
-              {t('classesPage.scheduleLabel')}
-            </div>
-            <h2 className="mt-3 font-display text-[clamp(2rem,8vw,3.75rem)] leading-tight tracking-wide text-white md:text-6xl">
-              {t('classesPage.scheduleTitle')}
-            </h2>
-          </motion.div>
+            {VIEW_KEYS.map((key) => {
+              const activeView = viewMode === key
+              const label =
+                key === 'calendar'
+                  ? t('classesPage.viewCalendar')
+                  : t('classesPage.viewClasses')
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  role="tab"
+                  aria-selected={activeView}
+                  onClick={() => setViewMode(key)}
+                  className={[
+                    'min-h-11 flex-1 px-4 font-body text-[10px] font-semibold uppercase tracking-wide transition sm:min-h-12 sm:min-w-[10.5rem] sm:flex-none sm:px-8 sm:text-xs sm:tracking-widest',
+                    activeView
+                      ? 'bg-primary text-white'
+                      : 'border border-white/25 bg-transparent text-white/80 hover:border-primary/50 hover:text-white',
+                  ].join(' ')}
+                >
+                  {label}
+                </button>
+              )
+            })}
+          </div>
 
-          <div className="mt-8 md:mt-10">
-            <motion.div
-              className="md:hidden"
-              initial={{ opacity: 0, y: 12 }}
-              animate={calInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ type: 'spring', stiffness: 260, damping: 26 }}
-            >
-              <MobileScheduleList
-                events={events}
-                anchorMonday={anchorMonday}
-                lang={lang}
-                onSelect={setModalEvent}
-              />
-            </motion.div>
+          <div className="mt-8 min-h-[240px] sm:mt-10 sm:min-h-[320px]" role="tabpanel">
+            <AnimatePresence mode="wait">
+              {viewMode === 'calendar' ? (
+                <motion.div
+                  key="calendar"
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.22 }}
+                >
+                  <motion.div
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={contentInView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ type: 'spring', stiffness: 260, damping: 26 }}
+                    className="max-w-3xl"
+                  >
+                    <div className="font-body text-[12px] font-semibold uppercase tracking-[0.26em] text-primary">
+                      {t('classesPage.scheduleLabel')}
+                    </div>
+                    <h2 className="mt-3 font-display text-[clamp(2rem,8vw,3.75rem)] leading-tight tracking-wide text-white md:text-6xl">
+                      {t('classesPage.scheduleTitle')}
+                    </h2>
+                  </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 14 }}
-              animate={calInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ type: 'spring', stiffness: 260, damping: 26, delay: 0.06 }}
-              className="hidden md:block"
-            >
-              <div className="mb-3 flex items-center justify-end gap-2 text-white/55">
-                <span className="font-body text-[11px] uppercase tracking-widest">
-                  {t('classesPage.hintTapEvent')}
-                </span>
-                <ArrowRight className="h-3.5 w-3.5 text-primary" />
-              </div>
-              <div className="overflow-hidden rounded-lg border border-white/[0.08] bg-[#080808]">
-                <div className="unit-weekly-calendar px-2 pb-2 pt-3 md:px-3 md:pb-3 md:pt-4">
-                  <FullCalendar
-                    key={anchorMonday.toISOString()}
-                    plugins={[timeGridPlugin, interactionPlugin]}
-                    initialView="timeGridWeek"
-                    initialDate={anchorMonday}
-                    firstDay={1}
-                    hiddenDays={[0]}
-                    validRange={{ start: anchorMonday, end: weekEnd }}
-                    height="auto"
-                    locales={[frLocale]}
-                    locale={lang === 'fr' ? 'fr' : 'en'}
-                    nowIndicator
-                    allDaySlot={false}
-                    slotMinTime="06:00:00"
-                    slotMaxTime="21:00:00"
-                    slotDuration="00:30:00"
-                    slotLabelInterval="01:00"
-                    expandRows
-                    headerToolbar={false}
-                    navLinks={false}
-                    editable={false}
-                    eventStartEditable={false}
-                    eventDurationEditable={false}
-                    displayEventTime={false}
-                    eventMinHeight={26}
-                    dayHeaderContent={(arg) => {
-                      const locale = lang === 'fr' ? 'fr-FR' : 'en-US'
-                      const dow = arg.date.toLocaleDateString(locale, { weekday: 'short' })
-                      const dom = arg.date.getDate()
-                      const isSat = arg.date.getDay() === 6
-                      return (
-                        <div
-                          className={[
-                            'unit-fc-day-head',
-                            isSat ? 'unit-fc-day-head--sat' : '',
-                          ].join(' ')}
-                        >
-                          <span className="unit-fc-day-head__dow">{dow}</span>
-                          <span className="unit-fc-day-head__dom">{dom}</span>
-                        </div>
-                      )
-                    }}
-                    slotLabelContent={(arg) => {
-                      const d = arg.date
-                      const locale = lang === 'fr' ? 'fr-FR' : 'en-US'
-                      return (
-                        <span className="unit-fc-slot-label">
-                          {d.toLocaleTimeString(locale, {
-                            hour: 'numeric',
-                            minute: '2-digit',
-                          })}
+                  <div className="mt-8 md:mt-10">
+                    <motion.div
+                      className="md:hidden"
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={contentInView ? { opacity: 1, y: 0 } : {}}
+                      transition={{ type: 'spring', stiffness: 260, damping: 26 }}
+                    >
+                      <MobileScheduleList
+                        events={events}
+                        anchorMonday={anchorMonday}
+                        lang={lang}
+                        onSelect={setModalEvent}
+                      />
+                    </motion.div>
+
+                    <motion.div
+                      initial={{ opacity: 0, y: 14 }}
+                      animate={contentInView ? { opacity: 1, y: 0 } : {}}
+                      transition={{ type: 'spring', stiffness: 260, damping: 26, delay: 0.06 }}
+                      className="hidden md:block"
+                    >
+                      <div className="mb-3 flex items-center justify-end gap-2 text-white/55">
+                        <span className="font-body text-[11px] uppercase tracking-widest">
+                          {t('classesPage.hintTapEvent')}
                         </span>
-                      )
-                    }}
-                    slotLaneClassNames={(arg) => {
-                      const m = arg.date.getMinutes()
-                      return m === 0 ? ['unit-fc-slot-lane-hour'] : ['unit-fc-slot-lane-half']
-                    }}
-                    events={events}
-                    eventContent={(arg) => <ScheduleEventContent eventInfo={arg} lang={lang} />}
-                    eventClick={(arg) => {
-                      arg.jsEvent.preventDefault()
-                      setModalEvent(arg.event)
-                    }}
-                  />
-                </div>
-              </div>
-            </motion.div>
+                        <ArrowRight className="h-3.5 w-3.5 text-primary" />
+                      </div>
+                      <div className="overflow-hidden rounded-lg border border-white/[0.08] bg-[#080808]">
+                        <div className="unit-weekly-calendar px-2 pb-2 pt-3 md:px-3 md:pb-3 md:pt-4">
+                          <FullCalendar
+                            key={anchorMonday.toISOString()}
+                            plugins={[timeGridPlugin, interactionPlugin]}
+                            initialView="timeGridWeek"
+                            initialDate={anchorMonday}
+                            firstDay={1}
+                            hiddenDays={[0]}
+                            validRange={{ start: anchorMonday, end: weekEnd }}
+                            height="auto"
+                            locales={[frLocale]}
+                            locale={lang === 'fr' ? 'fr' : 'en'}
+                            nowIndicator
+                            allDaySlot={false}
+                            slotMinTime="08:00:00"
+                            slotMaxTime="21:00:00"
+                            slotDuration="00:30:00"
+                            slotLabelInterval="01:00"
+                            expandRows
+                            headerToolbar={false}
+                            navLinks={false}
+                            editable={false}
+                            eventStartEditable={false}
+                            eventDurationEditable={false}
+                            displayEventTime={false}
+                            eventMinHeight={26}
+                            dayHeaderContent={(arg) => {
+                              const locale = lang === 'fr' ? 'fr-FR' : 'en-US'
+                              const dow = arg.date.toLocaleDateString(locale, { weekday: 'short' })
+                              const dom = arg.date.getDate()
+                              const isSat = arg.date.getDay() === 6
+                              return (
+                                <div
+                                  className={[
+                                    'unit-fc-day-head',
+                                    isSat ? 'unit-fc-day-head--sat' : '',
+                                  ].join(' ')}
+                                >
+                                  <span className="unit-fc-day-head__dow">{dow}</span>
+                                  <span className="unit-fc-day-head__dom">{dom}</span>
+                                </div>
+                              )
+                            }}
+                            slotLabelContent={(arg) => {
+                              const d = arg.date
+                              const locale = lang === 'fr' ? 'fr-FR' : 'en-US'
+                              return (
+                                <span className="unit-fc-slot-label">
+                                  {d.toLocaleTimeString(locale, {
+                                    hour: 'numeric',
+                                    minute: '2-digit',
+                                  })}
+                                </span>
+                              )
+                            }}
+                            slotLaneClassNames={(arg) => {
+                              const m = arg.date.getMinutes()
+                              return m === 0 ? ['unit-fc-slot-lane-hour'] : ['unit-fc-slot-lane-half']
+                            }}
+                            events={events}
+                            eventContent={(arg) => (
+                              <ScheduleEventContent eventInfo={arg} lang={lang} />
+                            )}
+                            eventClick={(arg) => {
+                              arg.jsEvent.preventDefault()
+                              setModalEvent(arg.event)
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </motion.div>
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="classes"
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.22 }}
+                  className="flex flex-col gap-8 sm:gap-10"
+                >
+                  <div>
+                    <div className="font-body text-[12px] font-semibold uppercase tracking-[0.26em] text-primary">
+                      {t('classesPage.categoriesLabel')}
+                    </div>
+                    <div className="mt-6 overflow-x-auto">
+                      <motion.div
+                        className="flex min-w-max items-center gap-8 border-b border-border pb-3"
+                        variants={tabContainer}
+                        initial="hidden"
+                        animate="show"
+                      >
+                        {(dict.classesPage?.tabs ?? TAB_KEYS).map((label, idx) => {
+                          const key = TAB_KEYS[idx] ?? label
+                          const activeNow = key === active
+                          return (
+                            <motion.button
+                              key={key}
+                              type="button"
+                              variants={tabItem}
+                              onClick={() => setActive(key)}
+                              className={[
+                                'relative pb-2 font-body text-xs font-semibold uppercase tracking-widest transition-colors',
+                                activeNow ? 'text-primary' : 'text-white/75 hover:text-white',
+                              ].join(' ')}
+                            >
+                              {label}
+                              {activeNow && (
+                                <motion.span
+                                  layoutId="classes-category-underline"
+                                  className="absolute left-0 right-0 -bottom-[13px] h-[2px] bg-primary"
+                                  transition={{ type: 'spring', stiffness: 520, damping: 36 }}
+                                />
+                              )}
+                            </motion.button>
+                          )
+                        })}
+                      </motion.div>
+                    </div>
+                  </div>
+
+                  <div ref={gridRef}>
+                    <motion.div
+                      layout
+                      className="grid grid-cols-1 gap-3 min-[400px]:grid-cols-2 sm:gap-4 md:gap-6 lg:grid-cols-3"
+                    >
+                      <AnimatePresence mode="popLayout">
+                        {filtered.map((c, idx) => (
+                          <motion.article
+                            key={c.id}
+                            layout
+                            initial={{ opacity: 0, y: 14 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 14 }}
+                            transition={{
+                              type: 'spring',
+                              stiffness: 320,
+                              damping: 30,
+                              delay: gridInView ? Math.min(0.22, idx * 0.04) : 0,
+                            }}
+                            className="group flex min-h-0 flex-col overflow-hidden border border-border bg-surface"
+                          >
+                            <div className="relative h-32 overflow-hidden sm:h-40 md:h-48">
+                              <img
+                                src={c.img}
+                                alt={c.name}
+                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.06]"
+                                loading="lazy"
+                                referrerPolicy="no-referrer"
+                                onError={(e) => {
+                                  if (e.currentTarget.src !== CLASS_IMG_FALLBACK) {
+                                    e.currentTarget.src = CLASS_IMG_FALLBACK
+                                  }
+                                }}
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-primary/35 via-dark/35 to-dark/15" />
+                              <div className="absolute left-2 top-2 inline-flex max-w-[calc(100%-1rem)] items-center truncate bg-primary px-2 py-0.5 font-body text-[8px] font-semibold uppercase tracking-wider text-white sm:left-3 sm:top-3 sm:px-3 sm:py-1 sm:text-[10px] sm:tracking-widest md:left-5 md:top-5">
+                                {c.category}
+                              </div>
+                            </div>
+
+                            <div className="flex flex-1 flex-col p-3 sm:p-4 md:p-6">
+                              <div className="font-display text-lg leading-tight tracking-wide text-white sm:text-2xl md:text-3xl">
+                                {c.name}
+                              </div>
+                              {c.tagline ? (
+                                <p className="mt-1 font-body text-[11px] leading-snug text-white/65 sm:text-sm">
+                                  {c.tagline}
+                                </p>
+                              ) : null}
+
+                              <div className="mt-2 flex flex-wrap gap-1 sm:mt-3 sm:gap-2">
+                                <span className="border border-white/35 bg-dark/20 px-1.5 py-0.5 font-body text-[8px] font-semibold uppercase tracking-wide text-white/90 sm:px-2 sm:py-1 sm:text-[10px] sm:tracking-widest">
+                                  {c.duration}
+                                </span>
+                                <span
+                                  className={[
+                                    'border bg-dark/20 px-1.5 py-0.5 font-body text-[8px] font-semibold uppercase tracking-wide sm:px-2 sm:py-1 sm:text-[10px] sm:tracking-widest',
+                                    levelTone(c.level),
+                                  ].join(' ')}
+                                >
+                                  {c.level}
+                                </span>
+                              </div>
+
+                              <div className="mt-3 flex flex-1 flex-col gap-2 sm:mt-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
+                                <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+                                  <div className="hidden h-8 w-8 shrink-0 border border-primary/40 bg-primary/15 sm:block sm:h-9 sm:w-9" />
+                                  <div className="min-w-0">
+                                    <div className="truncate font-body text-[9px] font-semibold uppercase tracking-wide text-white sm:text-[11px] sm:tracking-widest">
+                                      {c.trainer}
+                                    </div>
+                                    <div className="font-body text-[9px] text-white/60 sm:text-xs">
+                                      {t('classesPage.trainerLabel')}
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="line-clamp-2 font-body text-[9px] leading-snug text-white/70 sm:text-right sm:text-xs">
+                                  {c.time}
+                                </div>
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setWhatsAppMessage(
+                                    t('whatsapp.classBook').replace('{class}', c.name),
+                                  )
+                                  setWhatsAppOpen(true)
+                                }}
+                                className="mt-3 inline-flex min-h-10 w-full items-center justify-center bg-primary px-3 py-2 font-body text-[9px] font-semibold uppercase tracking-wide text-white transition-transform active:scale-[0.98] hover:bg-accent sm:mt-6 sm:min-h-11 sm:px-6 sm:text-xs sm:tracking-widest sm:hover:scale-[1.02]"
+                              >
+                                {t('classesPage.bookNow')}
+                              </button>
+                            </div>
+                          </motion.article>
+                        ))}
+                      </AnimatePresence>
+                    </motion.div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 
@@ -786,151 +987,6 @@ export function ClassesPage() {
             setModalEvent(null)
           }}
         />
-      </section>
-
-      {/* CATEGORIES + GRID */}
-      <section className="bg-dark py-14 sm:py-16">
-        <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
-          <div className="flex flex-col gap-8 sm:gap-10">
-            <div>
-              <div className="font-body text-[12px] font-semibold uppercase tracking-[0.26em] text-primary">
-                {t('classesPage.categoriesLabel')}
-              </div>
-              <div className="mt-6 overflow-x-auto">
-                <motion.div
-                  className="flex min-w-max items-center gap-8 border-b border-border pb-3"
-                  variants={tabContainer}
-                  initial="hidden"
-                  animate="show"
-                >
-                  {(dict.classesPage?.tabs ?? TAB_KEYS).map((label, idx) => {
-                    const key = TAB_KEYS[idx] ?? label
-                    const activeNow = key === active
-                    return (
-                      <motion.button
-                        key={key}
-                        type="button"
-                        variants={tabItem}
-                        onClick={() => setActive(key)}
-                        className={[
-                          'relative pb-2 font-body text-xs font-semibold uppercase tracking-widest transition-colors',
-                          activeNow ? 'text-primary' : 'text-white/75 hover:text-white',
-                        ].join(' ')}
-                      >
-                        {label}
-                        {activeNow && (
-                          <motion.span
-                            layoutId="classes-tab-underline"
-                            className="absolute left-0 right-0 -bottom-[13px] h-[2px] bg-primary"
-                            transition={{ type: 'spring', stiffness: 520, damping: 36 }}
-                          />
-                        )}
-                      </motion.button>
-                    )
-                  })}
-                </motion.div>
-              </div>
-            </div>
-
-            <div ref={gridRef}>
-              <motion.div
-                layout
-                className="grid grid-cols-1 gap-3 min-[400px]:grid-cols-2 sm:gap-4 md:gap-6 lg:grid-cols-3"
-              >
-                <AnimatePresence mode="popLayout">
-                  {filtered.map((c, idx) => (
-                    <motion.article
-                      key={c.id}
-                      layout
-                      initial={{ opacity: 0, y: 14 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 14 }}
-                      transition={{
-                        type: 'spring',
-                        stiffness: 320,
-                        damping: 30,
-                        delay: gridInView ? Math.min(0.22, idx * 0.04) : 0,
-                      }}
-                      className="group flex min-h-0 flex-col overflow-hidden border border-border bg-surface"
-                    >
-                      <div className="relative h-32 overflow-hidden sm:h-40 md:h-48">
-                        <img
-                          src={c.img}
-                          alt={c.name}
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.06]"
-                          loading="lazy"
-                          referrerPolicy="no-referrer"
-                          onError={(e) => {
-                            if (e.currentTarget.src !== CLASS_IMG_FALLBACK) {
-                              e.currentTarget.src = CLASS_IMG_FALLBACK
-                            }
-                          }}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-primary/35 via-dark/35 to-dark/15" />
-                        <div className="absolute left-2 top-2 inline-flex max-w-[calc(100%-1rem)] items-center truncate bg-primary px-2 py-0.5 font-body text-[8px] font-semibold uppercase tracking-wider text-white sm:left-3 sm:top-3 sm:px-3 sm:py-1 sm:text-[10px] sm:tracking-widest md:left-5 md:top-5">
-                          {c.category}
-                        </div>
-                      </div>
-
-                      <div className="flex flex-1 flex-col p-3 sm:p-4 md:p-6">
-                        <div className="font-display text-lg leading-tight tracking-wide text-white sm:text-2xl md:text-3xl">
-                          {c.name}
-                        </div>
-                        {c.tagline ? (
-                          <p className="mt-1 font-body text-[11px] leading-snug text-white/65 sm:text-sm">
-                            {c.tagline}
-                          </p>
-                        ) : null}
-
-                        <div className="mt-2 flex flex-wrap gap-1 sm:mt-3 sm:gap-2">
-                          <span className="border border-white/35 bg-dark/20 px-1.5 py-0.5 font-body text-[8px] font-semibold uppercase tracking-wide text-white/90 sm:px-2 sm:py-1 sm:text-[10px] sm:tracking-widest">
-                            {c.duration}
-                          </span>
-                          <span
-                            className={[
-                              'border bg-dark/20 px-1.5 py-0.5 font-body text-[8px] font-semibold uppercase tracking-wide sm:px-2 sm:py-1 sm:text-[10px] sm:tracking-widest',
-                              levelTone(c.level),
-                            ].join(' ')}
-                          >
-                            {c.level}
-                          </span>
-                        </div>
-
-                        <div className="mt-3 flex flex-1 flex-col gap-2 sm:mt-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
-                          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-                            <div className="hidden h-8 w-8 shrink-0 border border-primary/40 bg-primary/15 sm:block sm:h-9 sm:w-9" />
-                            <div className="min-w-0">
-                              <div className="truncate font-body text-[9px] font-semibold uppercase tracking-wide text-white sm:text-[11px] sm:tracking-widest">
-                                {c.trainer}
-                              </div>
-                              <div className="font-body text-[9px] text-white/60 sm:text-xs">
-                                {t('classesPage.trainerLabel')}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="line-clamp-2 font-body text-[9px] leading-snug text-white/70 sm:text-right sm:text-xs">
-                            {c.time}
-                          </div>
-                        </div>
-
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setWhatsAppMessage(t('whatsapp.classBook').replace('{class}', c.name))
-                            setWhatsAppOpen(true)
-                          }}
-                          className="mt-3 inline-flex min-h-10 w-full items-center justify-center bg-primary px-3 py-2 font-body text-[9px] font-semibold uppercase tracking-wide text-white transition-transform active:scale-[0.98] hover:bg-accent sm:mt-6 sm:min-h-11 sm:px-6 sm:text-xs sm:tracking-widest sm:hover:scale-[1.02]"
-                        >
-                          {t('classesPage.bookNow')}
-                        </button>
-                      </div>
-                    </motion.article>
-                  ))}
-                </AnimatePresence>
-              </motion.div>
-            </div>
-          </div>
-        </div>
       </section>
       <WhatsAppLeadModal
         open={whatsAppOpen}

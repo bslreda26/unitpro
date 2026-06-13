@@ -27,15 +27,16 @@ export const translations = {
     about: {
       label: 'WHO WE ARE',
       title: 'NOT JUST A GYM. A MOVEMENT.',
-      intro:
-        'At UNIT PRO Transformation Center, we help busy professionals, athletes, and everyday people achieve:',
-      benefits: [
-        'Fat loss',
-        'Muscle building',
-        'Better health',
-        'Increased confidence',
-        'High-performance fitness',
+      introSegments: [
+        { text: "At Uni Pro Transformation, we don't do quick fixes. We build " },
+        { text: 'stronger bodies,', highlight: true },
+        { text: ' ' },
+        { text: 'sharper minds', highlight: true },
+        { text: ' and ' },
+        { text: 'unstoppable habits', highlight: true },
+        { text: ' that last a lifetime.' },
       ],
+      benefits: [],
       p1: '',
       p2: 'Join the fastest-growing fitness community in Abidjan.',
       learnMore: 'Learn More',
@@ -186,21 +187,21 @@ export const translations = {
           {
             key: 'pack-8',
             name: '8 Session Package',
-            description: '8 sessions × 15,000 FCFA',
+            description: '',
             price: 120000,
             suffix: '',
           },
           {
             key: 'pack-12',
             name: '12 Session Package',
-            description: '12 sessions × 12,500 FCFA',
+            description: '',
             price: 150000,
             suffix: '',
           },
           {
             key: 'premium-body',
             name: 'Premium Transformation',
-            description: 'Personal training, nutrition coaching, weekly check-ins, customized program, fat loss & muscle-building strategy.',
+            description: '',
             price: 200000,
             suffix: '',
           },
@@ -279,7 +280,7 @@ export const translations = {
     classesPage: {
       breadcrumbHome: 'Home',
       breadcrumbClasses: 'Classes',
-      heroTitle: 'OUR CLASSES',
+      heroTitle: 'GROUP FITNESS CLASSES',
       categoriesLabel: 'Categories',
       viewCalendar: 'Calendar',
       viewClasses: 'Classes',
@@ -302,6 +303,13 @@ export const translations = {
       },
       tabs: ['All', 'Strength', 'Cardio', 'HIIT', 'Conditioning', 'Recovery'],
       trainerLabel: 'Trainer',
+      labels: {
+        benefits: 'Benefits',
+        perfectFor: 'Perfect for',
+        idealFor: 'Ideal for',
+        includes: 'Includes',
+        level: 'Level',
+      },
       calendar: { today: 'Today', week: 'Week', day: 'Day' },
     },
     subscriptions: {
@@ -445,7 +453,7 @@ export const translations = {
         {
           key: 'pt-8',
           name: '8 session package',
-          description: '8 sessions × 15,000 FCFA.',
+          description: '',
           price: 120000,
           priceKind: 'fixed',
           suffix: '',
@@ -454,7 +462,7 @@ export const translations = {
         {
           key: 'pt-12',
           name: '12 session package',
-          description: '12 sessions × 12,500 FCFA.',
+          description: '',
           price: 150000,
           priceKind: 'fixed',
           suffix: '',
@@ -463,7 +471,7 @@ export const translations = {
         {
           key: 'pt-premium-body',
           name: 'Premium transformation',
-          description: 'PT, nutrition, weekly check-ins, custom program.',
+          description: '',
           price: 200000,
           priceKind: 'fixed',
           suffix: '',
@@ -570,15 +578,16 @@ export const translations = {
     about: {
       label: 'QUI SOMMES-NOUS',
       title: 'PAS SEULEMENT UNE SALLE. UN MOUVEMENT.',
-      intro:
-        'Chez UNIT PRO Centre de Transformation, nous aidons les professionnels occupés, les athlètes et chacun à atteindre :',
-      benefits: [
-        'Perte de gras',
-        'Prise de muscle',
-        'Meilleure santé',
-        'Confiance accrue',
-        'Fitness haute performance',
+      introSegments: [
+        { text: 'Chez Uni Pro Transformation, nous ne faisons pas de solutions rapides. Nous construisons des ' },
+        { text: 'corps plus forts,', highlight: true },
+        { text: ' des ' },
+        { text: 'esprits plus aiguisés', highlight: true },
+        { text: ' et des ' },
+        { text: 'habitudes inarrêtables', highlight: true },
+        { text: ' qui durent toute une vie.' },
       ],
+      benefits: [],
       p1: '',
       p2: 'Rejoins la communauté fitness qui grandit le plus vite à Abidjan.',
       learnMore: 'En savoir plus',
@@ -729,21 +738,21 @@ export const translations = {
           {
             key: 'pack-8',
             name: 'Pack 8 séances',
-            description: '8 séances × 15 000 FCFA',
+            description: '',
             price: 120000,
             suffix: '',
           },
           {
             key: 'pack-12',
             name: 'Pack 12 séances',
-            description: '12 séances × 12 500 FCFA',
+            description: '',
             price: 150000,
             suffix: '',
           },
           {
             key: 'premium-body',
             name: 'Transformation Premium',
-            description: 'Coaching perso, nutrition, suivis hebdo, programme sur mesure, stratégie perte de gras & muscle.',
+            description: '',
             price: 200000,
             suffix: '',
           },
@@ -822,7 +831,7 @@ export const translations = {
     classesPage: {
       breadcrumbHome: 'Accueil',
       breadcrumbClasses: 'Cours',
-      heroTitle: 'NOS COURS',
+      heroTitle: 'COURS COLLECTIFS',
       categoriesLabel: 'Catégories',
       viewCalendar: 'Calendrier',
       viewClasses: 'Cours',
@@ -845,6 +854,13 @@ export const translations = {
       },
       tabs: ['Tous', 'Force', 'Cardio', 'HIIT', 'Conditioning', 'Récup'],
       trainerLabel: 'Coach',
+      labels: {
+        benefits: 'Bénéfices',
+        perfectFor: 'Parfait pour',
+        idealFor: 'Idéal pour',
+        includes: 'Comprend',
+        level: 'Niveau',
+      },
       calendar: { today: 'Aujourd’hui', week: 'Semaine', day: 'Jour' },
     },
     subscriptions: {
@@ -988,7 +1004,7 @@ export const translations = {
         {
           key: 'pt-8',
           name: 'Pack 8 séances',
-          description: '8 séances × 15 000 FCFA.',
+          description: '',
           price: 120000,
           priceKind: 'fixed',
           suffix: '',
@@ -997,7 +1013,7 @@ export const translations = {
         {
           key: 'pt-12',
           name: 'Pack 12 séances',
-          description: '12 séances × 12 500 FCFA.',
+          description: '',
           price: 150000,
           priceKind: 'fixed',
           suffix: '',
@@ -1006,7 +1022,7 @@ export const translations = {
         {
           key: 'pt-premium-body',
           name: 'Transformation Premium',
-          description: 'Coaching perso, nutrition, suivis hebdo, programme sur mesure.',
+          description: '',
           price: 200000,
           priceKind: 'fixed',
           suffix: '',

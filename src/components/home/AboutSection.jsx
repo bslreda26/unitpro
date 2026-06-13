@@ -12,10 +12,9 @@ export function AboutSection() {
   const { dict, t } = useI18n()
   const { ref, inView } = useInView({ threshold: 0.25, triggerOnce: true })
   const [src, setSrc] = useState(ABOUT_IMG_PRIMARY)
-  const intro = t('about.intro')
+  const introSegments = dict.about?.introSegments ?? []
   const benefits = dict.about?.benefits ?? []
   const closing = t('about.p2')
-  const showIntro = intro && !intro.startsWith('about.')
   const showClosing = closing && !closing.startsWith('about.')
   const placeholder = useMemo(() => {
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
@@ -96,7 +95,19 @@ export function AboutSection() {
           </h2>
 
           <div className="mt-6 space-y-4 font-body text-base leading-relaxed text-text-muted">
-            {showIntro ? <p>{intro}</p> : null}
+            {introSegments.length > 0 ? (
+              <p className="text-white">
+                {introSegments.map((segment, index) =>
+                  segment.highlight ? (
+                    <span key={index} className="text-primary">
+                      {segment.text}
+                    </span>
+                  ) : (
+                    <span key={index}>{segment.text}</span>
+                  ),
+                )}
+              </p>
+            ) : null}
             {benefits.length > 0 ? (
               <ul className="space-y-2 pl-1">
                 {benefits.map((item) => (

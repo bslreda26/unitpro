@@ -9,6 +9,12 @@ import interactionPlugin from '@fullcalendar/interaction'
 import { ArrowRight, ChevronRight, X } from 'lucide-react'
 import { useI18n } from '../i18n/I18nProvider.jsx'
 import { WhatsAppLeadModal } from '../components/WhatsAppLeadModal.jsx'
+import {
+  buildClassInfoMap,
+  catalogWithImages,
+  durationMinutes,
+  getGroupClasses,
+} from '../data/groupClasses.js'
 
 import '../styles/fullcalendar.css'
 
@@ -41,83 +47,6 @@ const TAB_KEYS = ['All', 'Strength', 'Cardio', 'HIIT', 'Conditioning', 'Recovery
 const CLASS_IMG_FALLBACK =
   'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1600&q=80'
 
-/** Studio timetable + blurbs from membership / schedule brief (Bassel.pdf). */
-const CLASS_INFO = {
-  'Burn45': {
-    category: 'Cardio',
-    level: 'All levels',
-    trainer: 'UNIT PRO Coach',
-    details:
-      '45-minute fat-burning workout: circuits, cardio intervals, full body. Great for beginners and weight loss.',
-  },
-  Strong: {
-    category: 'Strength',
-    level: 'All levels',
-    trainer: 'UNIT PRO Coach',
-    details: 'Strength & muscle building class',
-  },
-  Sculpt: {
-    category: 'Strength',
-    level: 'All levels',
-    trainer: 'UNIT PRO Coach',
-    details: 'Full body strength',
-  },
-  'HIIT Rush': {
-    category: 'HIIT',
-    level: 'Intermediate',
-    trainer: 'UNIT PRO Coach',
-    details: 'High-intensity intervals—fast-paced calorie burn with sharp work/rest blocks.',
-  },
-  'Booty & Legs': {
-    category: 'Strength',
-    level: 'All levels',
-    trainer: 'UNIT PRO Coach',
-    details: 'Lower body for Women',
-  },
-  'Express Burn': {
-    category: 'Cardio',
-    level: 'All levels',
-    trainer: 'UNIT PRO Coach',
-    details: 'Express format to spike metabolism mid-day—efficient burn in a tight window.',
-  },
-  'Core & Cardio': {
-    category: 'Cardio',
-    level: 'All levels',
-    trainer: 'UNIT PRO Coach',
-    details: 'Midday core work plus cardio blocks to reset posture and energy.',
-  },
-  Sweat60: {
-    category: 'Conditioning',
-    level: 'Intermediate',
-    trainer: 'UNIT PRO Coach',
-    details: 'Hybrid class',
-  },
-  Bootcamp: {
-    category: 'HIIT',
-    level: 'All levels',
-    trainer: 'UNIT PRO Coach',
-    details: 'Strength, endurance, functional',
-  },
-  'Athletic Conditioning': {
-    category: 'Conditioning',
-    level: 'Advanced',
-    trainer: 'UNIT PRO Coach',
-    details: 'Sports style training',
-  },
-  'Stretch & Recovery': {
-    category: 'Recovery',
-    level: 'All levels',
-    trainer: 'UNIT PRO Coach',
-    details: 'Mobility and recovery to improve flexibility and reduce injury risk.',
-  },
-  'Small Group Coaching': {
-    category: 'Strength',
-    level: 'All levels',
-    trainer: 'UNIT PRO Coach',
-    details: 'Premium coaching for 4–8 people max: customized guidance on the studio floor.',
-  },
-}
-
 /** [dayOffsetFromMonday, hour, minute, className] — powers calendar + mobile list */
 const SWEAT60_SLOTS = [
   [0, 18, 30, 'Sweat60'],
@@ -127,11 +56,11 @@ const SWEAT60_SLOTS = [
 
 const WEEKLY_SLOTS = [
   [0, 8, 30, 'Burn45'],
-  [1, 8, 30, 'Strong'],
+  [1, 8, 30, 'Strong Workout'],
   [2, 8, 30, 'Burn45'],
-  [3, 8, 30, 'Strong'],
+  [3, 8, 30, 'Strong Workout'],
   [4, 8, 30, 'Burn45'],
-  [5, 8, 30, 'Booty & Legs'],
+  [5, 8, 30, 'Booty & Legs Workout'],
   [0, 9, 15, 'Sculpt'],
   [2, 9, 15, 'Sculpt'],
   [4, 9, 15, 'Sculpt'],
@@ -143,11 +72,11 @@ const WEEKLY_SLOTS = [
   [2, 12, 30, 'Express Burn'],
   [3, 12, 30, 'Core & Cardio'],
   [4, 12, 30, 'Express Burn'],
-  [0, 17, 30, 'Strong'],
-  [1, 17, 30, 'Booty & Legs'],
-  [2, 17, 30, 'Strong'],
-  [3, 17, 30, 'Booty & Legs'],
-  [4, 17, 30, 'Strong'],
+  [0, 17, 30, 'Strong Workout'],
+  [1, 17, 30, 'Booty & Legs Workout'],
+  [2, 17, 30, 'Strong Workout'],
+  [3, 17, 30, 'Booty & Legs Workout'],
+  [4, 17, 30, 'Strong Workout'],
   [5, 17, 30, 'Athletic Conditioning'],
   ...SWEAT60_SLOTS,
   [1, 18, 30, 'Burn45'],
@@ -160,13 +89,68 @@ const WEEKLY_SLOTS = [
   [4, 19, 30, 'Small Group Coaching'],
 ]
 
-function durationMinutes(title, hour, minute) {
-  if (hour === 9 && minute === 15) return 45 // Sculpt — 9:15–10:00
-  if (hour === 9 && minute === 30) return 60 // HIIT Rush & Bootcamp — 9:30–10:30
-  if (title === 'Burn45') return 45
-  if (title === 'Express Burn') return 45
-  if (title === 'Sweat60') return 60
-  return 60
+
+function ClassDetailsBody({ classData, t, dict }) {
+  if (!classData) return null
+  const labels = dict.classesPage?.labels ?? {}
+
+  return (
+    <>
+      <p className="font-body text-sm leading-relaxed text-white/80">{classData.description}</p>
+
+      {classData.benefits?.length > 0 ? (
+        <div className="mt-5">
+          <div className="font-body text-[11px] font-semibold uppercase tracking-widest text-primary">
+            {labels.benefits}
+          </div>
+          <ul className="mt-2 space-y-1.5 font-body text-sm text-white/75">
+            {classData.benefits.map((item) => (
+              <li key={item} className="flex items-start gap-2">
+                <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary" aria-hidden />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      {classData.note ? (
+        <p className="mt-2 font-body text-xs text-white/50">{classData.note}</p>
+      ) : null}
+
+      {classData.idealFor?.items?.length > 0 ? (
+        <div className="mt-5">
+          <div className="font-body text-[11px] font-semibold uppercase tracking-widest text-primary">
+            {labels[classData.idealFor.label] ?? labels.idealFor}
+          </div>
+          <ul className="mt-2 space-y-1.5 font-body text-sm text-white/75">
+            {classData.idealFor.items.map((item) => (
+              <li key={item} className="flex items-start gap-2">
+                <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary" aria-hidden />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      {classData.includes?.length > 0 ? (
+        <div className="mt-5">
+          <div className="font-body text-[11px] font-semibold uppercase tracking-widest text-primary">
+            {labels.includes}
+          </div>
+          <ul className="mt-2 space-y-1.5 font-body text-sm text-white/75">
+            {classData.includes.map((item) => (
+              <li key={item} className="flex items-start gap-2">
+                <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-primary" aria-hidden />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+    </>
+  )
 }
 
 /** Visual group for FullCalendar event styling (left accent + background). */
@@ -295,145 +279,100 @@ function ScheduleEventContent({ eventInfo, lang }) {
   )
 }
 
-const CLASSES = [
-  {
-    id: 'burn45',
-    category: 'Cardio',
-    name: 'Burn45',
-    duration: '45 MIN',
-    level: 'All levels',
-    trainer: 'UNIT PRO Coach',
-    time: 'Mon–Fri — 8:30 AM & evening blocks',
-    img: 'https://images.unsplash.com/photo-1517963879433-6ad2b056d712?auto=format&fit=crop&w=1600&q=80',
-  },
-  {
-    id: 'strong',
-    category: 'Strength',
-    name: 'Strong',
-    tagline: 'Strength & muscle building class',
-    duration: '60 MIN',
-    level: 'All levels',
-    trainer: 'UNIT PRO Coach',
-    time: 'Tue / Thu / Sat — 8:30 AM · Mon–Fri — 5:30 PM',
-    img: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1600&q=80',
-  },
-  {
-    id: 'sculpt',
-    category: 'Strength',
-    name: 'Sculpt',
-    tagline: 'Full body strength',
-    duration: '60 MIN',
-    level: 'All levels',
-    trainer: 'UNIT PRO Coach',
-    time: 'Mon / Wed / Fri — 9:15–10:00 AM',
-    img: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=1600&q=80',
-  },
-  {
-    id: 'hiit-rush',
-    category: 'HIIT',
-    name: 'HIIT Rush',
-    duration: '60 MIN',
-    level: 'Intermediate',
-    trainer: 'UNIT PRO Coach',
-    time: 'Tue / Thu — 9:30–10:30 AM',
-    img: 'https://images.unsplash.com/photo-1601422407692-ec4eeec1d9b3?auto=format&fit=crop&w=1600&q=80',
-  },
-  {
-    id: 'booty-legs',
-    category: 'Strength',
-    name: 'Booty & Legs',
-    tagline: 'Lower body for Women',
-    duration: '60 MIN',
-    level: 'All levels',
-    trainer: 'UNIT PRO Coach',
-    time: 'Tue / Thu — 5:30 PM · Sat — 8:30 AM',
-    img: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1600&q=80',
-  },
-  {
-    id: 'express-burn',
-    category: 'Cardio',
-    name: 'Express Burn',
-    duration: '45 MIN',
-    level: 'All levels',
-    trainer: 'UNIT PRO Coach',
-    time: 'Mon / Wed / Fri — 12:30 PM',
-    img: 'https://images.unsplash.com/photo-1526401485004-2aa7bca48f03?auto=format&fit=crop&w=1600&q=80',
-  },
-  {
-    id: 'core-cardio',
-    category: 'Cardio',
-    name: 'Core & Cardio',
-    duration: '60 MIN',
-    level: 'All levels',
-    trainer: 'UNIT PRO Coach',
-    time: 'Tue / Thu — 12:30 PM',
-    img: 'https://images.unsplash.com/photo-1434596922112-19c563067271?auto=format&fit=crop&w=1600&q=80',
-  },
-  {
-    id: 'sweat60',
-    category: 'Conditioning',
-    name: 'Sweat60',
-    tagline: 'Hybrid class',
-    duration: '60 MIN',
-    level: 'Intermediate',
-    trainer: 'UNIT PRO Coach',
-    time: 'Mon / Wed / Fri — 6:30 PM',
-    img: 'https://images.unsplash.com/photo-1517832207067-4db24a2ae47c?auto=format&fit=crop&w=1600&q=80',
-  },
-  {
-    id: 'bootcamp',
-    category: 'HIIT',
-    name: 'Bootcamp',
-    tagline: 'Strength, endurance, functional',
-    duration: '60 MIN',
-    level: 'All levels',
-    trainer: 'UNIT PRO Coach',
-    time: 'Sat — 9:30–10:30 AM',
-    img: 'https://images.unsplash.com/photo-1601422407692-ec4eeec1d9b3?auto=format&fit=crop&w=1600&q=80',
-  },
-  {
-    id: 'athletic-conditioning',
-    category: 'Conditioning',
-    name: 'Athletic Conditioning',
-    tagline: 'Sports style training',
-    duration: '60 MIN',
-    level: 'Advanced',
-    trainer: 'UNIT PRO Coach',
-    time: 'Sat — 5:30 PM',
-    img: 'https://images.unsplash.com/photo-1599058945522-28ba584b6715?auto=format&fit=crop&w=1600&q=80',
-  },
-  {
-    id: 'stretch-recovery',
-    category: 'Recovery',
-    name: 'Stretch & Recovery',
-    duration: '60 MIN',
-    level: 'All levels',
-    trainer: 'UNIT PRO Coach',
-    time: 'Sat — 6:30 PM',
-    img: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1600&q=80',
-  },
-  {
-    id: 'small-group',
-    category: 'Strength',
-    name: 'Small Group Coaching',
-    duration: '60 MIN',
-    level: 'All levels',
-    trainer: 'UNIT PRO Coach',
-    time: 'Mon–Fri — 7:30 PM',
-    img: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1600&q=80',
-  },
-]
+function ClassDetailModal({ classItem, onClose, onWhatsAppRequest, dict }) {
+  const { t } = useI18n()
+  if (!classItem) return null
+
+  return (
+    <AnimatePresence>
+      {classItem && (
+        <>
+          <motion.button
+            type="button"
+            className="fixed inset-0 z-50 bg-black/60"
+            aria-label={t('classesPage.modal.closeAria')}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+          />
+          <motion.div
+            className={[
+              'fixed inset-x-0 bottom-0 z-[60] w-full border border-border bg-surface p-5',
+              'rounded-t-2xl',
+              'md:left-1/2 md:top-1/2 md:bottom-auto md:w-[92vw] md:max-w-lg md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-none md:p-6',
+            ].join(' ')}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 16 }}
+            transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+            role="dialog"
+            aria-modal="true"
+          >
+            <div className="mx-auto max-w-lg">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="font-body text-[11px] font-semibold uppercase tracking-widest text-primary">
+                    {classItem.category}
+                  </div>
+                  <div className="mt-2 font-display text-3xl tracking-wide text-white sm:text-4xl">
+                    {classItem.emoji ? `${classItem.emoji} ` : ''}
+                    {classItem.name}
+                  </div>
+                  <div className="mt-2 font-body text-xs text-white/60">
+                    {dict.classesPage?.labels?.level ?? 'Level'}: {classItem.level}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="inline-flex h-10 w-10 shrink-0 items-center justify-center border border-border bg-dark/30 text-white/80 hover:text-white"
+                  aria-label={t('classesPage.modal.close')}
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              <div className="mt-4 max-h-[55vh] overflow-auto pr-1 md:max-h-[min(70vh,520px)] md:pr-0">
+                <ClassDetailsBody classData={classItem} t={t} dict={dict} />
+              </div>
+
+              <div className="mt-6">
+                <button
+                  type="button"
+                  onClick={() =>
+                    onWhatsAppRequest?.(
+                      t('whatsapp.classBook').replace('{class}', classItem.name ?? ''),
+                    )
+                  }
+                  className="inline-flex h-11 w-full items-center justify-center bg-primary px-6 font-body text-xs font-semibold uppercase tracking-widest text-white transition-transform hover:scale-[1.02] hover:bg-accent"
+                >
+                  {t('classesPage.bookNow')}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  )
+}
+
+const VIEW_KEYS = ['calendar', 'classes']
 
 function levelTone(level) {
   const v = level.toLowerCase()
-  if (v.includes('beginner')) return 'border-emerald-400/40 text-emerald-200'
-  if (v.includes('advanced')) return 'border-primary/50 text-primary'
-  if (v.includes('intermediate')) return 'border-amber-400/35 text-amber-100'
+  if (v.includes('beginner') || v.includes('débutant')) return 'border-emerald-400/40 text-emerald-200'
+  if (v.includes('advanced') || v.includes('avancé')) return 'border-primary/50 text-primary'
+  if (v.includes('intermediate') || v.includes('intermédiaire')) {
+    return 'border-amber-400/35 text-amber-100'
+  }
   return 'border-white/35 text-white/90'
 }
 
-function EventModal({ eventInfo, onClose, onWhatsAppRequest }) {
+function EventModal({ eventInfo, onClose, onWhatsAppRequest, dict }) {
   const { t } = useI18n()
+  const classData = eventInfo?.extendedProps?.classData
   return (
     <AnimatePresence>
       {eventInfo && (
@@ -469,6 +408,7 @@ function EventModal({ eventInfo, onClose, onWhatsAppRequest }) {
                     {eventInfo.extendedProps.category || t('classesPage.modal.classFallback')}
                   </div>
                   <div className="mt-2 font-display text-4xl tracking-wide text-white">
+                    {classData?.emoji ? `${classData.emoji} ` : ''}
                     {eventInfo.title}
                   </div>
                 </div>
@@ -482,10 +422,14 @@ function EventModal({ eventInfo, onClose, onWhatsAppRequest }) {
                 </button>
               </div>
 
-              <div className="mt-3 max-h-[55vh] overflow-auto pr-1 md:max-h-none md:overflow-visible md:pr-0">
-                <div className="font-body text-sm text-white/80">
-                  {eventInfo.extendedProps.details || t('classesPage.modal.detailsFallback')}
-                </div>
+              <div className="mt-3 max-h-[55vh] overflow-auto pr-1 md:max-h-[min(70vh,520px)] md:pr-0">
+                {classData ? (
+                  <ClassDetailsBody classData={classData} t={t} dict={dict} />
+                ) : (
+                  <div className="font-body text-sm text-white/80">
+                    {eventInfo.extendedProps.details || t('classesPage.modal.detailsFallback')}
+                  </div>
+                )}
 
                 <div className="mt-6 grid gap-3 border-t border-border pt-5 font-body text-sm text-white/80">
                   <div className="flex items-center justify-between gap-3">
@@ -534,22 +478,28 @@ function EventModal({ eventInfo, onClose, onWhatsAppRequest }) {
   )
 }
 
-const VIEW_KEYS = ['calendar', 'classes']
-
 export function ClassesPage() {
   const { dict, t, lang } = useI18n()
   const [viewMode, setViewMode] = useState('calendar')
   const [active, setActive] = useState('All')
   const [modalEvent, setModalEvent] = useState(null)
+  const [selectedClass, setSelectedClass] = useState(null)
   const [whatsAppMessage, setWhatsAppMessage] = useState('')
   const [whatsAppOpen, setWhatsAppOpen] = useState(false)
   const placeholderBg = useSvgPlaceholderDataUrl()
   const [heroBg, setHeroBg] = useState(HERO_BG_PRIMARY)
 
+  const classes = useMemo(
+    () => catalogWithImages(getGroupClasses(lang).catalog),
+    [lang],
+  )
+
+  const classInfoMap = useMemo(() => buildClassInfoMap(lang), [lang])
+
   const filtered = useMemo(() => {
-    if (active === 'All') return CLASSES
-    return CLASSES.filter((c) => c.category === active)
-  }, [active])
+    if (active === 'All') return classes
+    return classes.filter((c) => c.category === active)
+  }, [active, classes])
 
   const anchorMonday = useMemo(() => {
     // Anchor to "this week's Monday" to keep a stable weekly template (local time).
@@ -581,7 +531,7 @@ export function ClassesPage() {
       const start = at(dOffset, hour, minute)
       const end = new Date(start)
       end.setMinutes(end.getMinutes() + durationMinutes(title, hour, minute))
-      const info = CLASS_INFO[title] ?? {
+      const info = classInfoMap[title] ?? {
         category: 'Strength',
         level: 'All levels',
         trainer: 'UNIT PRO Coach',
@@ -598,10 +548,11 @@ export function ClassesPage() {
           trainer: info.trainer,
           level: info.level,
           details: info.details,
+          classData: info.classData,
         },
       }
     })
-  }, [anchorMonday])
+  }, [anchorMonday, classInfoMap])
 
   const { ref: contentRef, inView: contentInView } = useInView({
     threshold: 0.08,
@@ -915,17 +866,16 @@ export function ClassesPage() {
 
                             <div className="flex flex-1 flex-col p-3 sm:p-4 md:p-6">
                               <div className="font-display text-lg leading-tight tracking-wide text-white sm:text-2xl md:text-3xl">
+                                {c.emoji ? `${c.emoji} ` : ''}
                                 {c.name}
                               </div>
-                              {c.tagline ? (
-                                <p className="mt-1 font-body text-[11px] leading-snug text-white/65 sm:text-sm">
-                                  {c.tagline}
-                                </p>
-                              ) : null}
+                              <p className="mt-2 line-clamp-3 font-body text-[11px] leading-snug text-white/65 sm:text-sm">
+                                {c.description}
+                              </p>
 
                               <div className="mt-2 flex flex-wrap gap-1 sm:mt-3 sm:gap-2">
                                 <span className="border border-white/35 bg-dark/20 px-1.5 py-0.5 font-body text-[8px] font-semibold uppercase tracking-wide text-white/90 sm:px-2 sm:py-1 sm:text-[10px] sm:tracking-widest">
-                                  {c.duration}
+                                  {c.durationLabel}
                                 </span>
                                 <span
                                   className={[
@@ -937,35 +887,31 @@ export function ClassesPage() {
                                 </span>
                               </div>
 
-                              <div className="mt-3 flex flex-1 flex-col gap-2 sm:mt-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
-                                <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-                                  <div className="hidden h-8 w-8 shrink-0 border border-primary/40 bg-primary/15 sm:block sm:h-9 sm:w-9" />
-                                  <div className="min-w-0">
-                                    <div className="truncate font-body text-[9px] font-semibold uppercase tracking-wide text-white sm:text-[11px] sm:tracking-widest">
-                                      {c.trainer}
-                                    </div>
-                                    <div className="font-body text-[9px] text-white/60 sm:text-xs">
-                                      {t('classesPage.trainerLabel')}
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="line-clamp-2 font-body text-[9px] leading-snug text-white/70 sm:text-right sm:text-xs">
-                                  {c.time}
-                                </div>
+                              <div className="mt-3 font-body text-[9px] leading-snug text-white/70 sm:text-xs">
+                                {c.time}
                               </div>
 
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setWhatsAppMessage(
-                                    t('whatsapp.classBook').replace('{class}', c.name),
-                                  )
-                                  setWhatsAppOpen(true)
-                                }}
-                                className="mt-3 inline-flex min-h-10 w-full items-center justify-center bg-primary px-3 py-2 font-body text-[9px] font-semibold uppercase tracking-wide text-white transition-transform active:scale-[0.98] hover:bg-accent sm:mt-6 sm:min-h-11 sm:px-6 sm:text-xs sm:tracking-widest sm:hover:scale-[1.02]"
-                              >
-                                {t('classesPage.bookNow')}
-                              </button>
+                              <div className="mt-3 flex flex-col gap-2 sm:mt-5">
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedClass(c)}
+                                  className="inline-flex min-h-10 w-full items-center justify-center border border-white/25 bg-transparent px-3 py-2 font-body text-[9px] font-semibold uppercase tracking-wide text-white transition-colors hover:border-primary/50 hover:text-primary sm:min-h-11 sm:px-6 sm:text-xs sm:tracking-widest"
+                                >
+                                  {t('classesPreview.viewClass')}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setWhatsAppMessage(
+                                      t('whatsapp.classBook').replace('{class}', c.name),
+                                    )
+                                    setWhatsAppOpen(true)
+                                  }}
+                                  className="inline-flex min-h-10 w-full items-center justify-center bg-primary px-3 py-2 font-body text-[9px] font-semibold uppercase tracking-wide text-white transition-transform active:scale-[0.98] hover:bg-accent sm:min-h-11 sm:px-6 sm:text-xs sm:tracking-widest sm:hover:scale-[1.02]"
+                                >
+                                  {t('classesPage.bookNow')}
+                                </button>
+                              </div>
                             </div>
                           </motion.article>
                         ))}
@@ -980,11 +926,22 @@ export function ClassesPage() {
 
         <EventModal
           eventInfo={modalEvent}
+          dict={dict}
           onClose={() => setModalEvent(null)}
           onWhatsAppRequest={(message) => {
             setWhatsAppMessage(message)
             setWhatsAppOpen(true)
             setModalEvent(null)
+          }}
+        />
+        <ClassDetailModal
+          classItem={selectedClass}
+          dict={dict}
+          onClose={() => setSelectedClass(null)}
+          onWhatsAppRequest={(message) => {
+            setWhatsAppMessage(message)
+            setWhatsAppOpen(true)
+            setSelectedClass(null)
           }}
         />
       </section>

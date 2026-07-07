@@ -1,7 +1,11 @@
 import { useI18n } from '../i18n/I18nProvider.jsx'
+import { useContact } from '../context/ContactContext.jsx'
 
 export function Footer() {
   const { t } = useI18n()
+  const contact = useContact()
+  const mapHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(contact.mapQuery || contact.locationLabel || '')}`
+
   return (
     <footer className="relative overflow-hidden border-t border-primary/40 bg-gradient-to-b from-[#0c0c0c] via-dark to-black">
       <div
@@ -39,14 +43,14 @@ export function Footer() {
         <div className="mt-6 grid grid-cols-2 grid-rows-2 gap-2 sm:mt-8 sm:grid-cols-4 sm:grid-rows-1 sm:gap-4 md:mt-10">
           <a
             className="group flex min-h-0 flex-col justify-center rounded-xl border border-white/[0.09] bg-white/[0.03] px-3 py-2.5 shadow-[0_10px_26px_rgba(0,0,0,0.25)] transition-all duration-300 active:bg-white/[0.06] hover:-translate-y-0.5 hover:border-primary/50 hover:bg-white/[0.05] sm:min-h-[52px] sm:px-5 sm:py-4"
-            href="mailto:hello@unitpro.com"
+            href={`mailto:${contact.email}`}
           >
             <div className="font-body text-[9px] font-semibold uppercase tracking-[0.18em] text-primary sm:text-[10px] sm:tracking-[0.22em]">
               {t('footer.email')}
             </div>
             <div className="mt-1 flex items-start justify-between gap-1 sm:mt-2 sm:items-baseline sm:gap-2">
               <span className="min-w-0 break-all font-body text-[11px] leading-snug text-white/90 transition-colors group-hover:text-white sm:text-sm sm:break-normal sm:leading-normal">
-                hello@unitpro.com
+                {contact.email}
               </span>
               <span
                 className="hidden shrink-0 text-primary opacity-0 transition-opacity group-hover:opacity-100 sm:inline"
@@ -59,14 +63,14 @@ export function Footer() {
 
           <a
             className="group flex min-h-0 flex-col justify-center rounded-xl border border-white/[0.09] bg-white/[0.03] px-3 py-2.5 shadow-[0_10px_26px_rgba(0,0,0,0.25)] transition-all duration-300 active:bg-white/[0.06] hover:-translate-y-0.5 hover:border-primary/50 hover:bg-white/[0.05] sm:min-h-[52px] sm:px-5 sm:py-4"
-            href="tel:07000000"
+            href={`tel:${contact.phone}`}
           >
             <div className="font-body text-[9px] font-semibold uppercase tracking-[0.18em] text-primary sm:text-[10px] sm:tracking-[0.22em]">
               {t('footer.phone')}
             </div>
             <div className="mt-1 flex items-baseline justify-between gap-1 sm:mt-2 sm:gap-2">
               <span className="font-body text-[11px] text-white/90 transition-colors group-hover:text-white sm:text-sm">
-                07000000
+                {contact.phone}
               </span>
               <span
                 className="hidden shrink-0 text-primary opacity-0 transition-opacity group-hover:opacity-100 sm:inline"
@@ -82,12 +86,12 @@ export function Footer() {
               {t('footer.hours')}
             </div>
             <p className="mt-1 font-body text-[11px] leading-snug text-white/85 sm:mt-2 sm:text-sm">
-              {t('footer.hoursValue')}
+              {contact.hours}
             </p>
           </div>
           <a
             className="group flex min-h-0 flex-col justify-center rounded-xl border border-primary/35 bg-primary/[0.08] px-3 py-2.5 shadow-[0_12px_28px_rgba(227,27,35,0.16)] transition-all duration-300 active:bg-primary/[0.14] hover:-translate-y-0.5 hover:bg-primary/[0.14] sm:min-h-[52px] sm:px-5 sm:py-4"
-            href="https://www.google.com/maps/search/?api=1&query=Deux+Plateau+Abidjan"
+            href={mapHref}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -96,7 +100,7 @@ export function Footer() {
             </div>
             <div className="mt-1 flex items-center justify-between gap-2 sm:mt-2">
               <p className="font-body text-[11px] leading-snug text-white sm:text-sm">
-                {t('footer.locationValue')}
+                {contact.locationLabel}
               </p>
               <span
                 className="shrink-0 text-primary opacity-80 transition-opacity group-hover:opacity-100"

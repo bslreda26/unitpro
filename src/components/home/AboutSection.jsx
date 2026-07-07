@@ -3,10 +3,13 @@ import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { useI18n } from '../../i18n/I18nProvider.jsx'
 
+// Rendered at most ~560px wide (half of a max-w-6xl grid on desktop, narrower
+// on mobile) — 900px covers retina displays without shipping a 1800px image
+// for a ~500px box.
 const ABOUT_IMG_PRIMARY =
-  'https://images.unsplash.com/photo-1517964603305-11c0f6f66012?auto=format&fit=crop&w=1800&q=80'
+  'https://images.unsplash.com/photo-1517964603305-11c0f6f66012?auto=format&fit=crop&w=900&q=75'
 const ABOUT_IMG_FALLBACK =
-  'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1800&q=80'
+  'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=900&q=75'
 
 export function AboutSection() {
   const { dict, t } = useI18n()
@@ -60,8 +63,7 @@ export function AboutSection() {
               animate={inView ? { opacity: 1, scale: 1.05, rotate: -2, y: 0 } : {}}
               whileHover={{ scale: 1.09, rotate: -0.8 }}
               transition={{ type: 'spring', stiffness: 240, damping: 24 }}
-              loading="eager"
-              fetchPriority="high"
+              loading="lazy"
               referrerPolicy="no-referrer"
               onError={() => {
                 if (src !== ABOUT_IMG_FALLBACK) setSrc(ABOUT_IMG_FALLBACK)

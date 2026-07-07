@@ -62,8 +62,13 @@ Currently implemented:
 - **Subscriptions & pricing** (`/#/admin/subscriptions`, requires the "manage
   subscriptions" privilege) — create, edit, reorder, and hide/show the membership
   plans, day pass, group class packages, personal training packages, and special
-  offers shown on the public `/subscriptions` page. Every text field has separate
-  English and French versions, matching the site's existing bilingual toggle.
+  offers shown on the public `/subscriptions` page.
+- **Contact info** (`/#/admin/contact-info`, requires the "manage settings"
+  privilege) — email, phone, WhatsApp number, hours, and location shown in the
+  site footer.
+
+The site and admin panel are French only (no language toggle) — one field to
+fill in per fact, not two.
 
 Course/class content editing and client management are planned next (see
 `CLAUDE.md` for the full roadmap and architecture notes if you're picking up

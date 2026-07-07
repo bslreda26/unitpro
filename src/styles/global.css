@@ -16,7 +16,6 @@ body {
   min-height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  overscroll-behavior-y: none;
   margin: 0;
   padding: 0;
 }
@@ -62,48 +61,5 @@ body::before {
   }
   100% {
     transform: scale(1.08) translate3d(-1.5%, -1.5%, 0);
-  }
-}
-
-@layer utilities {
-  /* Fixed header: h-16 mobile, h-20 sm+ + iOS notch / safe area */
-  .pt-unit-header {
-    padding-top: calc(4rem + env(safe-area-inset-top, 0px));
-  }
-  @media (min-width: 640px) {
-    .pt-unit-header {
-      padding-top: calc(5rem + env(safe-area-inset-top, 0px));
-    }
-  }
-  .-mt-unit-header {
-    margin-top: calc(-4rem - env(safe-area-inset-top, 0px));
-  }
-  @media (min-width: 640px) {
-    .-mt-unit-header {
-      margin-top: calc(-5rem - env(safe-area-inset-top, 0px));
-    }
-  }
-  .pt-safe-top {
-    padding-top: env(safe-area-inset-top, 0px);
-  }
-  .pb-safe-bottom {
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-  }
-  .scrollbar-none {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  .scrollbar-none::-webkit-scrollbar {
-    display: none;
-  }
-  .touch-pan-x {
-    touch-action: pan-x;
-  }
-}
-
-@layer base {
-  :where(a, button, [role='button'], input, textarea, select, summary):focus-visible {
-    outline: 2px solid #e31b23;
-    outline-offset: 2px;
   }
 }

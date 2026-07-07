@@ -8,18 +8,18 @@ import { fetchPublicPlans } from '../../api/subscriptionPlans.api.js'
 
 const TAB_KEYS = ['membership', 'groupClasses', 'personalTraining']
 
-function pickPlanForLang(plan, lang) {
+function mapPlan(plan) {
   return {
     key: plan.planKey ?? plan.id,
-    name: plan.name?.[lang] ?? plan.name?.en ?? '',
-    subtitle: plan.subtitle?.[lang] ?? plan.subtitle?.en ?? '',
-    description: plan.subtitle?.[lang] ?? plan.subtitle?.en ?? '',
-    bestFor: plan.bestFor?.[lang] ?? plan.bestFor?.en ?? '',
+    name: plan.name ?? '',
+    subtitle: plan.subtitle ?? '',
+    description: plan.subtitle ?? '',
+    bestFor: plan.bestFor ?? '',
     price: plan.price,
-    suffix: plan.suffix?.[lang] ?? plan.suffix?.en ?? '',
-    features: plan.features?.[lang] ?? plan.features?.en ?? [],
+    suffix: plan.suffix ?? '',
+    features: plan.features ?? [],
     cta: {
-      label: plan.cta?.label?.[lang] ?? plan.cta?.label?.en ?? '',
+      label: plan.cta?.label ?? '',
       variant: plan.cta?.variant,
     },
     featured: plan.featured,
@@ -176,7 +176,7 @@ function OfferCard({ item }) {
 }
 
 export function PricingPackagesSection() {
-  const { dict, t, lang } = useI18n()
+  const { dict, t } = useI18n()
   const { ref, inView } = useInView({ threshold: 0.08, triggerOnce: true })
   const [activeTab, setActiveTab] = useState('membership')
   const [whatsAppMessage, setWhatsAppMessage] = useState('')
@@ -204,10 +204,10 @@ export function PricingPackagesSection() {
     const grouped = {}
     for (const plan of allPlans) {
       grouped[plan.category] ??= []
-      grouped[plan.category].push(pickPlanForLang(plan, lang))
+      grouped[plan.category].push(mapPlan(plan))
     }
     return grouped
-  }, [allPlans, lang])
+  }, [allPlans])
 
   const dayPass = byCategory.day_pass?.[0]
   const plans = byCategory.membership ?? []

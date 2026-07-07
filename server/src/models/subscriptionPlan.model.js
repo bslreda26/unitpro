@@ -25,64 +25,36 @@ SubscriptionPlan.init(
       allowNull: true,
       field: 'plan_key',
     },
-    nameEn: {
+    name: {
       type: DataTypes.STRING,
       allowNull: false,
-      field: 'name_en',
     },
-    nameFr: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      field: 'name_fr',
-    },
-    subtitleEn: {
+    subtitle: {
       type: DataTypes.STRING,
       allowNull: true,
-      field: 'subtitle_en',
     },
-    subtitleFr: {
+    bestFor: {
       type: DataTypes.STRING,
       allowNull: true,
-      field: 'subtitle_fr',
-    },
-    bestForEn: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      field: 'best_for_en',
-    },
-    bestForFr: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      field: 'best_for_fr',
+      field: 'best_for',
     },
     price: {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
-    suffixEn: {
+    suffix: {
       type: DataTypes.STRING,
       allowNull: true,
-      field: 'suffix_en',
-    },
-    suffixFr: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      field: 'suffix_fr',
     },
     features: {
       type: DataTypes.JSON,
       allowNull: true,
-      defaultValue: { en: [], fr: [] },
+      defaultValue: [],
     },
-    ctaLabelEn: {
+    ctaLabel: {
       type: DataTypes.STRING,
       allowNull: true,
-      field: 'cta_label_en',
-    },
-    ctaLabelFr: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      field: 'cta_label_fr',
+      field: 'cta_label',
     },
     ctaVariant: {
       type: DataTypes.ENUM('solid', 'outline'),

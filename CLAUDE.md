@@ -15,32 +15,36 @@ Unit Pro is a gym website with two parts living in one repo:
 The frontend and backend are developed and run independently. The frontend calls the
 backend over HTTP using `VITE_API_URL` (see `.env.local`).
 
-## Status: Phases 1–2 done, phase 3 not started
+## Status: Phases 1–2 done (+ contact info), phase 3 not started
 
 The original ask was, in order:
 1. ✅ **Admin authentication** — hidden `/login`, roles (super_admin / employee),
    super admin creates employees with specific privileges. **Done.**
 2. ✅ **Subscriptions & pricing content** — admin can create/edit/reorder/hide the
    membership plans, day pass, group class packages, personal training packages,
-   and special offers shown on the public `/subscriptions` page, bilingual (EN/FR).
-   **Done.**
+   and special offers shown on the public `/subscriptions` page. **Done.**
 3. ⬜ **Course/class content editing** — same idea as phase 2 but for
    `src/data/groupClasses.js`. **Not started.**
 4. ⬜ **Clients & subscriptions** — client records, client subscription management.
    **Not started.**
 
+Added outside the original numbered roadmap: **site contact info** (email, phone,
+WhatsApp number, hours, location) is also admin-editable now — see notes below.
+
 The `permissions` table (seeded in Phase 1) already has a `manage_courses` key
 ready for phase 3, and `manage_clients` ready for phase 4, so no schema changes
-will be needed there when those ship.
+will be needed there when those ship. A `manage_settings` permission was added
+alongside the contact-info feature (see below).
 
 ### Phase 2 notes (subscriptions & pricing)
 
-- New table `subscription_plans` (`server/src/models/subscriptionPlan.model.js`)
+- Table `subscription_plans` (`server/src/models/subscriptionPlan.model.js`)
   covers all five categories (`day_pass`, `membership`, `group_class`,
   `personal_training`, `special_offer`) in one table — they share the same shape,
-  just with different fields populated per category. Bilingual text fields are
-  separate columns (`nameEn`/`nameFr`, etc.); `features` is a single JSON column
-  shaped `{ en: string[], fr: string[] }`.
+  just with different fields populated per category. Text fields (`name`,
+  `subtitle`, `bestFor`, `suffix`, `ctaLabel`) are plain single-language columns;
+  `features` is a JSON array of strings. (This used to be bilingual EN/FR — see
+  "Site went French-only" below for why that changed.)
 - **Scope boundary, deliberately kept out of this phase**: page-level copy (section
   title "Choose your Package", tab labels, the WhatsApp CTA button text) is still
   static in `src/i18n/translations.js` — only the plan/package data itself is
@@ -50,42 +54,85 @@ will be needed there when those ship.
   CRUD: `server/src/routes/adminSubscriptionPlan.routes.js`, mounted at
   `/api/admin/subscription-plans`, gated by `requirePermission('manage_subscriptions')`
   — reuses the exact same middleware from Phase 1, no new auth logic needed.
-- `src/components/subscriptions/PricingPackagesSection.jsx` now fetches from the
-  API and picks `nameEn`/`nameFr` etc. based on the current `lang` from
-  `useI18n()`, instead of reading `dict.homePricing`. `src/pages/SubscriptionsPage.jsx`
-  itself was untouched.
+- `src/components/subscriptions/PricingPackagesSection.jsx` fetches from the API
+  and maps each plan's flat fields directly (no per-language lookup).
+  `src/pages/SubscriptionsPage.jsx` itself was untouched.
 - Admin UI: `src/pages/admin/SubscriptionsPage.jsx` (careful: **not** the same file
   as the public `src/pages/SubscriptionsPage.jsx` — same name, different folder,
   easy to open the wrong one). One form handles create and edit (category picker,
-  EN/FR fields side by side, features as a newline-separated textarea, sort order
-  as a plain number field — no drag-and-drop, per an earlier scope decision).
-- `seedSubscriptionPlans.js` migrated the exact EN/FR content that used to be
-  hardcoded in `translations.js` (`dict.homePricing`) into the new table, so
-  shipping this didn't change what visitors see. It's idempotent (checked by
-  `planKey`), and folded into `npm run seed`.
+  one field per concept, features as a newline-separated textarea, sort order as
+  a plain number field — no drag-and-drop, per an earlier scope decision).
+- `seedSubscriptionPlans.js` matches the French content admins have been editing,
+  so a fresh install's public site content matches what's already live. It's
+  idempotent (checked by `planKey`), and folded into `npm run seed`.
 
-## Language notes
+### Contact info notes
 
-- **Public site**: bilingual EN/FR via `useI18n()` (`src/i18n/I18nProvider.jsx`),
-  toggled by the visitor. Defaults to **French** for any visitor without a saved
-  preference, unless their browser explicitly prefers English
-  (`navigator.language` starts with `en`) — changed from the original
-  English-default behavior.
-- **Admin panel** (`/login`, `/admin/*`): UI chrome (labels, buttons, table
-  headers, confirm dialogs) is **hardcoded in French directly in the JSX** — it
-  does **not** use `useI18n()`/`dict` at all, and there's no language toggle for
-  admins. This was a deliberate choice (the gym's admins are French-speaking), not
-  an oversight — don't "fix" it by wiring the admin panel into the public i18n
-  system unless asked. The **data** the admin edits (subscription plan names,
-  features, etc.) still has separate EN/FR fields, same as before, because that
-  data feeds the bilingual public site.
+- Singleton table `contact_info` (`server/src/models/contactInfo.model.js`) — one
+  row (`id=1` in practice), not a list. Holds `email`, `phone` (displayed +
+  `tel:` link), `whatsappNumber` (international format, no `+`, used for `wa.me`
+  links — separate from `phone` since a business may want a different number for
+  each), `hours` and `locationLabel` (plain strings), and `mapQuery` (the Google
+  Maps search string — kept independent from `locationLabel` since the original
+  hardcoded data already had them slightly inconsistent: label "Cocody" but map
+  query "Deux Plateau Abidjan"; that mismatch was preserved on migration rather
+  than silently "fixed", and is now something the admin can reconcile themselves
+  via the form).
+- Public read: `GET /api/contact-info` (no auth). Admin read/update:
+  `GET/PATCH /api/admin/contact-info`, gated by the `manage_settings` permission
+  (added to `seedRolesAndPermissions.js` — re-run that seeder, or `npm run seed`,
+  to pick it up on an existing DB).
+- `src/context/ContactContext.jsx` fetches the public endpoint once at the app
+  root (wraps everything in `main.jsx`, alongside `I18nProvider`/`AuthProvider`)
+  and exposes it via `useContact()`. `Footer.jsx` and `WhatsAppLeadModal.jsx` both
+  consume it instead of hardcoded values.
+- `src/utils/whatsapp.js`'s `getWhatsAppUrl()` used to hardcode the number as a
+  module constant; it now takes the number as a parameter. `WhatsAppLeadModal.jsx`
+  is the **only** caller (all "open WhatsApp" flows across the site funnel through
+  that one shared modal), so this was a small, contained change.
+- Admin UI: `src/pages/admin/ContactInfoPage.jsx` — a single form, no table (it's
+  a singleton, not a list), at `/#/admin/contact-info`.
+
+## Site went French-only (no more EN/FR anywhere)
+
+The site and admin panel were bilingual (EN/FR) through the first few phases, with
+a visitor-facing language toggle and every admin-editable field duplicated
+(`nameEn`/`nameFr`, etc.). That was scrapped in favor of **French-only,
+everywhere** — the admin was typing every field twice for no real benefit, and
+there was never an actual English-speaking audience for this gym. Key facts for
+anyone picking this up:
+
+- **No language toggle exists anymore.** `src/i18n/translations.js` only has a
+  `fr` key now (the `en` block — roughly half the file — was deleted outright,
+  not just hidden). `src/i18n/I18nProvider.jsx` no longer has `lang` state,
+  `toggleLang`, or `localStorage` persistence — `t()`/`dict` still work exactly
+  as before for any component, but `lang` is now a **hardcoded constant `'fr'`**
+  kept in the context value on purpose, so `src/pages/ClassesPage.jsx` and
+  `src/data/groupClasses.js` (still internally bilingual EN/FR data, untouched —
+  that content is phase 3, not yet migrated to the DB) don't need any changes:
+  they keep asking for `lang` and always get `'fr'`.
+- **`subscription_plans` and `contact_info` are single-language now** (see
+  columns above) — this was an actual schema migration on the live dev DB, not
+  just a fresh-install seed change. The one-off script that did it is
+  `server/scripts/migrateToFrenchOnly.js` (adds flat columns, copies the `_fr`
+  values into them, drops the `_en`/`_fr` columns). It's already been run against
+  the dev DB — don't re-run it; it's kept only as a reference for what happened
+  and as a template if another environment ever needs the same migration.
+- **Admin forms shrank accordingly** — `SubscriptionsPage.jsx` and
+  `ContactInfoPage.jsx` (both under `src/pages/admin/`) now have one input per
+  field instead of an EN/FR pair. This was the actual point of the change: half
+  the typing for the admin, one source of truth per fact.
 - Permission labels (`permissions.label` in MySQL, shown in the Employees page's
-  privilege checkboxes) are also stored in French now. If you ever need to
-  UPDATE French text directly via `docker exec ... mysql -e "..."`, pass
+  privilege checkboxes) are in French. If you ever need to UPDATE French text
+  directly via `docker exec ... mysql -e "..."`, pass
   `--default-character-set=utf8mb4` — without it, accented characters get
   mangled into mojibake (`Gérer` → `GÃ©rer`) even though Sequelize/Node writes
-  are unaffected. Hit this once already; check with a `SELECT` after any raw SQL
-  UPDATE containing accents.
+  are unaffected. Hit this more than once already; check with a `SELECT` (or
+  better, the actual API response) after any raw SQL touching accented text.
+  Same goes for testing an API with `curl -d '...'` containing non-ASCII
+  characters (e.g. `·`) through Git Bash — it can mangle the character before it
+  reaches the server. Build the request in a small Node script (`fetch(...)`)
+  instead when the payload has accents.
 
 ## Backend architecture (`server/`)
 

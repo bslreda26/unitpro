@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
@@ -488,6 +488,19 @@ export function ClassesPage() {
   const [whatsAppOpen, setWhatsAppOpen] = useState(false)
   const placeholderBg = useSvgPlaceholderDataUrl()
   const [heroBg, setHeroBg] = useState(HERO_BG_PRIMARY)
+  const calendarRef = useRef(null)
+
+  // FullCalendar measures row/header heights once at mount. If the custom
+  // display font (Bebas Neue) finishes loading after that — common on a slow
+  // connection — text metrics shift slightly but the already-positioned event
+  // boxes don't get recalculated, leaving them subtly misaligned until
+  // something else forces a resize. Force one once the font is actually ready.
+  useEffect(() => {
+    if (!document.fonts?.ready) return
+    document.fonts.ready.then(() => {
+      calendarRef.current?.getApi()?.updateSize()
+    })
+  }, [])
 
   const classes = useMemo(
     () => catalogWithImages(getGroupClasses(lang).catalog),
@@ -704,6 +717,7 @@ export function ClassesPage() {
                       <div className="overflow-hidden rounded-lg border border-white/[0.08] bg-[#080808]">
                         <div className="unit-weekly-calendar px-2 pb-2 pt-3 md:px-3 md:pb-3 md:pt-4">
                           <FullCalendar
+                            ref={calendarRef}
                             key={anchorMonday.toISOString()}
                             plugins={[timeGridPlugin, interactionPlugin]}
                             initialView="timeGridWeek"

@@ -85,7 +85,7 @@ function MobileQuickLinks() {
 export function Navbar() {
   const scrolled = useScrolled(10)
   const [hovered, setHovered] = useState(null)
-  const { t, lang, toggleLang } = useI18n()
+  const { t } = useI18n()
 
   return (
     <header
@@ -127,14 +127,6 @@ export function Navbar() {
             {t('nav.joinNow')}
           </NavLink>
 
-          <button
-            type="button"
-            onClick={toggleLang}
-            className="inline-flex h-11 min-h-[44px] min-w-[44px] items-center justify-center border border-primary/35 bg-primary/10 px-3 font-body text-[10px] font-bold uppercase tracking-widest text-primary"
-            aria-label={lang === 'fr' ? 'Switch to English' : 'Passer en français'}
-          >
-            {lang === 'fr' ? 'EN' : 'FR'}
-          </button>
         </div>
       </div>
     </header>

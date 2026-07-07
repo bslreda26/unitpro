@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { X } from 'lucide-react'
 import { useI18n } from '../i18n/I18nProvider.jsx'
+import { useContact } from '../context/ContactContext.jsx'
 import { getWhatsAppUrl } from '../utils/whatsapp.js'
 
 const PHONE_PREFIX = '+225'
@@ -12,6 +13,7 @@ function normalizePhone(value) {
 
 export function WhatsAppLeadModal({ open, onClose, initialMessage = '' }) {
   const { t } = useI18n()
+  const { whatsappNumber } = useContact()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
@@ -43,7 +45,7 @@ export function WhatsAppLeadModal({ open, onClose, initialMessage = '' }) {
       .filter(Boolean)
       .join('\n')
 
-    window.open(getWhatsAppUrl(payload), '_blank', 'noopener,noreferrer')
+    window.open(getWhatsAppUrl(payload, whatsappNumber), '_blank', 'noopener,noreferrer')
     onClose?.()
   }
 

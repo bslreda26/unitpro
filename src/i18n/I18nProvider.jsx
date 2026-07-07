@@ -1,65 +1,25 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useMemo } from 'react'
 import { translations } from './translations.js'
 
-const STORAGE_KEY = 'unitpro.lang'
-
-function normalizeLang(lang) {
-  return lang === 'en' ? 'en' : 'fr'
-}
-
-function getInitialLang() {
-  try {
-    const stored = window.localStorage.getItem(STORAGE_KEY)
-    if (stored) return normalizeLang(stored)
-  } catch {
-    // ignore
-  }
-
-  // Default to French. Only switch to English if the visitor's browser explicitly
-  // prefers it — otherwise (including languages we don't have translations for),
-  // French is the site's default.
-  const nav = (typeof navigator !== 'undefined' && navigator.language) || ''
-  if (nav.toLowerCase().startsWith('en')) return 'en'
-  return 'fr'
-}
+// The site is French-only — no language toggle. `lang` is kept as a constant
+// (rather than removed outright) so components that still branch on it for
+// locale-aware formatting (e.g. date libraries) don't need to change.
+const lang = 'fr'
+const dict = translations.fr
 
 const I18nContext = createContext(null)
 
 export function I18nProvider({ children }) {
-  const [lang, setLang] = useState(getInitialLang)
-
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, lang)
-    } catch {
-      // ignore
+  const t = useCallback((key) => {
+    const parts = String(key).split('.')
+    let cur = dict
+    for (const p of parts) {
+      cur = cur?.[p]
     }
-  }, [lang])
+    return typeof cur === 'string' ? cur : String(key)
+  }, [])
 
-  const dict = translations[lang] ?? translations.fr
-
-  const t = useCallback(
-    (key) => {
-      const parts = String(key).split('.')
-      let cur = dict
-      for (const p of parts) {
-        cur = cur?.[p]
-      }
-      return typeof cur === 'string' ? cur : String(key)
-    },
-    [dict],
-  )
-
-  const value = useMemo(
-    () => ({
-      lang,
-      setLang: (next) => setLang(normalizeLang(next)),
-      toggleLang: () => setLang((v) => (v === 'fr' ? 'en' : 'fr')),
-      dict,
-      t,
-    }),
-    [dict, lang, t],
-  )
+  const value = useMemo(() => ({ lang, dict, t }), [t])
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>
 }
@@ -69,4 +29,3 @@ export function useI18n() {
   if (!ctx) throw new Error('useI18n must be used within I18nProvider')
   return ctx
 }
-

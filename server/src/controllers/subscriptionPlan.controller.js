@@ -5,14 +5,14 @@ function serialize(plan) {
     id: plan.id,
     category: plan.category,
     planKey: plan.planKey,
-    name: { en: plan.nameEn, fr: plan.nameFr },
-    subtitle: { en: plan.subtitleEn, fr: plan.subtitleFr },
-    bestFor: { en: plan.bestForEn, fr: plan.bestForFr },
+    name: plan.name,
+    subtitle: plan.subtitle,
+    bestFor: plan.bestFor,
     price: plan.price,
-    suffix: { en: plan.suffixEn, fr: plan.suffixFr },
-    features: plan.features ?? { en: [], fr: [] },
+    suffix: plan.suffix,
+    features: plan.features ?? [],
     cta: {
-      label: { en: plan.ctaLabelEn, fr: plan.ctaLabelFr },
+      label: plan.ctaLabel,
       variant: plan.ctaVariant,
     },
     featured: plan.featured,
@@ -46,12 +46,12 @@ function extractFields(body) {
   const {
     category,
     planKey,
-    name = {},
-    subtitle = {},
-    bestFor = {},
+    name,
+    subtitle,
+    bestFor,
     price,
-    suffix = {},
-    features = {},
+    suffix,
+    features,
     cta = {},
     featured,
     sortOrder,
@@ -61,21 +61,13 @@ function extractFields(body) {
   return {
     category,
     planKey,
-    nameEn: name.en,
-    nameFr: name.fr,
-    subtitleEn: subtitle.en ?? null,
-    subtitleFr: subtitle.fr ?? null,
-    bestForEn: bestFor.en ?? null,
-    bestForFr: bestFor.fr ?? null,
+    name,
+    subtitle: subtitle ?? null,
+    bestFor: bestFor ?? null,
     price: price ?? null,
-    suffixEn: suffix.en ?? null,
-    suffixFr: suffix.fr ?? null,
-    features: {
-      en: Array.isArray(features.en) ? features.en : [],
-      fr: Array.isArray(features.fr) ? features.fr : [],
-    },
-    ctaLabelEn: cta.label?.en ?? null,
-    ctaLabelFr: cta.label?.fr ?? null,
+    suffix: suffix ?? null,
+    features: Array.isArray(features) ? features : [],
+    ctaLabel: cta.label ?? null,
     ctaVariant: cta.variant ?? 'outline',
     featured: Boolean(featured),
     sortOrder: Number.isFinite(sortOrder) ? sortOrder : 0,
@@ -97,8 +89,8 @@ async function create(req, res) {
   if (!fields.category || !VALID_CATEGORIES.includes(fields.category)) {
     return res.status(400).json({ message: 'A valid category is required' });
   }
-  if (!fields.nameEn || !fields.nameFr) {
-    return res.status(400).json({ message: 'Name (EN and FR) is required' });
+  if (!fields.name) {
+    return res.status(400).json({ message: 'Name is required' });
   }
 
   const plan = await SubscriptionPlan.create(fields);
@@ -119,19 +111,19 @@ async function update(req, res) {
   res.json({ plan: serialize(plan) });
 }
 
-// Re-shapes the current DB row back into the bilingual request shape so partial
-// PATCH bodies can be merged with extractFields without clobbering untouched fields.
+// Re-shapes the current DB row back into the request shape so partial PATCH
+// bodies can be merged with extractFields without clobbering untouched fields.
 function serializeForUpdate(plan) {
   return {
     category: plan.category,
     planKey: plan.planKey,
-    name: { en: plan.nameEn, fr: plan.nameFr },
-    subtitle: { en: plan.subtitleEn, fr: plan.subtitleFr },
-    bestFor: { en: plan.bestForEn, fr: plan.bestForFr },
+    name: plan.name,
+    subtitle: plan.subtitle,
+    bestFor: plan.bestFor,
     price: plan.price,
-    suffix: { en: plan.suffixEn, fr: plan.suffixFr },
-    features: plan.features ?? { en: [], fr: [] },
-    cta: { label: { en: plan.ctaLabelEn, fr: plan.ctaLabelFr }, variant: plan.ctaVariant },
+    suffix: plan.suffix,
+    features: plan.features ?? [],
+    cta: { label: plan.ctaLabel, variant: plan.ctaVariant },
     featured: plan.featured,
     sortOrder: plan.sortOrder,
     isActive: plan.isActive,

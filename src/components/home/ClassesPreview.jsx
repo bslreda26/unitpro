@@ -3,17 +3,19 @@ import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { useI18n } from '../../i18n/I18nProvider.jsx'
 
+// Rendered at roughly 370px wide max (3-column grid inside max-w-6xl) — 700px
+// covers retina displays without shipping a 1200px image for a ~370px cell.
 const GALLERY_IMAGES = [
-  'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1517963879433-6ad2b056d712?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80',
+  'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=700&q=75',
+  'https://images.unsplash.com/photo-1517963879433-6ad2b056d712?auto=format&fit=crop&w=700&q=75',
+  'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=700&q=75',
+  'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=700&q=75',
+  'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?auto=format&fit=crop&w=700&q=75',
+  'https://images.unsplash.com/photo-1434596922112-19c563067271?auto=format&fit=crop&w=700&q=75',
 ]
 
 const GALLERY_FALLBACK =
-  'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80'
+  'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=700&q=75'
 
 export function ClassesPreview() {
   const { t } = useI18n()
@@ -71,7 +73,7 @@ export function ClassesPreview() {
         >
           {GALLERY_IMAGES.map((src, idx) => (
             <motion.div
-              key={src}
+              key={`${src}-${idx}`}
               variants={cell}
               className="group relative aspect-[4/5] overflow-hidden rounded-xl border border-white/10 bg-surface shadow-[0_16px_40px_rgba(0,0,0,0.35)] sm:aspect-square"
             >

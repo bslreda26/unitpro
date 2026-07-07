@@ -33,6 +33,9 @@ const EmployeesPage = lazy(() =>
 const AdminSubscriptionsPage = lazy(() =>
   import('./pages/admin/SubscriptionsPage.jsx').then((m) => ({ default: m.SubscriptionsPage })),
 )
+const ContactInfoPage = lazy(() =>
+  import('./pages/admin/ContactInfoPage.jsx').then((m) => ({ default: m.ContactInfoPage })),
+)
 
 export default function App() {
   const [loading, setLoading] = useState(true)
@@ -90,6 +93,7 @@ export default function App() {
           AdminDashboardPage={AdminDashboardPage}
           EmployeesPage={EmployeesPage}
           AdminSubscriptionsPage={AdminSubscriptionsPage}
+          ContactInfoPage={ContactInfoPage}
         />
       </div>
     )
@@ -112,6 +116,7 @@ export default function App() {
               AdminDashboardPage={AdminDashboardPage}
               EmployeesPage={EmployeesPage}
               AdminSubscriptionsPage={AdminSubscriptionsPage}
+              ContactInfoPage={ContactInfoPage}
             />
           </main>
           <Footer />

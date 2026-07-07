@@ -4,6 +4,7 @@ const Permission = require('./permission.model');
 const User = require('./user.model');
 const UserPermission = require('./userPermission.model');
 const SubscriptionPlan = require('./subscriptionPlan.model');
+const ContactInfo = require('./contactInfo.model');
 
 Role.hasMany(User, { foreignKey: 'roleId', as: 'users' });
 User.belongsTo(Role, { foreignKey: 'roleId', as: 'role' });
@@ -23,4 +24,12 @@ Permission.belongsToMany(User, {
 
 User.belongsTo(User, { foreignKey: 'createdBy', as: 'creator' });
 
-module.exports = { sequelize, Role, Permission, User, UserPermission, SubscriptionPlan };
+module.exports = {
+  sequelize,
+  Role,
+  Permission,
+  User,
+  UserPermission,
+  SubscriptionPlan,
+  ContactInfo,
+};

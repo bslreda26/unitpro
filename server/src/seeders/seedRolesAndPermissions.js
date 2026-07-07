@@ -7,6 +7,7 @@ const PERMISSIONS = [
   { key: 'manage_courses', label: 'Gérer les cours et les classes' },
   { key: 'manage_subscriptions', label: 'Gérer les abonnements et les tarifs' },
   { key: 'manage_clients', label: 'Gérer les clients et leurs abonnements' },
+  { key: 'manage_settings', label: 'Gérer les paramètres du site (contact, etc.)' },
 ];
 
 async function run() {

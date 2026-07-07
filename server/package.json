@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js",
-    "seed": "node src/seeders/seedRolesAndPermissions.js && node src/seeders/seedSuperAdmin.js && node src/seeders/seedSubscriptionPlans.js"
+    "seed": "node src/seeders/seedRolesAndPermissions.js && node src/seeders/seedSuperAdmin.js && node src/seeders/seedSubscriptionPlans.js && node src/seeders/seedContactInfo.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

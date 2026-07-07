@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import { ArrowDown } from 'lucide-react'
 import { useI18n } from '../i18n/I18nProvider.jsx'
-import { HERO_POSTER_URL, HERO_VIDEO_FALLBACK_URL, HERO_VIDEO_URL } from '../constants/heroMedia.js'
+import { HERO_POSTER_URL, HERO_VIDEO_URL } from '../constants/heroMedia.js'
 
 export function Hero() {
   const { t } = useI18n()
@@ -80,7 +80,6 @@ export function Hero() {
               poster={HERO_POSTER_URL}
             >
               <source src={HERO_VIDEO_URL} type="video/mp4" />
-              <source src={HERO_VIDEO_FALLBACK_URL} type="video/mp4" />
             </video>
             <img
               src={HERO_POSTER_URL}

@@ -18,19 +18,13 @@ const CATEGORIES = [
 const emptyForm = {
   category: 'membership',
   planKey: '',
-  nameEn: '',
-  nameFr: '',
-  subtitleEn: '',
-  subtitleFr: '',
-  bestForEn: '',
-  bestForFr: '',
+  name: '',
+  subtitle: '',
+  bestFor: '',
   price: '',
-  suffixEn: '',
-  suffixFr: '',
-  featuresEn: '',
-  featuresFr: '',
-  ctaLabelEn: '',
-  ctaLabelFr: '',
+  suffix: '',
+  features: '',
+  ctaLabel: '',
   ctaVariant: 'outline',
   featured: false,
   sortOrder: 0,
@@ -48,19 +42,13 @@ function planToForm(plan) {
   return {
     category: plan.category,
     planKey: plan.planKey ?? '',
-    nameEn: plan.name?.en ?? '',
-    nameFr: plan.name?.fr ?? '',
-    subtitleEn: plan.subtitle?.en ?? '',
-    subtitleFr: plan.subtitle?.fr ?? '',
-    bestForEn: plan.bestFor?.en ?? '',
-    bestForFr: plan.bestFor?.fr ?? '',
+    name: plan.name ?? '',
+    subtitle: plan.subtitle ?? '',
+    bestFor: plan.bestFor ?? '',
     price: plan.price ?? '',
-    suffixEn: plan.suffix?.en ?? '',
-    suffixFr: plan.suffix?.fr ?? '',
-    featuresEn: (plan.features?.en ?? []).join('\n'),
-    featuresFr: (plan.features?.fr ?? []).join('\n'),
-    ctaLabelEn: plan.cta?.label?.en ?? '',
-    ctaLabelFr: plan.cta?.label?.fr ?? '',
+    suffix: plan.suffix ?? '',
+    features: (plan.features ?? []).join('\n'),
+    ctaLabel: plan.cta?.label ?? '',
     ctaVariant: plan.cta?.variant ?? 'outline',
     featured: Boolean(plan.featured),
     sortOrder: plan.sortOrder ?? 0,
@@ -72,14 +60,14 @@ function formToPayload(form) {
   return {
     category: form.category,
     planKey: form.planKey || null,
-    name: { en: form.nameEn, fr: form.nameFr },
-    subtitle: { en: form.subtitleEn || null, fr: form.subtitleFr || null },
-    bestFor: { en: form.bestForEn || null, fr: form.bestForFr || null },
+    name: form.name,
+    subtitle: form.subtitle || null,
+    bestFor: form.bestFor || null,
     price: form.price === '' ? null : Number(form.price),
-    suffix: { en: form.suffixEn || null, fr: form.suffixFr || null },
-    features: { en: linesToArray(form.featuresEn), fr: linesToArray(form.featuresFr) },
+    suffix: form.suffix || null,
+    features: linesToArray(form.features),
     cta: {
-      label: { en: form.ctaLabelEn || null, fr: form.ctaLabelFr || null },
+      label: form.ctaLabel || null,
       variant: form.ctaVariant,
     },
     featured: form.featured,
@@ -157,7 +145,7 @@ export function SubscriptionsPage() {
   }
 
   const handleDelete = async (plan) => {
-    if (!window.confirm(`Supprimer « ${plan.name.fr} » ? Cette action est irréversible.`)) return
+    if (!window.confirm(`Supprimer « ${plan.name} » ? Cette action est irréversible.`)) return
     await deletePlan(plan.id)
     if (editingId === plan.id) closeForm()
     await loadData()
@@ -202,224 +190,166 @@ export function SubscriptionsPage() {
             onSubmit={handleSubmit}
             className="grid grid-cols-1 gap-4 border-t border-border p-6 sm:grid-cols-2"
           >
-        <div className="flex flex-col gap-1.5">
-          <label className={labelClass}>Catégorie</label>
-          <select
-            value={form.category}
-            onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
-            className={inputClass}
-          >
-            {CATEGORIES.map((cat) => (
-              <option key={cat.value} value={cat.value}>
-                {cat.label}
-              </option>
-            ))}
-          </select>
-        </div>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass}>Catégorie</label>
+              <select
+                value={form.category}
+                onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
+                className={inputClass}
+              >
+                {CATEGORIES.map((cat) => (
+                  <option key={cat.value} value={cat.value}>
+                    {cat.label}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-        <div className="flex flex-col gap-1.5">
-          <label className={labelClass}>Clé du forfait (identifiant, facultatif)</label>
-          <input
-            type="text"
-            value={form.planKey}
-            onChange={(e) => setForm((f) => ({ ...f, planKey: e.target.value }))}
-            className={inputClass}
-          />
-        </div>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass}>Clé du forfait (identifiant, facultatif)</label>
+              <input
+                type="text"
+                value={form.planKey}
+                onChange={(e) => setForm((f) => ({ ...f, planKey: e.target.value }))}
+                className={inputClass}
+              />
+            </div>
 
-        <div className="flex flex-col gap-1.5">
-          <label className={labelClass}>Nom (EN)</label>
-          <input
-            required
-            type="text"
-            value={form.nameEn}
-            onChange={(e) => setForm((f) => ({ ...f, nameEn: e.target.value }))}
-            className={inputClass}
-          />
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <label className={labelClass}>Nom (FR)</label>
-          <input
-            required
-            type="text"
-            value={form.nameFr}
-            onChange={(e) => setForm((f) => ({ ...f, nameFr: e.target.value }))}
-            className={inputClass}
-          />
-        </div>
+            <div className="flex flex-col gap-1.5 sm:col-span-2">
+              <label className={labelClass}>Nom</label>
+              <input
+                required
+                type="text"
+                value={form.name}
+                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                className={inputClass}
+              />
+            </div>
 
-        <div className="flex flex-col gap-1.5">
-          <label className={labelClass}>Sous-titre / description (EN)</label>
-          <input
-            type="text"
-            value={form.subtitleEn}
-            onChange={(e) => setForm((f) => ({ ...f, subtitleEn: e.target.value }))}
-            className={inputClass}
-          />
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <label className={labelClass}>Sous-titre / description (FR)</label>
-          <input
-            type="text"
-            value={form.subtitleFr}
-            onChange={(e) => setForm((f) => ({ ...f, subtitleFr: e.target.value }))}
-            className={inputClass}
-          />
-        </div>
+            <div className="flex flex-col gap-1.5 sm:col-span-2">
+              <label className={labelClass}>Sous-titre / description</label>
+              <input
+                type="text"
+                value={form.subtitle}
+                onChange={(e) => setForm((f) => ({ ...f, subtitle: e.target.value }))}
+                className={inputClass}
+              />
+            </div>
 
-        <div className="flex flex-col gap-1.5">
-          <label className={labelClass}>Idéal pour (EN)</label>
-          <input
-            type="text"
-            value={form.bestForEn}
-            onChange={(e) => setForm((f) => ({ ...f, bestForEn: e.target.value }))}
-            className={inputClass}
-          />
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <label className={labelClass}>Idéal pour (FR)</label>
-          <input
-            type="text"
-            value={form.bestForFr}
-            onChange={(e) => setForm((f) => ({ ...f, bestForFr: e.target.value }))}
-            className={inputClass}
-          />
-        </div>
+            <div className="flex flex-col gap-1.5 sm:col-span-2">
+              <label className={labelClass}>Idéal pour</label>
+              <input
+                type="text"
+                value={form.bestFor}
+                onChange={(e) => setForm((f) => ({ ...f, bestFor: e.target.value }))}
+                className={inputClass}
+              />
+            </div>
 
-        <div className="flex flex-col gap-1.5">
-          <label className={labelClass}>Prix (FCFA, laisser vide si aucun)</label>
-          <input
-            type="number"
-            min="0"
-            value={form.price}
-            onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
-            className={inputClass}
-          />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="flex flex-col gap-1.5">
-            <label className={labelClass}>Suffixe (EN)</label>
-            <input
-              type="text"
-              placeholder="/ month"
-              value={form.suffixEn}
-              onChange={(e) => setForm((f) => ({ ...f, suffixEn: e.target.value }))}
-              className={inputClass}
-            />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label className={labelClass}>Suffixe (FR)</label>
-            <input
-              type="text"
-              placeholder="/ mois"
-              value={form.suffixFr}
-              onChange={(e) => setForm((f) => ({ ...f, suffixFr: e.target.value }))}
-              className={inputClass}
-            />
-          </div>
-        </div>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass}>Prix (FCFA, laisser vide si aucun)</label>
+              <input
+                type="number"
+                min="0"
+                value={form.price}
+                onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
+                className={inputClass}
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass}>Suffixe</label>
+              <input
+                type="text"
+                placeholder="/ mois"
+                value={form.suffix}
+                onChange={(e) => setForm((f) => ({ ...f, suffix: e.target.value }))}
+                className={inputClass}
+              />
+            </div>
 
-        <div className="flex flex-col gap-1.5">
-          <label className={labelClass}>Fonctionnalités (EN, une par ligne)</label>
-          <textarea
-            rows={4}
-            value={form.featuresEn}
-            onChange={(e) => setForm((f) => ({ ...f, featuresEn: e.target.value }))}
-            className={inputClass}
-          />
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <label className={labelClass}>Fonctionnalités (FR, une par ligne)</label>
-          <textarea
-            rows={4}
-            value={form.featuresFr}
-            onChange={(e) => setForm((f) => ({ ...f, featuresFr: e.target.value }))}
-            className={inputClass}
-          />
-        </div>
+            <div className="flex flex-col gap-1.5 sm:col-span-2">
+              <label className={labelClass}>Fonctionnalités (une par ligne)</label>
+              <textarea
+                rows={4}
+                value={form.features}
+                onChange={(e) => setForm((f) => ({ ...f, features: e.target.value }))}
+                className={inputClass}
+              />
+            </div>
 
-        <div className="flex flex-col gap-1.5">
-          <label className={labelClass}>Libellé du bouton (EN)</label>
-          <input
-            type="text"
-            value={form.ctaLabelEn}
-            onChange={(e) => setForm((f) => ({ ...f, ctaLabelEn: e.target.value }))}
-            className={inputClass}
-          />
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <label className={labelClass}>Libellé du bouton (FR)</label>
-          <input
-            type="text"
-            value={form.ctaLabelFr}
-            onChange={(e) => setForm((f) => ({ ...f, ctaLabelFr: e.target.value }))}
-            className={inputClass}
-          />
-        </div>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass}>Libellé du bouton</label>
+              <input
+                type="text"
+                value={form.ctaLabel}
+                onChange={(e) => setForm((f) => ({ ...f, ctaLabel: e.target.value }))}
+                className={inputClass}
+              />
+            </div>
 
-        <div className="flex flex-col gap-1.5">
-          <label className={labelClass}>Style du bouton</label>
-          <select
-            value={form.ctaVariant}
-            onChange={(e) => setForm((f) => ({ ...f, ctaVariant: e.target.value }))}
-            className={inputClass}
-          >
-            <option value="outline">Contour</option>
-            <option value="solid">Plein</option>
-          </select>
-        </div>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass}>Style du bouton</label>
+              <select
+                value={form.ctaVariant}
+                onChange={(e) => setForm((f) => ({ ...f, ctaVariant: e.target.value }))}
+                className={inputClass}
+              >
+                <option value="outline">Contour</option>
+                <option value="solid">Plein</option>
+              </select>
+            </div>
 
-        <div className="flex flex-col gap-1.5">
-          <label className={labelClass}>Ordre d’affichage</label>
-          <input
-            type="number"
-            value={form.sortOrder}
-            onChange={(e) => setForm((f) => ({ ...f, sortOrder: e.target.value }))}
-            className={inputClass}
-          />
-        </div>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass}>Ordre d’affichage</label>
+              <input
+                type="number"
+                value={form.sortOrder}
+                onChange={(e) => setForm((f) => ({ ...f, sortOrder: e.target.value }))}
+                className={inputClass}
+              />
+            </div>
 
-        <div className="flex items-center gap-6 sm:col-span-2">
-          <label className="flex items-center gap-2 text-xs text-white/80">
-            <input
-              type="checkbox"
-              checked={form.featured}
-              onChange={(e) => setForm((f) => ({ ...f, featured: e.target.checked }))}
-            />
-            Mis en avant (carte surlignée, abonnements uniquement)
-          </label>
-          <label className="flex items-center gap-2 text-xs text-white/80">
-            <input
-              type="checkbox"
-              checked={form.isActive}
-              onChange={(e) => setForm((f) => ({ ...f, isActive: e.target.checked }))}
-            />
-            Actif (visible sur le site public)
-          </label>
-        </div>
+            <div className="flex items-center gap-6 sm:col-span-2">
+              <label className="flex items-center gap-2 text-xs text-white/80">
+                <input
+                  type="checkbox"
+                  checked={form.featured}
+                  onChange={(e) => setForm((f) => ({ ...f, featured: e.target.checked }))}
+                />
+                Mis en avant (carte surlignée, abonnements uniquement)
+              </label>
+              <label className="flex items-center gap-2 text-xs text-white/80">
+                <input
+                  type="checkbox"
+                  checked={form.isActive}
+                  onChange={(e) => setForm((f) => ({ ...f, isActive: e.target.checked }))}
+                />
+                Actif (visible sur le site public)
+              </label>
+            </div>
 
-        {error && (
-          <p className="sm:col-span-2 text-sm text-primary" role="alert">
-            {error}
-          </p>
-        )}
+            {error && (
+              <p className="sm:col-span-2 text-sm text-primary" role="alert">
+                {error}
+              </p>
+            )}
 
-        <div className="flex gap-3 sm:col-span-2">
-          <button
-            type="submit"
-            disabled={submitting}
-            className="h-11 bg-primary px-6 font-body text-sm font-semibold uppercase tracking-widest text-white transition-transform hover:scale-[1.02] hover:bg-accent disabled:opacity-60"
-          >
-            {submitting ? 'Enregistrement…' : editingId ? 'Enregistrer' : 'Créer le forfait'}
-          </button>
-          <button
-            type="button"
-            onClick={closeForm}
-            className="h-11 border border-border px-6 font-body text-sm font-semibold uppercase tracking-widest text-white/80 hover:border-primary/50 hover:text-primary"
-          >
-            Annuler
-          </button>
-        </div>
+            <div className="flex gap-3 sm:col-span-2">
+              <button
+                type="submit"
+                disabled={submitting}
+                className="h-11 bg-primary px-6 font-body text-sm font-semibold uppercase tracking-widest text-white transition-transform hover:scale-[1.02] hover:bg-accent disabled:opacity-60"
+              >
+                {submitting ? 'Enregistrement…' : editingId ? 'Enregistrer' : 'Créer le forfait'}
+              </button>
+              <button
+                type="button"
+                onClick={closeForm}
+                className="h-11 border border-border px-6 font-body text-sm font-semibold uppercase tracking-widest text-white/80 hover:border-primary/50 hover:text-primary"
+              >
+                Annuler
+              </button>
+            </div>
           </form>
         )}
       </div>
@@ -457,7 +387,7 @@ export function SubscriptionsPage() {
                   {cat.items.map((plan) => (
                     <tr key={plan.id} className="border-b border-border/60 last:border-0">
                       <td className="px-4 py-3 text-white">
-                        {plan.name.fr}
+                        {plan.name}
                         {plan.featured ? (
                           <span className="ml-2 text-[10px] uppercase tracking-wide text-primary">
                             Mis en avant

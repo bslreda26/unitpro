@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
-import { Menu, X, LogOut, LayoutDashboard, Users, Tag } from 'lucide-react'
+import { Menu, X, LogOut, LayoutDashboard, Users, Tag, Phone } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext.jsx'
 
 const NAV_ITEMS = [
@@ -11,6 +11,12 @@ const NAV_ITEMS = [
     label: 'Abonnements',
     icon: Tag,
     requiredPermission: 'manage_subscriptions',
+  },
+  {
+    to: '/admin/contact-info',
+    label: 'Contact',
+    icon: Phone,
+    requiredPermission: 'manage_settings',
   },
 ]
 

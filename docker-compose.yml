@@ -1,0 +1,15 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: unitpro_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: unitpro_root_pw
+      MYSQL_DATABASE: unitpro
+    ports:
+      - "3308:3306"
+    volumes:
+      - unitpro_mysql_data:/var/lib/mysql
+
+volumes:
+  unitpro_mysql_data:

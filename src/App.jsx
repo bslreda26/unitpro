@@ -1,4 +1,5 @@
 import { lazy, useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { Navbar } from './components/Navbar.jsx'
 import { Footer } from './components/Footer.jsx'
 import { AnimatedRoutes } from './components/AnimatedRoutes.jsx'
@@ -15,9 +16,28 @@ const SubscriptionsPage = lazy(() =>
     default: m.SubscriptionsPage,
   })),
 )
+const LoginPage = lazy(() =>
+  import('./pages/admin/LoginPage.jsx').then((m) => ({ default: m.LoginPage })),
+)
+const AdminLayout = lazy(() =>
+  import('./components/admin/AdminLayout.jsx').then((m) => ({ default: m.AdminLayout })),
+)
+const AdminDashboardPage = lazy(() =>
+  import('./pages/admin/AdminDashboardPage.jsx').then((m) => ({
+    default: m.AdminDashboardPage,
+  })),
+)
+const EmployeesPage = lazy(() =>
+  import('./pages/admin/EmployeesPage.jsx').then((m) => ({ default: m.EmployeesPage })),
+)
+const AdminSubscriptionsPage = lazy(() =>
+  import('./pages/admin/SubscriptionsPage.jsx').then((m) => ({ default: m.SubscriptionsPage })),
+)
 
 export default function App() {
   const [loading, setLoading] = useState(true)
+  const location = useLocation()
+  const isAdminRoute = location.pathname === '/login' || location.pathname.startsWith('/admin')
 
   useEffect(() => {
     if ('scrollRestoration' in history) {
@@ -58,6 +78,23 @@ export default function App() {
     }
   }, [loading])
 
+  if (isAdminRoute) {
+    return (
+      <div className="min-h-screen bg-dark text-text-primary font-body">
+        <AnimatedRoutes
+          HomePage={HomePage}
+          ClassesPage={ClassesPage}
+          SubscriptionsPage={SubscriptionsPage}
+          LoginPage={LoginPage}
+          AdminLayout={AdminLayout}
+          AdminDashboardPage={AdminDashboardPage}
+          EmployeesPage={EmployeesPage}
+          AdminSubscriptionsPage={AdminSubscriptionsPage}
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-dark text-text-primary font-body">
       <LoadingScreen show={loading} onDone={() => setLoading(false)} />
@@ -70,6 +107,11 @@ export default function App() {
               HomePage={HomePage}
               ClassesPage={ClassesPage}
               SubscriptionsPage={SubscriptionsPage}
+              LoginPage={LoginPage}
+              AdminLayout={AdminLayout}
+              AdminDashboardPage={AdminDashboardPage}
+              EmployeesPage={EmployeesPage}
+              AdminSubscriptionsPage={AdminSubscriptionsPage}
             />
           </main>
           <Footer />

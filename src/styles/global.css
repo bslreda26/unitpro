@@ -1,5 +1,4 @@
 html {
-  scroll-behavior: smooth;
   /* Avoid jumps when tall content mounts (e.g. after splash). */
   overflow-anchor: none;
   -webkit-tap-highlight-color: rgba(227, 27, 35, 0.12);

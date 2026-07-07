@@ -4,7 +4,7 @@ import { translations } from './translations.js'
 const STORAGE_KEY = 'unitpro.lang'
 
 function normalizeLang(lang) {
-  return lang === 'fr' ? 'fr' : 'en'
+  return lang === 'en' ? 'en' : 'fr'
 }
 
 function getInitialLang() {
@@ -15,9 +15,12 @@ function getInitialLang() {
     // ignore
   }
 
+  // Default to French. Only switch to English if the visitor's browser explicitly
+  // prefers it — otherwise (including languages we don't have translations for),
+  // French is the site's default.
   const nav = (typeof navigator !== 'undefined' && navigator.language) || ''
-  if (nav.toLowerCase().startsWith('fr')) return 'fr'
-  return 'en'
+  if (nav.toLowerCase().startsWith('en')) return 'en'
+  return 'fr'
 }
 
 const I18nContext = createContext(null)
@@ -33,7 +36,7 @@ export function I18nProvider({ children }) {
     }
   }, [lang])
 
-  const dict = translations[lang] ?? translations.en
+  const dict = translations[lang] ?? translations.fr
 
   const t = useCallback(
     (key) => {

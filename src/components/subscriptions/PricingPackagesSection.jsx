@@ -1,11 +1,30 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Check, Gift, Sparkles } from 'lucide-react'
 import { useInView } from 'react-intersection-observer'
 import { useI18n } from '../../i18n/I18nProvider.jsx'
 import { WhatsAppLeadModal } from '../WhatsAppLeadModal.jsx'
+import { fetchPublicPlans } from '../../api/subscriptionPlans.api.js'
 
 const TAB_KEYS = ['membership', 'groupClasses', 'personalTraining']
+
+function pickPlanForLang(plan, lang) {
+  return {
+    key: plan.planKey ?? plan.id,
+    name: plan.name?.[lang] ?? plan.name?.en ?? '',
+    subtitle: plan.subtitle?.[lang] ?? plan.subtitle?.en ?? '',
+    description: plan.subtitle?.[lang] ?? plan.subtitle?.en ?? '',
+    bestFor: plan.bestFor?.[lang] ?? plan.bestFor?.en ?? '',
+    price: plan.price,
+    suffix: plan.suffix?.[lang] ?? plan.suffix?.en ?? '',
+    features: plan.features?.[lang] ?? plan.features?.en ?? [],
+    cta: {
+      label: plan.cta?.label?.[lang] ?? plan.cta?.label?.en ?? '',
+      variant: plan.cta?.variant,
+    },
+    featured: plan.featured,
+  }
+}
 
 const money = new Intl.NumberFormat('fr-FR')
 
@@ -157,19 +176,44 @@ function OfferCard({ item }) {
 }
 
 export function PricingPackagesSection() {
-  const { dict, t } = useI18n()
+  const { dict, t, lang } = useI18n()
   const { ref, inView } = useInView({ threshold: 0.08, triggerOnce: true })
   const [activeTab, setActiveTab] = useState('membership')
   const [whatsAppMessage, setWhatsAppMessage] = useState('')
   const [whatsAppOpen, setWhatsAppOpen] = useState(false)
+  const [allPlans, setAllPlans] = useState([])
+
+  useEffect(() => {
+    let cancelled = false
+    fetchPublicPlans()
+      .then((data) => {
+        if (!cancelled) setAllPlans(data)
+      })
+      .catch(() => {
+        if (!cancelled) setAllPlans([])
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const hp = dict.homePricing ?? {}
-  const plans = hp.plans ?? []
-  const dayPass = hp.dayPass
-  const groupItems = hp.groupClasses?.items ?? []
-  const ptItems = hp.personalTraining?.items ?? []
-  const offers = hp.specialOffers?.items ?? []
   const tabs = hp.tabs ?? {}
+
+  const byCategory = useMemo(() => {
+    const grouped = {}
+    for (const plan of allPlans) {
+      grouped[plan.category] ??= []
+      grouped[plan.category].push(pickPlanForLang(plan, lang))
+    }
+    return grouped
+  }, [allPlans, lang])
+
+  const dayPass = byCategory.day_pass?.[0]
+  const plans = byCategory.membership ?? []
+  const groupItems = byCategory.group_class ?? []
+  const ptItems = byCategory.personal_training ?? []
+  const offers = byCategory.special_offer ?? []
 
   const labels = useMemo(
     () => ({

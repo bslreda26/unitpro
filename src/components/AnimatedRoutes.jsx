@@ -2,8 +2,18 @@ import { Suspense } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import { PageTransition } from './PageTransition.jsx'
+import { ProtectedRoute } from './admin/ProtectedRoute.jsx'
 
-export function AnimatedRoutes({ HomePage, ClassesPage, SubscriptionsPage }) {
+export function AnimatedRoutes({
+  HomePage,
+  ClassesPage,
+  SubscriptionsPage,
+  LoginPage,
+  AdminLayout,
+  AdminDashboardPage,
+  EmployeesPage,
+  AdminSubscriptionsPage,
+}) {
   const location = useLocation()
 
   return (
@@ -40,10 +50,36 @@ export function AnimatedRoutes({ HomePage, ClassesPage, SubscriptionsPage }) {
               </PageTransition>
             }
           />
+          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<AdminDashboardPage />} />
+            <Route
+              path="employees"
+              element={
+                <ProtectedRoute requiredRole="super_admin">
+                  <EmployeesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="subscriptions"
+              element={
+                <ProtectedRoute requiredPermission="manage_subscriptions">
+                  <AdminSubscriptionsPage />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
     </AnimatePresence>
   )
 }
-

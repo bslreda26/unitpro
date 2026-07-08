@@ -15,7 +15,7 @@ Unit Pro is a gym website with two parts living in one repo:
 The frontend and backend are developed and run independently. The frontend calls the
 backend over HTTP using `VITE_API_URL` (see `.env.local`).
 
-## Status: Phases 1–2 done (+ contact info), phase 3 not started
+## Status: Phases 1–3 done (+ contact info), phase 4 not started
 
 The original ask was, in order:
 1. ✅ **Admin authentication** — hidden `/login`, roles (super_admin / employee),
@@ -23,18 +23,18 @@ The original ask was, in order:
 2. ✅ **Subscriptions & pricing content** — admin can create/edit/reorder/hide the
    membership plans, day pass, group class packages, personal training packages,
    and special offers shown on the public `/subscriptions` page. **Done.**
-3. ⬜ **Course/class content editing** — same idea as phase 2 but for
-   `src/data/groupClasses.js`. **Not started.**
+3. ✅ **Course/class content editing** — admin can create/edit/hide group classes
+   and the weekly calendar schedule shown on the public `/classes` page. **Done.**
 4. ⬜ **Clients & subscriptions** — client records, client subscription management.
    **Not started.**
 
 Added outside the original numbered roadmap: **site contact info** (email, phone,
 WhatsApp number, hours, location) is also admin-editable now — see notes below.
 
-The `permissions` table (seeded in Phase 1) already has a `manage_courses` key
-ready for phase 3, and `manage_clients` ready for phase 4, so no schema changes
-will be needed there when those ship. A `manage_settings` permission was added
-alongside the contact-info feature (see below).
+The `permissions` table (seeded in Phase 1) already has a `manage_clients` key
+ready for phase 4, so no schema changes will be needed there when it ships.
+A `manage_settings` permission was added alongside the contact-info feature, and
+`manage_courses` (seeded in Phase 1, unused until now) gates phase 3 (see below).
 
 ### Phase 2 notes (subscriptions & pricing)
 
@@ -93,6 +93,63 @@ alongside the contact-info feature (see below).
 - Admin UI: `src/pages/admin/ContactInfoPage.jsx` — a single form, no table (it's
   a singleton, not a list), at `/#/admin/contact-info`.
 
+### Phase 3 notes (cours & planning)
+
+- Two tables replace the old static `src/data/groupClasses.js` (deleted) and the
+  `WEEKLY_SLOTS` array that used to be hardcoded in `src/pages/ClassesPage.jsx`
+  (also deleted).
+- Table `group_classes` (`server/src/models/groupClass.model.js`) merges what
+  used to be two separate concepts in the static file — catalog cards (shown on
+  the "Cours" tab) and `scheduleOnly` entries (calendar-only, no card) — into one
+  table with a `showInCatalog` boolean. A class like "Burn45" or "Sculpt" is just
+  a row with `showInCatalog=false`; there's no separate schema for it.
+- `category` is a Sequelize `ENUM('Cardio','Strength','HIIT','Conditioning',
+  'Recovery')`, not free text. Those exact strings are load-bearing: the calendar
+  colors (`categoryEventClass`/`categoryAccentClass` in `ClassesPage.jsx`) and the
+  category tabs (`TAB_KEYS`) switch on them directly. If a new category is ever
+  needed, it has to be added to the enum *and* to those two switch functions *and*
+  to `TAB_KEYS`/the French tab labels in `translations.js` — four places, not one.
+- `durationMinutes` lives directly on each class row now. The old code had a
+  `durationMinutes(title, hour, minute)` helper with special-cased hacks (e.g.
+  "if hour===9 && minute===15, it must be Sculpt, return 45") to infer duration
+  from the time slot since `scheduleOnly` entries didn't carry their own duration.
+  That helper is gone — every class, catalog or schedule-only, has an explicit
+  duration column, so no inference is needed anywhere.
+- Table `class_schedule_slots` (`server/src/models/classScheduleSlot.model.js`)
+  is the weekly grid: `groupClassId` (FK), `dayOfWeek` (0=Monday..5=Saturday,
+  matching the calendar's existing Monday-based convention and `hiddenDays={[0]}`
+  Sunday-hide), `startHour`, `startMinute`. Deleting a class cascades to delete
+  its schedule slots (done manually in `groupClass.controller.js`'s `remove`,
+  not a DB-level `ON DELETE CASCADE`) — otherwise a dangling FK would block the
+  delete or leave orphaned "Cours supprimé" rows in the admin planning list.
+- Public read: `GET /api/group-classes` (active classes only) and
+  `GET /api/class-schedule` (all slots, each with its class nested via Sequelize
+  `include` — the calendar needs class details, category, and duration for every
+  slot regardless of any admin-only state). Admin CRUD for both, mounted at
+  `/api/admin/group-classes` and `/api/admin/class-schedule`, both gated by
+  `requirePermission('manage_courses')` — same middleware pattern as Phase 2.
+- `src/pages/ClassesPage.jsx` fetches both endpoints once on mount (a single
+  `Promise.all`) and builds `classes` (catalog grid) and `classInfoMap`
+  (calendar event lookup) from the response, replacing the old
+  `catalogWithImages()`/`buildClassInfoMap()`/`getGroupClasses()` helpers.
+  Class images now come from each class's `imageUrl` column, falling back to
+  the existing `CLASS_IMG_FALLBACK` constant when empty (admin can paste any
+  image URL — no upload infra exists in this project, kept consistent with that).
+- Admin UI: `src/pages/admin/ClassesPage.jsx` at `/#/admin/classes`, two tabs in
+  one page component — "Cours" (catalog CRUD, same form-then-table pattern as
+  `SubscriptionsPage.jsx`: newline-separated textareas for `benefits`/`includes`/
+  `idealFor.items`, comma-separated input for `levels`) and "Planning" (weekly
+  slots grouped by day, plain day/hour/class dropdowns to add a slot — no
+  drag-and-drop calendar, per the same "no drag-and-drop" scope decision already
+  made for subscriptions in Phase 2).
+- `seedGroupClasses.js` migrates the French catalog + `scheduleOnly` content that
+  used to live in `src/data/groupClasses.js` (idempotent by `classKey`).
+  `seedClassSchedule.js` migrates the old `WEEKLY_SLOTS` array (idempotent by
+  "skip entirely if any rows already exist" — schedule slots have no natural
+  unique business key beyond day+time+class, and admins own this list going
+  forward). Both folded into `npm run seed`, and `seedClassSchedule.js` must run
+  after `seedGroupClasses.js` since it resolves each slot's class by `classKey`.
+
 ## Site went French-only (no more EN/FR anywhere)
 
 The site and admin panel were bilingual (EN/FR) through the first few phases, with
@@ -107,10 +164,12 @@ anyone picking this up:
   not just hidden). `src/i18n/I18nProvider.jsx` no longer has `lang` state,
   `toggleLang`, or `localStorage` persistence — `t()`/`dict` still work exactly
   as before for any component, but `lang` is now a **hardcoded constant `'fr'`**
-  kept in the context value on purpose, so `src/pages/ClassesPage.jsx` and
-  `src/data/groupClasses.js` (still internally bilingual EN/FR data, untouched —
-  that content is phase 3, not yet migrated to the DB) don't need any changes:
-  they keep asking for `lang` and always get `'fr'`.
+  kept in the context value on purpose, so components that still take a `lang`
+  prop for locale-aware formatting (e.g. `src/pages/ClassesPage.jsx`'s date/time
+  formatting) don't need any changes: they keep asking for `lang` and always get
+  `'fr'`. (`src/data/groupClasses.js`, which used to hold bilingual EN/FR class
+  data, is gone now too — see "Phase 3 notes" above, that content moved to the DB
+  and is French-only like everything else.)
 - **`subscription_plans` and `contact_info` are single-language now** (see
   columns above) — this was an actual schema migration on the live dev DB, not
   just a fresh-install seed change. The one-off script that did it is

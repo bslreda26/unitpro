@@ -14,6 +14,7 @@ export function AnimatedRoutes({
   EmployeesPage,
   AdminSubscriptionsPage,
   ContactInfoPage,
+  AdminClassesPage,
 }) {
   const location = useLocation()
 
@@ -82,6 +83,14 @@ export function AnimatedRoutes({
               element={
                 <ProtectedRoute requiredPermission="manage_settings">
                   <ContactInfoPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="classes"
+              element={
+                <ProtectedRoute requiredPermission="manage_courses">
+                  <AdminClassesPage />
                 </ProtectedRoute>
               }
             />

@@ -1,11 +1,17 @@
 import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
-import { Menu, X, LogOut, LayoutDashboard, Users, Tag, Phone } from 'lucide-react'
+import { Menu, X, LogOut, LayoutDashboard, Users, Tag, Phone, Dumbbell } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext.jsx'
 
 const NAV_ITEMS = [
   { to: '/admin', label: 'Tableau de bord', icon: LayoutDashboard, end: true },
   { to: '/admin/employees', label: 'Employés', icon: Users, requiresSuperAdmin: true },
+  {
+    to: '/admin/classes',
+    label: 'Cours',
+    icon: Dumbbell,
+    requiredPermission: 'manage_courses',
+  },
   {
     to: '/admin/subscriptions',
     label: 'Abonnements',

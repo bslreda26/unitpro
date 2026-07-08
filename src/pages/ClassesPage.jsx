@@ -9,14 +9,13 @@ import interactionPlugin from '@fullcalendar/interaction'
 import { ArrowRight, ChevronRight, X } from 'lucide-react'
 import { useI18n } from '../i18n/I18nProvider.jsx'
 import { WhatsAppLeadModal } from '../components/WhatsAppLeadModal.jsx'
-import {
-  buildClassInfoMap,
-  catalogWithImages,
-  durationMinutes,
-  getGroupClasses,
-} from '../data/groupClasses.js'
+import { fetchPublicClasses, fetchPublicSchedule } from '../api/groupClasses.api.js'
 
 import '../styles/fullcalendar.css'
+
+function formatLevels(levels) {
+  return (levels ?? []).join(' • ')
+}
 
 const HERO_BG_PRIMARY =
   'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=2400&q=80'
@@ -46,48 +45,6 @@ function useSvgPlaceholderDataUrl() {
 const TAB_KEYS = ['All', 'Strength', 'Cardio', 'HIIT', 'Conditioning', 'Recovery']
 const CLASS_IMG_FALLBACK =
   'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1600&q=80'
-
-/** [dayOffsetFromMonday, hour, minute, className] — powers calendar + mobile list */
-const SWEAT60_SLOTS = [
-  [0, 18, 30, 'Sweat60'],
-  [2, 18, 30, 'Sweat60'],
-  [4, 18, 30, 'Sweat60'],
-]
-
-const WEEKLY_SLOTS = [
-  [0, 8, 30, 'Burn45'],
-  [1, 8, 30, 'Strong Workout'],
-  [2, 8, 30, 'Burn45'],
-  [3, 8, 30, 'Strong Workout'],
-  [4, 8, 30, 'Burn45'],
-  [5, 8, 30, 'Booty & Legs Workout'],
-  [0, 9, 15, 'Sculpt'],
-  [2, 9, 15, 'Sculpt'],
-  [4, 9, 15, 'Sculpt'],
-  [1, 9, 30, 'HIIT Rush'],
-  [3, 9, 30, 'HIIT Rush'],
-  [5, 9, 30, 'Bootcamp'],
-  [0, 12, 30, 'Express Burn'],
-  [1, 12, 30, 'Core & Cardio'],
-  [2, 12, 30, 'Express Burn'],
-  [3, 12, 30, 'Core & Cardio'],
-  [4, 12, 30, 'Express Burn'],
-  [0, 17, 30, 'Strong Workout'],
-  [1, 17, 30, 'Booty & Legs Workout'],
-  [2, 17, 30, 'Strong Workout'],
-  [3, 17, 30, 'Booty & Legs Workout'],
-  [4, 17, 30, 'Strong Workout'],
-  [5, 17, 30, 'Athletic Conditioning'],
-  ...SWEAT60_SLOTS,
-  [1, 18, 30, 'Burn45'],
-  [3, 18, 30, 'Burn45'],
-  [5, 18, 30, 'Stretch & Recovery'],
-  [0, 19, 30, 'Small Group Coaching'],
-  [1, 19, 30, 'Small Group Coaching'],
-  [2, 19, 30, 'Small Group Coaching'],
-  [3, 19, 30, 'Small Group Coaching'],
-  [4, 19, 30, 'Small Group Coaching'],
-]
 
 
 function ClassDetailsBody({ classData, t, dict }) {
@@ -289,69 +246,71 @@ function ClassDetailModal({ classItem, onClose, onWhatsAppRequest, dict }) {
         <>
           <motion.button
             type="button"
-            className="fixed inset-0 z-50 bg-black/60"
+            className="fixed inset-0 z-50 bg-black/90"
             aria-label={t('classesPage.modal.closeAria')}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
           />
-          <motion.div
-            className={[
-              'fixed inset-x-0 bottom-0 z-[60] w-full border border-border bg-surface p-5',
-              'rounded-t-2xl',
-              'md:left-1/2 md:top-1/2 md:bottom-auto md:w-[92vw] md:max-w-lg md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-none md:p-6',
-            ].join(' ')}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 16 }}
-            transition={{ type: 'spring', stiffness: 320, damping: 28 }}
-            role="dialog"
-            aria-modal="true"
-          >
-            <div className="mx-auto max-w-lg">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <div className="font-body text-[11px] font-semibold uppercase tracking-widest text-primary">
-                    {classItem.category}
+          <div className="fixed inset-0 z-[60] flex items-end justify-center pointer-events-none md:items-center md:p-4">
+            <motion.div
+              className={[
+                'pointer-events-auto flex max-h-[85dvh] w-full flex-col border border-border bg-surface p-5',
+                'rounded-t-2xl',
+                'md:w-[92vw] md:max-w-lg md:rounded-none md:p-6',
+              ].join(' ')}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 16 }}
+              transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+              role="dialog"
+              aria-modal="true"
+            >
+              <div className="mx-auto flex w-full min-h-0 max-w-lg flex-col">
+                <div className="flex shrink-0 items-start justify-between gap-4">
+                  <div>
+                    <div className="font-body text-[11px] font-semibold uppercase tracking-widest text-primary">
+                      {classItem.category}
+                    </div>
+                    <div className="mt-2 font-display text-3xl tracking-wide text-white sm:text-4xl">
+                      {classItem.emoji ? `${classItem.emoji} ` : ''}
+                      {classItem.name}
+                    </div>
+                    <div className="mt-2 font-body text-xs text-white/60">
+                      {dict.classesPage?.labels?.level ?? 'Level'}: {classItem.level}
+                    </div>
                   </div>
-                  <div className="mt-2 font-display text-3xl tracking-wide text-white sm:text-4xl">
-                    {classItem.emoji ? `${classItem.emoji} ` : ''}
-                    {classItem.name}
-                  </div>
-                  <div className="mt-2 font-body text-xs text-white/60">
-                    {dict.classesPage?.labels?.level ?? 'Level'}: {classItem.level}
-                  </div>
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="inline-flex h-10 w-10 shrink-0 items-center justify-center border border-border bg-dark/30 text-white/80 hover:text-white"
+                    aria-label={t('classesPage.modal.close')}
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="inline-flex h-10 w-10 shrink-0 items-center justify-center border border-border bg-dark/30 text-white/80 hover:text-white"
-                  aria-label={t('classesPage.modal.close')}
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
 
-              <div className="mt-4 max-h-[55vh] overflow-auto pr-1 md:max-h-[min(70vh,520px)] md:pr-0">
-                <ClassDetailsBody classData={classItem} t={t} dict={dict} />
-              </div>
+                <div className="mt-4 min-h-0 flex-1 overflow-auto pr-1 md:pr-0">
+                  <ClassDetailsBody classData={classItem} t={t} dict={dict} />
+                </div>
 
-              <div className="mt-6">
-                <button
-                  type="button"
-                  onClick={() =>
-                    onWhatsAppRequest?.(
-                      t('whatsapp.classBook').replace('{class}', classItem.name ?? ''),
-                    )
-                  }
-                  className="inline-flex h-11 w-full items-center justify-center bg-primary px-6 font-body text-xs font-semibold uppercase tracking-widest text-white transition-transform hover:scale-[1.02] hover:bg-accent"
-                >
-                  {t('classesPage.bookNow')}
-                </button>
+                <div className="mt-6 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      onWhatsAppRequest?.(
+                        t('whatsapp.classBook').replace('{class}', classItem.name ?? ''),
+                      )
+                    }
+                    className="inline-flex h-11 w-full items-center justify-center bg-primary px-6 font-body text-xs font-semibold uppercase tracking-widest text-white transition-transform hover:scale-[1.02] hover:bg-accent"
+                  >
+                    {t('classesPage.bookNow')}
+                  </button>
+                </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>
@@ -379,99 +338,101 @@ function EventModal({ eventInfo, onClose, onWhatsAppRequest, dict }) {
         <>
           <motion.button
             type="button"
-            className="fixed inset-0 z-50 bg-black/60"
+            className="fixed inset-0 z-50 bg-black/90"
             aria-label={t('classesPage.modal.closeAria')}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
           />
-          <motion.div
-            className={[
-              // Mobile: bottom sheet
-              'fixed inset-x-0 bottom-0 z-[60] w-full border border-border bg-surface p-5',
-              'rounded-t-2xl',
-              // Desktop: centered modal
-              'md:left-1/2 md:top-1/2 md:bottom-auto md:w-[92vw] md:max-w-lg md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-none md:p-6',
-            ].join(' ')}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 16 }}
-            transition={{ type: 'spring', stiffness: 320, damping: 28 }}
-            role="dialog"
-            aria-modal="true"
-          >
-            <div className="mx-auto max-w-lg">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <div className="font-body text-[11px] font-semibold uppercase tracking-widest text-primary">
-                    {eventInfo.extendedProps.category || t('classesPage.modal.classFallback')}
+          <div className="fixed inset-0 z-[60] flex items-end justify-center pointer-events-none md:items-center md:p-4">
+            <motion.div
+              className={[
+                // Mobile: bottom sheet
+                'pointer-events-auto flex max-h-[85dvh] w-full flex-col border border-border bg-surface p-5',
+                'rounded-t-2xl',
+                // Desktop: centered modal
+                'md:w-[92vw] md:max-w-lg md:rounded-none md:p-6',
+              ].join(' ')}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 16 }}
+              transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+              role="dialog"
+              aria-modal="true"
+            >
+              <div className="mx-auto flex w-full min-h-0 max-w-lg flex-col">
+                <div className="flex shrink-0 items-start justify-between gap-4">
+                  <div>
+                    <div className="font-body text-[11px] font-semibold uppercase tracking-widest text-primary">
+                      {eventInfo.extendedProps.category || t('classesPage.modal.classFallback')}
+                    </div>
+                    <div className="mt-2 font-display text-4xl tracking-wide text-white">
+                      {classData?.emoji ? `${classData.emoji} ` : ''}
+                      {eventInfo.title}
+                    </div>
                   </div>
-                  <div className="mt-2 font-display text-4xl tracking-wide text-white">
-                    {classData?.emoji ? `${classData.emoji} ` : ''}
-                    {eventInfo.title}
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="inline-flex h-10 w-10 shrink-0 items-center justify-center border border-border bg-dark/30 text-white/80 hover:text-white"
+                    aria-label={t('classesPage.modal.close')}
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+
+                <div className="mt-3 min-h-0 flex-1 overflow-auto pr-1 md:pr-0">
+                  {classData ? (
+                    <ClassDetailsBody classData={classData} t={t} dict={dict} />
+                  ) : (
+                    <div className="font-body text-sm text-white/80">
+                      {eventInfo.extendedProps.details || t('classesPage.modal.detailsFallback')}
+                    </div>
+                  )}
+
+                  <div className="mt-6 grid gap-3 border-t border-border pt-5 font-body text-sm text-white/80">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-white/60">{t('classesPage.modal.time')}</span>
+                      <span>
+                        {eventInfo.start?.toLocaleString([], {
+                          weekday: 'short',
+                          hour: 'numeric',
+                          minute: '2-digit',
+                        })}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-white/60">{t('classesPage.modal.coach')}</span>
+                      <span>
+                        {eventInfo.extendedProps.trainer || t('classesPage.modal.staffFallback')}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-white/60">{t('classesPage.modal.level')}</span>
+                      <span>
+                        {eventInfo.extendedProps.level || t('classesPage.modal.levelFallback')}
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="inline-flex h-10 w-10 shrink-0 items-center justify-center border border-border bg-dark/30 text-white/80 hover:text-white"
-                  aria-label={t('classesPage.modal.close')}
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
 
-              <div className="mt-3 max-h-[55vh] overflow-auto pr-1 md:max-h-[min(70vh,520px)] md:pr-0">
-                {classData ? (
-                  <ClassDetailsBody classData={classData} t={t} dict={dict} />
-                ) : (
-                  <div className="font-body text-sm text-white/80">
-                    {eventInfo.extendedProps.details || t('classesPage.modal.detailsFallback')}
-                  </div>
-                )}
-
-                <div className="mt-6 grid gap-3 border-t border-border pt-5 font-body text-sm text-white/80">
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="text-white/60">{t('classesPage.modal.time')}</span>
-                    <span>
-                      {eventInfo.start?.toLocaleString([], {
-                        weekday: 'short',
-                        hour: 'numeric',
-                        minute: '2-digit',
-                      })}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="text-white/60">{t('classesPage.modal.coach')}</span>
-                    <span>
-                      {eventInfo.extendedProps.trainer || t('classesPage.modal.staffFallback')}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="text-white/60">{t('classesPage.modal.level')}</span>
-                    <span>
-                      {eventInfo.extendedProps.level || t('classesPage.modal.levelFallback')}
-                    </span>
-                  </div>
+                <div className="mt-6 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      onWhatsAppRequest?.(
+                        t('whatsapp.classBook').replace('{class}', eventInfo.title ?? ''),
+                      )
+                    }
+                    className="inline-flex h-11 w-full items-center justify-center bg-primary px-6 font-body text-xs font-semibold uppercase tracking-widest text-white transition-transform hover:scale-[1.02] hover:bg-accent md:w-auto md:justify-end"
+                  >
+                    {t('classesPage.bookNow')}
+                  </button>
                 </div>
               </div>
-
-              <div className="mt-6">
-                <button
-                  type="button"
-                  onClick={() =>
-                    onWhatsAppRequest?.(
-                      t('whatsapp.classBook').replace('{class}', eventInfo.title ?? ''),
-                    )
-                  }
-                  className="inline-flex h-11 w-full items-center justify-center bg-primary px-6 font-body text-xs font-semibold uppercase tracking-widest text-white transition-transform hover:scale-[1.02] hover:bg-accent md:w-auto md:justify-end"
-                >
-                  {t('classesPage.bookNow')}
-                </button>
-              </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>
@@ -502,12 +463,59 @@ export function ClassesPage() {
     })
   }, [])
 
+  const [groupClasses, setGroupClasses] = useState([])
+  const [scheduleSlots, setScheduleSlots] = useState([])
+  const [dataLoading, setDataLoading] = useState(true)
+
+  useEffect(() => {
+    let cancelled = false
+    Promise.all([fetchPublicClasses(), fetchPublicSchedule()])
+      .then(([classesData, slotsData]) => {
+        if (cancelled) return
+        setGroupClasses(classesData)
+        setScheduleSlots(slotsData)
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setGroupClasses([])
+          setScheduleSlots([])
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setDataLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   const classes = useMemo(
-    () => catalogWithImages(getGroupClasses(lang).catalog),
-    [lang],
+    () =>
+      groupClasses
+        .filter((c) => c.showInCatalog)
+        .map((c) => ({
+          ...c,
+          img: c.imageUrl || CLASS_IMG_FALLBACK,
+          level: formatLevels(c.levels),
+          durationLabel: `${c.durationMinutes} MIN`,
+          trainer: 'UNIT PRO Coach',
+        })),
+    [groupClasses],
   )
 
-  const classInfoMap = useMemo(() => buildClassInfoMap(lang), [lang])
+  const classInfoMap = useMemo(() => {
+    const map = {}
+    for (const c of groupClasses) {
+      map[c.name] = {
+        category: c.category,
+        level: formatLevels(c.levels),
+        trainer: 'UNIT PRO Coach',
+        details: c.description,
+        classData: c,
+      }
+    }
+    return map
+  }, [groupClasses])
 
   const filtered = useMemo(() => {
     if (active === 'All') return classes
@@ -540,18 +548,19 @@ export function ClassesPage() {
       return d
     }
 
-    return WEEKLY_SLOTS.map(([dOffset, hour, minute, title], idx) => {
-      const start = at(dOffset, hour, minute)
+    return scheduleSlots.map((slot) => {
+      const title = slot.groupClass?.name ?? ''
+      const start = at(slot.dayOfWeek, slot.startHour, slot.startMinute)
       const end = new Date(start)
-      end.setMinutes(end.getMinutes() + durationMinutes(title, hour, minute))
+      end.setMinutes(end.getMinutes() + (slot.groupClass?.durationMinutes ?? 60))
       const info = classInfoMap[title] ?? {
         category: 'Strength',
-        level: 'All levels',
+        level: 'Tous niveaux',
         trainer: 'UNIT PRO Coach',
-        details: 'Studio class — tap Book for WhatsApp.',
+        details: 'Cours en studio — appuyez sur Réserver pour WhatsApp.',
       }
       return {
-        id: `ev-${dOffset}-${hour}-${minute}-${title}-${idx}`,
+        id: `slot-${slot.id}`,
         title,
         start,
         end,
@@ -565,7 +574,7 @@ export function ClassesPage() {
         },
       }
     })
-  }, [anchorMonday, classInfoMap])
+  }, [anchorMonday, scheduleSlots, classInfoMap])
 
   const { ref: contentRef, inView: contentInView } = useInView({
     threshold: 0.08,
@@ -664,6 +673,11 @@ export function ClassesPage() {
           </div>
 
           <div className="mt-8 min-h-[240px] sm:mt-10 sm:min-h-[320px]" role="tabpanel">
+            {dataLoading ? (
+              <div className="flex min-h-[240px] items-center justify-center font-body text-sm uppercase tracking-widest text-white/50 sm:min-h-[320px]">
+                Chargement…
+              </div>
+            ) : (
             <AnimatePresence mode="wait">
               {viewMode === 'calendar' ? (
                 <motion.div
@@ -935,6 +949,7 @@ export function ClassesPage() {
                 </motion.div>
               )}
             </AnimatePresence>
+            )}
           </div>
         </div>
 

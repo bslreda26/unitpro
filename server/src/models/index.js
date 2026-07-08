@@ -5,6 +5,8 @@ const User = require('./user.model');
 const UserPermission = require('./userPermission.model');
 const SubscriptionPlan = require('./subscriptionPlan.model');
 const ContactInfo = require('./contactInfo.model');
+const GroupClass = require('./groupClass.model');
+const ClassScheduleSlot = require('./classScheduleSlot.model');
 
 Role.hasMany(User, { foreignKey: 'roleId', as: 'users' });
 User.belongsTo(Role, { foreignKey: 'roleId', as: 'role' });
@@ -24,6 +26,9 @@ Permission.belongsToMany(User, {
 
 User.belongsTo(User, { foreignKey: 'createdBy', as: 'creator' });
 
+GroupClass.hasMany(ClassScheduleSlot, { foreignKey: 'groupClassId', as: 'scheduleSlots' });
+ClassScheduleSlot.belongsTo(GroupClass, { foreignKey: 'groupClassId', as: 'groupClass' });
+
 module.exports = {
   sequelize,
   Role,
@@ -32,4 +37,6 @@ module.exports = {
   UserPermission,
   SubscriptionPlan,
   ContactInfo,
+  GroupClass,
+  ClassScheduleSlot,
 };
